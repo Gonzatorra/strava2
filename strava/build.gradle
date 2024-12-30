@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.strava'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform ('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+
+    //Dependencia a serverMeta
+    implementation project (':serverMeta')
+    implementation 'com.toedter:jcalendar:1.4' //Calendario
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.junit:junit-bom:5.10.0'
+    }
+}
+
+task prepareKotlinBuildScriptModel {
+
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
