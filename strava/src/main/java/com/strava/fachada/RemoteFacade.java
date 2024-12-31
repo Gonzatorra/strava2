@@ -128,61 +128,69 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         String token = null;
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
+        
         //Verificar si el usuario existe
-        if (usuario == null) {
-            System.out.println("Usuario no encontrado en Strava. Creando nuevo usuario.");
-            usuario = new UsuarioDTO();
+        /*if (usuario == null) {
+            System.out.println("Usuario no encontrado en Strava");
+            usuario2 = new UsuarioDTO();
             usuario.setUsername(username);
             usuario.setContrasena(password);
             usuario.setProveedor(plataforma);
             usuario.setEmail(username+"@"+plataforma+".com");
+        }*/
+        if (usuario != null) {
+	        
+	        String proveedor = usuario.getProveedor();
+	
+	        //Verificar si la plataforma del usuario coincide con la proporcionada
+	        if (plataforma.equalsIgnoreCase(proveedor)) {
+	            //Verificacion para Google
+	            if ("Google".equalsIgnoreCase(plataforma)) {
+	                token = googleAuthClient.loginUser(username, password);
+	                if (token != null) {
+	                    System.out.println("Login realizado correctamente en Google.");
+	                    usuarioService.registrar(username, password, username+"@google.com", token, proveedor);
+	                    
+	                } else {
+	                    System.err.println("Error en el login de Google.");
+	                }
+	
+	            }
+	            //Verificacion para Meta
+	            else if ("Meta".equalsIgnoreCase(plataforma)) {
+	                try {
+	                    AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
+	                    token = metaAuthClient.login(username, password);
+	                    if (token != null) {
+	                        System.out.println("Login realizado correctamente en Meta.");
+	                        usuarioService.registrar(username, password, username+"@meta.com", token, proveedor);
+	                    } else {
+	                        System.err.println("Error durante el login en Meta.");
+	                    }
+	                } catch (IOException e) {
+	                    System.err.println("Error durante el login en Meta: " + e.getMessage());
+	                    e.printStackTrace();
+	                }
+	            }
+	
+	            //Si se obtiene un token exitoso, actualizar el usuario
+	            if (token != null) {
+	                usuario.setToken(token); //Establecer el token en el usuario
+	                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
+	                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
+	                return usuarioActualizado; //Retornar el usuario actualizado
+	            } else {
+	                System.out.println("No se pudo obtener el token.");
+	                return null; //Si no se obtiene un token, retornar null
+	            }
+	        } else {
+	            //Si la plataforma no coincide con el proveedor del usuario, indicar login fallido
+	            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
+	            return null;
+	        }
         }
-
-        String proveedor = usuario.getProveedor();
-
-        //Verificar si la plataforma del usuario coincide con la proporcionada
-        if (plataforma.equals(proveedor)) {
-            //Verificacion para Google
-            if ("Google".equals(plataforma)) {
-                token = googleAuthClient.loginUser(username, password);
-                if (token != null) {
-                    System.out.println("Login realizado correctamente en Google.");
-                } else {
-                    System.err.println("Error en el login de Google.");
-                }
-
-            }
-            //Verificacion para Meta
-            else if ("Meta".equals(plataforma)) {
-                try {
-                    AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
-                    token = metaAuthClient.login(username, password);
-                    if (token != null) {
-                        System.out.println("Login realizado correctamente en Meta.");
-                    } else {
-                        System.err.println("Error durante el login en Meta.");
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error durante el login en Meta: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-
-            //Si se obtiene un token exitoso, actualizar el usuario
-            if (token != null) {
-                usuario.setToken(token); //Establecer el token en el usuario
-                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
-                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
-                return usuarioActualizado; //Retornar el usuario actualizado
-            } else {
-                System.out.println("No se pudo obtener el token.");
-                return null; //Si no se obtiene un token, retornar null
-            }
-        } else {
-            //Si la plataforma no coincide con el proveedor del usuario, indicar login fallido
-            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
-            return null;
-        }
+        System.out.println("Login fallido con plataforma: " + plataforma + " para usuario: " + username);
+        return null;
     }
 
 

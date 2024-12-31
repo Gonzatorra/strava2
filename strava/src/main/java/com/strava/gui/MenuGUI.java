@@ -67,20 +67,33 @@ public class MenuGUI extends JFrame {
         try {
             UsuarioDTO[] usuarioWrapper = new UsuarioDTO[1];
 
-            if ("Strava".equals(provider)) {
+            if ("Strava".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password);
-            } else if ("Google".equals(provider)) {
+                if (usuarioWrapper[0] != null) {
+                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
+                    SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                }
+            } else if ("Google".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.loginConProveedor(username, password, "Google");
-            } else if ("Meta".equals(provider)) {
+                if (usuarioWrapper[0] != null) {
+                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
+                    SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error en autenticacion. No existe ese username en Google");
+                }
+            } else if ("Meta".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.loginConProveedor(username, password, "Meta");
-            }
-
-            if (usuarioWrapper[0] != null) {
-                JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
-                SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                if (usuarioWrapper[0] != null) {
+                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
+                    SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error en autenticacion. No existe ese username en Meta");
+                }
             }
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(this, "Error de conexión con el servidor. Por favor, intente nuevamente.");

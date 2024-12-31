@@ -110,13 +110,13 @@ public class Servidor {
             facade.actualizarUsuario(usuario3);
 
             // Usuarios 4 al 10
-            UsuarioDTO usuario4 = facade.registrarUsuario("mario001", "marioKey", "mario001@strava.com", "Mario", "Strava");
-            UsuarioDTO usuario5 = facade.registrarUsuario("elena345", "elenaKey", "elena345@strava.com", "Elena", "Strava");
-            UsuarioDTO usuario6 = facade.registrarUsuario("pedro654", "pedroKey", "pedro654@strava.com", "Pedro", "Strava");
-            UsuarioDTO usuario7 = facade.registrarUsuario("laura999", "lauraKey", "laura999@strava.com", "Laura", "Strava");
-            UsuarioDTO usuario8 = facade.registrarUsuario("david111", "davidKey", "david111@strava.com", "David", "Strava");
-            UsuarioDTO usuario9 = facade.registrarUsuario("sofia777", "sofiaKey", "sofia777@strava.com", "Sofía", "Strava");
-            UsuarioDTO usuario10 = facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
+            facade.registrarUsuario("mario001", "marioKey", "mario001@strava.com", "Mario", "Strava");
+            facade.registrarUsuario("elena345", "elenaKey", "elena345@strava.com", "Elena", "Strava");
+            facade.registrarUsuario("pedro654", "pedroKey", "pedro654@strava.com", "Pedro", "Strava");
+            facade.registrarUsuario("laura999", "lauraKey", "laura999@strava.com", "Laura", "Strava");
+            facade.registrarUsuario("david111", "davidKey", "david111@strava.com", "David", "Strava");
+            facade.registrarUsuario("sofia777", "sofiaKey", "sofia777@strava.com", "Sofía", "Strava");
+            facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
 
             //Registros de Google
             googleAuthClient.registerUser("daniel333", "claveDaniel", "daniel333@gmail.com");
@@ -136,6 +136,25 @@ public class Servidor {
             metaAuthClient.registerUser("david333", "claveDavid", "david333@meta.com");
             metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
 
+	
+	        // Registros de Google también con facade.registrarUsuario
+	        facade.registrarUsuario("daniel333", "claveDaniel", "daniel333@gmail.com", "Daniel", "Google");
+	        facade.registrarUsuario("susana555", "claveSusana", "susana555@gmail.com", "Susana", "Google");
+	        facade.registrarUsuario("manuel111", "claveManuel", "manuel111@gmail.com", "Manuel", "Google");
+	        facade.registrarUsuario("isabel999", "claveIsabel", "isabel999@gmail.com", "Isabel", "Google");
+	        facade.registrarUsuario("andres444", "claveAndres", "andres444@gmail.com", "Andres", "Google");
+	        facade.registrarUsuario("clara777", "claveClara", "clara777@gmail.com", "Clara", "Google");
+	        facade.registrarUsuario("pablo888", "clavePablo", "pablo888@gmail.com", "Pablo", "Google");
+	
+	         // Registros de Meta también con facade.registrarUsuario
+	        facade.registrarUsuario("maria123", "claveMaria", "maria123@meta.com", "Maria", "Meta");
+	        facade.registrarUsuario("jose456", "claveJose", "jose456@meta.com", "Jose", "Meta");
+	        facade.registrarUsuario("lucia788", "claveLucia", "lucia788@meta.com", "Lucia", "Meta");
+	        facade.registrarUsuario("carlos111", "claveCarlos", "carlos111@meta.com", "Carlos", "Meta");
+	        facade.registrarUsuario("ana222", "claveAna", "ana222@meta.com", "Ana", "Meta");
+	        facade.registrarUsuario("david333", "claveDavid", "david333@meta.com", "David", "Meta");
+	        facade.registrarUsuario("laura444", "claveLaura", "laura444@meta.com", "Laura", "Meta");
+	            
 
             System.out.println("Servidor RMI listo y esperando conexiones...");
         } catch (Exception e) {

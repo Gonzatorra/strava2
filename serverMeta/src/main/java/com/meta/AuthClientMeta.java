@@ -17,7 +17,10 @@ public class AuthClientMeta {
 
             out.println(request);
             System.out.println(request);
-            return in.readLine();
+            String token=in.readLine();
+            return token;
+            	//throw new NullPointerException();
+            
         }
     }
 
