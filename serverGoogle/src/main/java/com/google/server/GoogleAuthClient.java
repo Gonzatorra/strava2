@@ -32,7 +32,7 @@ public class GoogleAuthClient {
         }
     }
 
-    public boolean loginUser(String username, String password) {
+    public String loginUser(String username, String password) {
         try {
             URL url = new URL(GOOGLE_SERVER_URL + "/login");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -58,16 +58,18 @@ public class GoogleAuthClient {
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
                     }
-                    System.out.println("Login exitoso. Token recibido: " + response.toString());
-                    return true;
+                    // Asumimos que la respuesta es el token
+                    String token = response.toString();
+                    System.out.println("Login exitoso. Token recibido: " + token);
+                    return token;  // Retornar el token recibido
                 }
             } else {
                 System.out.println("Login fallido. Código de respuesta: " + responseCode);
-                return false;
+                return null;  // Retornar null si el login no es exitoso
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;  // Retornar null en caso de error
         }
     }
 
@@ -127,5 +129,7 @@ public class GoogleAuthClient {
             return false;
         }
     }
+
+
 }
 

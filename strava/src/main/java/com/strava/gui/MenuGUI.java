@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import com.google.server.AuthControllerGoogle;
 import com.google.server.GoogleAuthClient;
+import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
 import com.strava.GAuth.*;
 import com.strava.assembler.*;
@@ -42,6 +43,7 @@ public class MenuGUI extends JFrame {
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
     private IRemoteFacade facade;
     static GoogleAuthClient googleAuthClient;
+    static AuthClientMeta metaAuthClient;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public MenuGUI(IRemoteFacade facade) {
@@ -63,32 +65,19 @@ public class MenuGUI extends JFrame {
 
     private void handleLogin(String provider, String username, String password) {
         try {
-            final UsuarioDTO usuarioDTO;  // Declaración como final
+            UsuarioDTO[] usuarioWrapper = new UsuarioDTO[1];
 
             if ("Strava".equals(provider)) {
-                usuarioDTO = facade.login(username, password);
+                usuarioWrapper[0] = facade.login(username, password);
             } else if ("Google".equals(provider)) {
-                boolean isLoginSuccessful = googleAuthClient.loginUser(username, password);
-                if (isLoginSuccessful) {
-                    usuarioDTO = new UsuarioDTO();
-                    usuarioDTO.setUsername(username);
-                    usuarioDTO.setContrasena(password);
-                    usuarioDTO.setEmail(username + "@gmail.com");
-                    usuarioDTO.setAmigos(new ArrayList<>());
-                    usuarioDTO.setEntrenamientos(new ArrayList<>());
-                    usuarioDTO.setRetos(new HashMap<>());
-                } else {
-                    usuarioDTO = null;
-                }
+                usuarioWrapper[0] = facade.loginConProveedor(username, password, "Google");
             } else if ("Meta".equals(provider)) {
-                usuarioDTO = facade.loginConProveedor(username, password, "Meta");
-            } else {
-                usuarioDTO = null;  // En caso de que no sea uno de los proveedores
+                usuarioWrapper[0] = facade.loginConProveedor(username, password, "Meta");
             }
 
-            if (usuarioDTO != null) {
+            if (usuarioWrapper[0] != null) {
                 JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
-                SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioDTO).setVisible(true));
+                SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
@@ -97,8 +86,9 @@ public class MenuGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Error de conexión con el servidor. Por favor, intente nuevamente.");
             ex.printStackTrace();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error en autenticación");
+            JOptionPane.showMessageDialog(this, "Error en autenticacion");
             ex.printStackTrace();
+
         }
     }
 

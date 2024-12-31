@@ -1,14 +1,12 @@
 package com.strava.fachada;
 
+import com.google.server.GoogleAuthClient;
 import com.strava.DTO.*;
-import com.strava.GAuth.IRemoteAuthFacadeG;
 import com.meta.*;
 import com.strava.servicios.*;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,24 +14,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public UsuarioService usuarioService;
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
-    //private ServicioExternosBridge externoService;
-    private IRemoteAuthFacadeG facadeG;
-    //private IRemoteAuthFacadeM facadeM;
-
     private static HashMap<String, String> tokensActivos = new HashMap<>();
+    static GoogleAuthClient googleAuthClient;
 
-    /*private static final String MOCK_GOOGLE_USER = "user@google.com";
-    private static final String MOCK_GOOGLE_PASSWORD = "google";
-    private static final String MOCK_META_USER = "user@meta.com";
-    private static final String MOCK_META_PASSWORD = "meta";*/
 
 
     public RemoteFacade() throws RemoteException {
@@ -137,58 +126,63 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     @Override
     public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws RemoteException {
         String token = null;
-        String proveedor = usuarioService.obtenerUsuarioPorNombre(username).getProveedor();
-        if(plataforma.equals(proveedor)) {
+        UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
+
+        //Verificar si el usuario existe
+        if (usuario == null) {
+            System.out.println("Usuario no encontrado en Strava. Creando nuevo usuario.");
+            usuario = new UsuarioDTO();
+            usuario.setUsername(username);
+            usuario.setContrasena(password);
+            usuario.setProveedor(plataforma);
+            usuario.setEmail(username+"@"+plataforma+".com");
+        }
+
+        String proveedor = usuario.getProveedor();
+
+        //Verificar si la plataforma del usuario coincide con la proporcionada
+        if (plataforma.equals(proveedor)) {
+            //Verificacion para Google
             if ("Google".equals(plataforma)) {
-                //token = externoService.verifyGoogle(username, password, proveedor);
-            } else if ("Meta".equals(plataforma)) {
+                token = googleAuthClient.loginUser(username, password);
+                if (token != null) {
+                    System.out.println("Login realizado correctamente en Google.");
+                } else {
+                    System.err.println("Error en el login de Google.");
+                }
+
+            }
+            //Verificacion para Meta
+            else if ("Meta".equals(plataforma)) {
                 try {
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
                     token = metaAuthClient.login(username, password);
-                    System.out.println("Login realizado correctamente en Meta.");
+                    if (token != null) {
+                        System.out.println("Login realizado correctamente en Meta.");
+                    } else {
+                        System.err.println("Error durante el login en Meta.");
+                    }
                 } catch (IOException e) {
                     System.err.println("Error durante el login en Meta: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
-            UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
-            usu.setToken(token);
-            usuarioService.actualizarUsuario(usu);
-            UsuarioDTO u= usuarioService.getUsuarios().get(usu.getId());
-
-            return u;
-        }
-        else {
-            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
-        }
-        return null;
-       /* if (token != null) {
-            UsuarioDTO usuario = new UsuarioDTO();
-            usuario.setToken(token);
-            usuario.setUsername(username);
-            usuario.setContrasena(password);
-            usuario.setProveedor(proveedor);
-            usuario.setEntrenamientos(new ArrayList<>());
-            usuario.setRetos(new HashMap<>());
-            usuario.setAmigos(new ArrayList<>());
-            boolean encontrado= false;
-            for (UsuarioDTO u: usuarioService.getUsuarios().values()) {
-            	if(u.getUsername().equals(usuario.getUsername())) encontrado=true;
+            //Si se obtiene un token exitoso, actualizar el usuario
+            if (token != null) {
+                usuario.setToken(token); //Establecer el token en el usuario
+                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
+                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
+                return usuarioActualizado; //Retornar el usuario actualizado
+            } else {
+                System.out.println("No se pudo obtener el token.");
+                return null; //Si no se obtiene un token, retornar null
             }
-            if (!encontrado) {
-            	usuarioService.registrarUsuario(usuario);
-            }
-            else {
-            	for (UsuarioDTO u: usuarioService.getUsuarios().values()) {
-            		if (u.getUsername().equals(usuario.getUsername())) return u;
-            	}
-            }
-            return usuario;
         } else {
-            System.out.println("Autenticacion fallida para usuario: " + username + " con proveedor: " + proveedor);
+            //Si la plataforma no coincide con el proveedor del usuario, indicar login fallido
+            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
             return null;
-        }*/
+        }
     }
 
 
@@ -253,7 +247,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             String token= usuario.getToken();
             String proveedor = usuario.getProveedor();
             if ("Google".equals(proveedor)) {
-                facadeG.logout(username);
+                googleAuthClient.logoutUser(username);
             } else if ("Meta".equals(proveedor)) {
                 try {
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
