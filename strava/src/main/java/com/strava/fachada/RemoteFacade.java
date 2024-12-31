@@ -45,10 +45,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         this.servicioAutentificacion= new ServicioAutentificacion();
 
         try {
-            Registry registryG = LocateRegistry.getRegistry("localhost", 1100);
-            this.facadeG = (IRemoteAuthFacadeG) registryG.lookup("RemoteAuthFacadeG");
-            System.out.println("RemoteAuthFacadeG vinculado correctamente.");
-
             AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
             System.out.println("MetaAuthClient inicializado correctamente para el servidor Meta.");
 

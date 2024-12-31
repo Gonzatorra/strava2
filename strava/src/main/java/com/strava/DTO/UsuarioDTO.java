@@ -1,10 +1,7 @@
 package com.strava.DTO;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.strava.dominio.*;
 
@@ -29,14 +26,22 @@ public class UsuarioDTO implements Serializable{
     private String proveedor; // Nuevo atributo
 
 
-    //constructores
     public UsuarioDTO() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-
-
+    public UsuarioDTO(String username, int id, String email, String contrasena, String nombre, float altura, float peso, Date fNacimiento, String token) {
+        this.username = username;
+        this.id = id;
+        this.email = email;
+        this.contrasena = contrasena;
+        this.nombre = nombre;
+        this.altura = altura;
+        this.peso = peso;
+        this.fNacimiento = fNacimiento;
+        this.token = token;
+    }
 
     public ArrayList<Integer> getAmigos() {
         return amigos;

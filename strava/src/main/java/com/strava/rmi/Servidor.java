@@ -2,12 +2,8 @@ package com.strava.rmi;
 
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
-import com.strava.GAuth.*;
-import com.strava.assembler.*;
-import com.strava.dominio.*;
 import com.strava.fachada.*;
-
-import java.rmi.Remote;
+import com.google.server.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -22,12 +18,14 @@ public class Servidor {
 
     private static RemoteFacade facade;
     protected static HashMap<UsuarioDTO, String> tokenActivos;
-    static IRemoteAuthFacadeG facadeG;
+    static GoogleAuthClient googleAuthClient;
     static AuthClientMeta metaAuthClient;
 
     public Servidor() {
         try {
             this.facade = new RemoteFacade();
+
+            googleAuthClient = new GoogleAuthClient();
 
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -48,28 +46,27 @@ public class Servidor {
                 registry = LocateRegistry.createRegistry(1099);
             }
 
-            // Buscar la instancia de RemoteAuthFacadeG en el registro del puerto 1100
-            Registry authRegistryG = LocateRegistry.getRegistry("localhost", 1100);
-            facadeG = (IRemoteAuthFacadeG) authRegistryG.lookup("RemoteAuthFacadeG"); // Usa la interfaz aquí
-
-            System.out.println("RemoteAuthFacadeG vinculado correctamente desde AuthServerGoogle.");
-
-
-            // Buscar la instancia de RemoteAuthFacadeM en el registro del puerto 1101
-            metaAuthClient = new AuthClientMeta("localhost", 1101);
-            System.out.println("MetaAuthClient inicializado correctamente.");
-
             //crear servidor
             Servidor servidor = new Servidor();
+
+            //buscar la instancia de RemoteAuthFacadeM en el registro del puerto 1101
+            metaAuthClient = new AuthClientMeta("localhost", 1101);
+            System.out.println("MetaAuthClient inicializado correctamente.");
 
             //si el objeto ya ha sido exportado, evitar la exportación de nuevo
             IRemoteFacade stub = null;
             if (servidor.facade != null) {
-                //descartar exportación anterior si la hay
-                UnicastRemoteObject.unexportObject(servidor.facade, true);
-                //exportar nuevo objeto
-                stub = (IRemoteFacade) UnicastRemoteObject.exportObject(servidor.facade, 0);
+                try {
+                    // Descartar exportación anterior si existe
+                    UnicastRemoteObject.unexportObject(servidor.facade, true);
+                    // Exportar nuevo objeto
+                    stub = (IRemoteFacade) UnicastRemoteObject.exportObject(servidor.facade, 0);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    // Considera agregar un manejo de excepción adecuado
+                }
             }
+
 
             //registrar stub en registro RMI como "RemoteFacade"
             registry.rebind("RemoteFacade", stub);
@@ -121,17 +118,16 @@ public class Servidor {
             UsuarioDTO usuario9 = facade.registrarUsuario("sofia777", "sofiaKey", "sofia777@strava.com", "Sofía", "Strava");
             UsuarioDTO usuario10 = facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
 
+            //Registros de Google
+            googleAuthClient.registerUser("daniel333", "claveDaniel", "daniel333@gmail.com");
+            googleAuthClient.registerUser("susana555", "claveSusana", "susana555@gmail.com");
+            googleAuthClient.registerUser("manuel111", "claveManuel", "manuel111@gmail.com");
+            googleAuthClient.registerUser("isabel999", "claveIsabel", "isabel999@gmail.com");
+            googleAuthClient.registerUser("andres444", "claveAndres", "andres444@gmail.com");
+            googleAuthClient.registerUser("clara777", "claveClara", "clara777@gmail.com");
+            googleAuthClient.registerUser("pablo888", "clavePablo", "pablo888@gmail.com");
 
-
-            facadeG.registerUser("daniel333", "claveDaniel", "daniel333@gmail.com");
-            facadeG.registerUser("susana555", "claveSusana", "susana555@gmail.com");
-            facadeG.registerUser("manuel111", "claveManuel", "manuel111@gmail.com");
-            facadeG.registerUser("isabel999", "claveIsabel", "isabel999@gmail.com");
-            facadeG.registerUser("andres444", "claveAndres", "andres444@gmail.com");
-            facadeG.registerUser("clara777", "claveClara", "clara777@gmail.com");
-            facadeG.registerUser("pablo888", "clavePablo", "pablo888@gmail.com");
-
-
+            //Registros de Meta
             metaAuthClient.registerUser("maria123", "claveMaria", "maria123@meta.com");
             metaAuthClient.registerUser("jose456", "claveJose", "jose456@meta.com");
             metaAuthClient.registerUser("lucia789", "claveLucia", "lucia789@meta.com");
@@ -141,7 +137,7 @@ public class Servidor {
             metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
 
 
-            UsuarioDTO usuario11 = facade.registrarUsuario("daniel333", "claveDaniel", "daniel333@gmail.com", "Daniel", "Google");
+            /*UsuarioDTO usuario11 = facade.registrarUsuario("daniel333", "claveDaniel", "daniel333@gmail.com", "Daniel", "Google");
             UsuarioDTO usuario12 = facade.registrarUsuario("susana555", "claveSusana", "susana555@gmail.com", "Susana", "Google");
             UsuarioDTO usuario13 = facade.registrarUsuario("manuel111", "claveManuel", "manuel111@gmail.com", "Manuel", "Google");
             UsuarioDTO usuario14 = facade.registrarUsuario("isabel999", "claveIsabel", "isabel999@gmail.com", "Isabel", "Google");
@@ -159,8 +155,7 @@ public class Servidor {
             UsuarioDTO usuario24 = facade.registrarUsuario("laura444", "claveLaura", "laura444@meta.com", "Laura", "Meta");
 
 
-
-
+*/
 
             System.out.println("Servidor RMI listo y esperando conexiones...");
         } catch (Exception e) {
