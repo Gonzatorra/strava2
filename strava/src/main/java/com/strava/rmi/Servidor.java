@@ -137,26 +137,6 @@ public class Servidor {
             metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
 
 
-            /*UsuarioDTO usuario11 = facade.registrarUsuario("daniel333", "claveDaniel", "daniel333@gmail.com", "Daniel", "Google");
-            UsuarioDTO usuario12 = facade.registrarUsuario("susana555", "claveSusana", "susana555@gmail.com", "Susana", "Google");
-            UsuarioDTO usuario13 = facade.registrarUsuario("manuel111", "claveManuel", "manuel111@gmail.com", "Manuel", "Google");
-            UsuarioDTO usuario14 = facade.registrarUsuario("isabel999", "claveIsabel", "isabel999@gmail.com", "Isabel", "Google");
-            UsuarioDTO usuario15 = facade.registrarUsuario("andres444", "claveAndres", "andres444@gmail.com", "Andres", "Google");
-            UsuarioDTO usuario16 = facade.registrarUsuario("clara777", "claveClara", "clara777@gmail.com", "Clara", "Google");
-            UsuarioDTO usuario17 = facade.registrarUsuario("pablo888", "clavePablo", "pablo888@gmail.com", "Pablo", "Google");
-
-            // Registrar más usuarios
-            UsuarioDTO usuario18 = facade.registrarUsuario("maria123", "claveMaria", "maria123@meta.com", "Maria", "Meta");
-            UsuarioDTO usuario19 = facade.registrarUsuario("jose456", "claveJose", "jose456@meta.com", "Jose", "Meta");
-            UsuarioDTO usuario20 = facade.registrarUsuario("lucia789", "claveLucia", "lucia789@meta.com", "Lucia", "Meta");
-            UsuarioDTO usuario21 = facade.registrarUsuario("carlos111", "claveCarlos", "carlos111@meta.com", "Carlos", "Meta");
-            UsuarioDTO usuario22 = facade.registrarUsuario("ana222", "claveAna", "ana222@meta.com", "Ana", "Meta");
-            UsuarioDTO usuario23 = facade.registrarUsuario("david333", "claveDavid", "david333@meta.com", "David", "Meta");
-            UsuarioDTO usuario24 = facade.registrarUsuario("laura444", "claveLaura", "laura444@meta.com", "Laura", "Meta");
-
-
-*/
-
             System.out.println("Servidor RMI listo y esperando conexiones...");
         } catch (Exception e) {
             e.printStackTrace();

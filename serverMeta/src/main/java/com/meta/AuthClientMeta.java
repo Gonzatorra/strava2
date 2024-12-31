@@ -16,6 +16,7 @@ public class AuthClientMeta {
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             out.println(request);
+            System.out.println(request);
             return in.readLine();
         }
     }
