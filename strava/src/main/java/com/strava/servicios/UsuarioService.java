@@ -49,11 +49,11 @@ public class UsuarioService {
 
     public void logout(String token) {
         for (UsuarioDTO usu : usuarios.values()) {
-            if (usu.getToken().equals(token)) {
+            if (usu.getToken() != null && usu.getToken().equals(token)) {
                 usu.setToken(null);
                 actualizarUsuario(usu);
                 System.out.println("Usuario desconectado");
-                break;
+                return;
             }
         }
         System.out.println("Token no encontrado");

@@ -23,9 +23,8 @@ public class Servidor {
 
     public Servidor() {
         try {
-            this.facade = new RemoteFacade();
-
-            googleAuthClient = new GoogleAuthClient();
+        	googleAuthClient = new GoogleAuthClient();
+            this.facade = new RemoteFacade(googleAuthClient);
 
         } catch (RemoteException e) {
             e.printStackTrace();

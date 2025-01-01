@@ -21,12 +21,13 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
     private static HashMap<String, String> tokensActivos = new HashMap<>();
-    static GoogleAuthClient googleAuthClient;
+    private GoogleAuthClient googleAuthClient;
 
 
 
-    public RemoteFacade() throws RemoteException {
+    public RemoteFacade(GoogleAuthClient googleAuthClient) throws RemoteException {
         super();
+        this.googleAuthClient = googleAuthClient;
         this.usuarioService = new UsuarioService();  //crear instancia del servicio
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
