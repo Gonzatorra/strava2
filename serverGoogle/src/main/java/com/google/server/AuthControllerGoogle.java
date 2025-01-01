@@ -17,7 +17,7 @@ public class AuthControllerGoogle {
 
     //Login: Recibir username y password, y devolver el usuario con el token si es correcto
     @PostMapping("/login")
-    public ResponseEntity<Usuario> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<Usuario> login(@RequestParam("username") String username, @RequestParam("password") String password) {
         try {
             Usuario usuario = usuarioService.login(username, password);
             return ResponseEntity.ok(usuario);
@@ -28,7 +28,7 @@ public class AuthControllerGoogle {
 
     //Logout: Recibir username y eliminar el token si existe
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestParam String username) {
+    public ResponseEntity<String> logout(@RequestParam("username") String username) {
         Optional<Usuario> usuario = usuarioService.logout(username);
 
         if (usuario.isPresent()) {
@@ -40,7 +40,7 @@ public class AuthControllerGoogle {
 
     //Registro: Recibir username, email y contraseña, y registrar al usuario
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<String> registerUser(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password) {
         try {
             Usuario usuario = usuarioService.register(username, email, password);
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
@@ -52,7 +52,7 @@ public class AuthControllerGoogle {
 
     //Validar usuario: Comprobar que el token es valido
     @PostMapping("/validate")
-    public ResponseEntity<String> validateUser(@RequestParam String username, @RequestParam String token) {
+    public ResponseEntity<String> validateUser(@RequestParam("username") String username, @RequestParam("token") String token) {
         Optional<Usuario> usuario = usuarioService.findByUsername(username);
 
         if (usuario.isPresent()) {
