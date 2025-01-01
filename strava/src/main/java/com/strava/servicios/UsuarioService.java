@@ -47,9 +47,9 @@ public class UsuarioService {
         return null;
     }
 
-    public void logout(String token) {
+    public void logout(String token) { //He añadido esto para que haga el logout
         for (UsuarioDTO usu : usuarios.values()) {
-            if (usu.getToken() != null && usu.getToken().equals(token)) {
+            if (usu.getToken() != null && usu.getToken().equals(token)) { 
                 usu.setToken(null);
                 actualizarUsuario(usu);
                 System.out.println("Usuario desconectado");
