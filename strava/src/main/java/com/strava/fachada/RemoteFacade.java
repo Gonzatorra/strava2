@@ -1,9 +1,12 @@
 package com.strava.fachada;
 
 import com.google.server.GoogleAuthClient;
+import com.google.server.Usuario;
 import com.strava.DTO.*;
 import com.meta.*;
 import com.strava.servicios.*;
+import com.google.server.UsuarioRepository;
+import com.meta.RemoteAuthFacadeMeta;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -13,10 +16,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public UsuarioService usuarioService;
+    public UsuarioRepository usuarioRepository;//objeto de proyecto google
+    public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
@@ -150,7 +156,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	                token = googleAuthClient.loginUser(username, password);
 	                if (token != null) {
 	                    System.out.println("Login realizado correctamente en Google.");
-	                    usuarioService.registrar(username, password, username+"@google.com", token, proveedor);
+	                    //usuarioService.registrar(username, password, username+"@google.com", token, "Google");
 	                    
 	                } else {
 	                    System.err.println("Error en el login de Google.");
@@ -164,7 +170,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	                    token = metaAuthClient.login(username, password);
 	                    if (token != null) {
 	                        System.out.println("Login realizado correctamente en Meta.");
-	                        usuarioService.registrar(username, password, username+"@meta.com", token, proveedor);
+	                        //usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");
 	                    } else {
 	                        System.err.println("Error durante el login en Meta.");
 	                    }
@@ -190,8 +196,26 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	            return null;
 	        }
         }
-        System.out.println("Login fallido con plataforma: " + plataforma + " para usuario: " + username);
-        return null;
+        else {
+        	//mirar si existe ese usuario en proveedor
+        	//si existe, registrar en strava, asignar token
+	        if (plataforma.equalsIgnoreCase("Google")){
+	        	Map<String, Usuario> usuariosG= usuarioRepository.getUsuarios();
+	        	if(usuariosG.containsKey(username)) {
+	        		registrarUsuario(username, password, username+"@google.com", username, "Google");
+	        	}
+	        }
+	        else if (plataforma.equalsIgnoreCase("Meta")){
+	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
+	        	if(userStore.containsKey(username)) {
+	        		registrarUsuario(username, password, username+"@meta.com", username, "Meta");
+	        	}
+	        }
+	        
+	        
+        }
+        System.out.println("Ha habido un error desconocido");
+    	return null;
     }
 
 

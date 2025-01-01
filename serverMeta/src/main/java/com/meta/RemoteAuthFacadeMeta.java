@@ -21,7 +21,11 @@ public class RemoteAuthFacadeMeta implements IRemoteAuthFacadeMeta {
 
         }
 
-        //Singleton
+        public Map<String, String> getUserStore() {
+		return userStore;
+	}
+
+		//Singleton
         public static RemoteAuthFacadeMeta getInstance() throws RemoteException {
             if (instance == null) {
                 synchronized (RemoteAuthFacadeMeta.class) {

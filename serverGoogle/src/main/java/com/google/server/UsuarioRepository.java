@@ -19,7 +19,11 @@ public class UsuarioRepository {
         return usuario;
     }
 
-    public void delete(String email) {
+    public Map<String, Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void delete(String email) {
         usuarios.remove(email);
     }
 }
