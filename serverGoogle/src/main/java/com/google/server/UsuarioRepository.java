@@ -8,8 +8,7 @@ import java.util.Optional;
 
 @Repository
 public class UsuarioRepository {
-    private Map<String, Usuario> usuarios = new HashMap<>();
-
+    private final Map<String, Usuario> usuarios = new HashMap<>();
 
     public Optional<Usuario> findByUsername(String username) {
         return Optional.ofNullable(usuarios.get(username));
@@ -17,11 +16,12 @@ public class UsuarioRepository {
 
     public Usuario save(Usuario usuario) {
         usuarios.put(usuario.getUsername(), usuario);  //Guardamos por username
+        System.out.println(usuarios.size());
         return usuario;
     }
 
     public Map<String, Usuario> getUsuarios() {
-		return usuarios;
+        return usuarios;
 	}
 
 	public void delete(String email) {

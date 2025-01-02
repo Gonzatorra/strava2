@@ -2,7 +2,7 @@ package com.strava.rmi;
 
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
-import com.strava.config.AppConfig;
+import com.strava.config.ApplicationContextProvider;
 import com.strava.fachada.*;
 import com.google.server.*;
 
@@ -29,16 +29,18 @@ public class Servidor {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public Servidor(UsuarioRepository usuarioRepository, GoogleAuthClient googleAuthClient) throws RemoteException {
+    public Servidor(UsuarioRepository usuarioRepository) throws RemoteException {
         this.usuarioRepository = usuarioRepository;
-        this.googleAuthClient = googleAuthClient;
+        this.googleAuthClient = new GoogleAuthClient(usuarioRepository);
         this.facade = new RemoteFacade(usuarioRepository);
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);  // Inicialización directa en el constructor
     }
 
     public static void main(String[] args) {
         try {
-            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+            AnnotationConfigApplicationContext context = ApplicationContextProvider.getContext();
+            System.out.println("Referencia compartida de context: " + context);
+
             Servidor servidor = context.getBean(Servidor.class);
             System.out.println("Referencia compartida de UsuarioRepository: " + servidor.usuarioRepository);
 
@@ -149,5 +151,14 @@ public class Servidor {
         facade.registrarUsuario("sofia777", "sofiaKey", "sofia777@strava.com", "Sofía", "Strava");
         facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
 
+    }
+
+    public void verRepositorio() {
+        // Usar el repositorio
+        System.out.println("Accediendo al repositorio de usuarios: " + usuarioRepository);
+    }
+
+    public UsuarioRepository getUsuarioRepository() {
+        return usuarioRepository;
     }
 }

@@ -2,13 +2,12 @@ package com.strava.gui;
 
 import javax.swing.*;
 import com.google.server.GoogleAuthClient;
+import com.google.server.Usuario;
 import com.google.server.UsuarioRepository;
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
-import com.strava.config.AppConfig;
+import com.strava.config.*;
 import com.strava.fachada.*;
-
-
 import java.awt.*;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -17,9 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.table.DefaultTableModel;
@@ -39,16 +36,15 @@ public class MenuGUI extends JFrame {
 
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
     private IRemoteFacade facade;
-    private UsuarioRepository usuarioRepository; // Asegúrate de que esta variable no sea estática si usas inyección
     private GoogleAuthClient googleAuthClient;
     private AuthClientMeta metaAuthClient;
     private Servidor servidor;
-
+    private final UsuarioRepository usuarioRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public MenuGUI(IRemoteFacade facade, UsuarioRepository usuarioRepository, Servidor servidor) {
+    public MenuGUI(IRemoteFacade facade, UsuarioRepository usuarioRepository) {
         this.facade = facade;
         this.usuarioRepository = usuarioRepository; // Ya tienes el repositorio inyectado
         this.servidor = servidor;
@@ -259,14 +255,22 @@ public class MenuGUI extends JFrame {
 
     @Autowired
     public static void main(String[] args) {
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        AnnotationConfigApplicationContext context = ApplicationContextProvider.getContext();
         // Obtener las instancias desde el contexto de Spring
         IRemoteFacade facade = context.getBean(IRemoteFacade.class);
-        UsuarioRepository usuarioRepository = context.getBean(UsuarioRepository.class);
         Servidor servidor = context.getBean(Servidor.class);
 
+        UsuarioRepository usuarioRepository = servidor.getUsuarioRepository();
+
+
         System.out.println("Referencia compartida de UsuarioRepository en Main GUI: " + usuarioRepository);
+        Map<String, Usuario> mapa = usuarioRepository.getUsuarios();
+        System.out.println("Usuarios registrados: " + mapa.size());
+        mapa.forEach((clave, usuario) -> {
+            System.out.println("Clave: " + clave + ", Usuario: " + usuario);
+        });
+        servidor.verRepositorio();
+
 
         // Registrar la fachada en RMI
         try {
@@ -274,7 +278,7 @@ public class MenuGUI extends JFrame {
             System.out.println("Servidor RMI en ejecución...");
 
             // Mostrar la GUI
-            SwingUtilities.invokeLater(() -> new MenuGUI(facade, usuarioRepository, servidor).setVisible(true));
+            SwingUtilities.invokeLater(() -> new MenuGUI(facade, usuarioRepository).setVisible(true));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -397,7 +401,7 @@ public class MenuGUI extends JFrame {
                         usuario.setToken(null); // Clear the token locally
                         JOptionPane.showMessageDialog(profilePanel, "Sesión cerrada correctamente.");
                         dispose();
-                        new MenuGUI(facade, usuarioRepository, servidor).setVisible(true);
+                        new MenuGUI(facade, usuarioRepository).setVisible(true);
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(profilePanel, "Error al cerrar sesión: " + ex.getMessage());
                         ex.printStackTrace();
