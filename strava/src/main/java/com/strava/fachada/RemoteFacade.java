@@ -7,7 +7,6 @@ import com.meta.*;
 import com.strava.servicios.*;
 import com.google.server.UsuarioRepository;
 import com.meta.RemoteAuthFacadeMeta;
-
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -17,11 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public UsuarioService usuarioService;
-    public UsuarioRepository usuarioRepository;//objeto de proyecto google
+    private UsuarioRepository usuarioRepository;//objeto de proyecto google
     public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
@@ -30,38 +31,22 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private GoogleAuthClient googleAuthClient;
 
 
-
-    public RemoteFacade(GoogleAuthClient googleAuthClient) throws RemoteException {
+    public RemoteFacade(UsuarioRepository usuarioRepository) throws RemoteException {
         super();
-        this.googleAuthClient = googleAuthClient;
-        this.usuarioService = new UsuarioService();  //crear instancia del servicio
+        this.usuarioRepository = usuarioRepository;  // Repositorio de usuarios
+        this.googleAuthClient = new GoogleAuthClient(usuarioRepository);  // Inicialización de GoogleAuthClient
+        this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
-        //this.externoService= new ServicioExternosBridge();
-        this.servicioAutentificacion= new ServicioAutentificacion();
+        this.servicioAutentificacion = new ServicioAutentificacion();
 
-        try {
-            AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
-            System.out.println("MetaAuthClient inicializado correctamente para el servidor Meta.");
-
-        } catch (Exception e) {
-            System.err.println("Error al inicializar facades para Google y Meta: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
-
-
-
-
 
     @Override
     public ArrayList<Integer> getAmigos(UsuarioDTO usuario) throws RemoteException {
         // TODO Auto-generated method stub
         return (ArrayList<Integer>) usuarioService.getAmigos(usuario);
     }
-
-
-
 
 
     @Override
@@ -135,16 +120,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         String token = null;
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
-        
-        //Verificar si el usuario existe
-        /*if (usuario == null) {
-            System.out.println("Usuario no encontrado en Strava");
-            usuario2 = new UsuarioDTO();
-            usuario.setUsername(username);
-            usuario.setContrasena(password);
-            usuario.setProveedor(plataforma);
-            usuario.setEmail(username+"@"+plataforma+".com");
-        }*/
         if (usuario != null) {
 	        
 	        String proveedor = usuario.getProveedor();
@@ -200,7 +175,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	//mirar si existe ese usuario en proveedor
         	//si existe, registrar en strava, asignar token
 	        if (plataforma.equalsIgnoreCase("Google")){
-	        	Map<String, Usuario> usuariosG= usuarioRepository.getUsuarios();
+	        	Map<String, Usuario> usuariosG = usuarioRepository.getUsuarios();
+
 	        	if(usuariosG.containsKey(username)) {
 	        		registrarUsuario(username, password, username+"@google.com", username, "Google");
 	        	}

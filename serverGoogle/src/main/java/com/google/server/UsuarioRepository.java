@@ -8,7 +8,8 @@ import java.util.Optional;
 
 @Repository
 public class UsuarioRepository {
-    private final Map<String, Usuario> usuarios = new HashMap<>();
+    private Map<String, Usuario> usuarios = new HashMap<>();
+
 
     public Optional<Usuario> findByUsername(String username) {
         return Optional.ofNullable(usuarios.get(username));

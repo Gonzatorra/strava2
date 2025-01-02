@@ -12,6 +12,15 @@ public class Usuario {
     private String username;
     private String contrasena;
 
+    public Usuario(String username, String contrasena, String email) {
+        this.username = username;
+        this.contrasena = contrasena;
+        this.email = email;
+    }
+
+    public Usuario() {
+    }
+
     // Getters y Setters
     public String getEmail() {
         return email;
@@ -49,5 +58,13 @@ public class Usuario {
     }
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

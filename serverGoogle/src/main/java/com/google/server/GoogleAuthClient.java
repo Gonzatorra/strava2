@@ -1,17 +1,31 @@
 package com.google.server;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.*;
+
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.util.*;
 
+
+@Component
 public class GoogleAuthClient {
 
     private static final String GOOGLE_SERVER_URL = "http://localhost:8080/google";
+    private final UsuarioRepository usuarioRepository;  // Inyección del repositorio
+
+    public GoogleAuthClient(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
 
     public boolean registerUser(String username, String password, String email) {
         try {
+            // Registro en Google
             URL url = new URL(GOOGLE_SERVER_URL + "/register");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -24,8 +38,29 @@ public class GoogleAuthClient {
             os.close();
 
             int responseCode = conn.getResponseCode();
-            System.out.println("Usuario " + username + " registrado correctamente en Google");
-            return responseCode == 200;
+
+            // Guardar el usuario en el repositorio local
+            if (responseCode == 201) {
+                Usuario usuario = new Usuario(username, password, email);
+                usuarioRepository.save(usuario);  // Guardamos el usuario en el repositorio
+                System.out.println("Usuario " + username + " guardado en repositorio correctamente en Google");
+                return true;
+            }else{
+                InputStream errorStream = conn.getErrorStream();
+                if (errorStream != null) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream));
+                    String line;
+                    StringBuilder responseBuilder = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        responseBuilder.append(line);
+                    }
+                    System.out.println("Error: " + responseCode + " - " + responseBuilder.toString());
+                } else {
+                    System.out.println("Error: Código de respuesta " + responseCode);
+                }
+            }
+
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -34,6 +69,7 @@ public class GoogleAuthClient {
 
     public String loginUser(String username, String password) {
         try {
+            // Login en Google
             URL url = new URL(GOOGLE_SERVER_URL + "/login");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -43,7 +79,7 @@ public class GoogleAuthClient {
             // Parámetros de la solicitud
             String params = "username=" + username + "&password=" + password;
 
-            // Enviar los parametros al servidor
+            // Enviar los parámetros al servidor
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(params.getBytes());
                 os.flush();
@@ -71,6 +107,11 @@ public class GoogleAuthClient {
             e.printStackTrace();
             return null;  // Retornar null en caso de error
         }
+    }
+
+    //Metodo para obtener todos los usuarios registrados
+    public Map<String, Usuario> getAllUsers() {
+        return usuarioRepository.getUsuarios();  // Retorna todos los usuarios del repositorio
     }
 
     public boolean validateUser(String username, String token) {
@@ -129,7 +170,4 @@ public class GoogleAuthClient {
             return false;
         }
     }
-
-
 }
-
