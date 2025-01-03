@@ -1,5 +1,6 @@
 package com.strava.fachada;
 
+import com.google.server.UsuarioRepository;
 import com.strava.DTO.*;
 import com.strava.dominio.*;
 import com.strava.servicios.*;
@@ -40,5 +41,6 @@ public interface IRemoteFacade extends Remote {
     void eliminarReto(UsuarioDTO usuario, RetoDTO reto) throws RemoteException;
     List<Integer> obtenerClasificacion(RetoDTO reto) throws RemoteException;
     void calcularProgreso(UsuarioDTO usuario) throws RemoteException;
+    UsuarioRepository getUsuarioRepository() throws RemoteException;
 
 }

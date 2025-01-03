@@ -255,7 +255,7 @@ public class MenuGUI extends JFrame {
 
     @Autowired
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = ApplicationContextProvider.getContext();
+        AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
         // Obtener las instancias desde el contexto de Spring
         IRemoteFacade facade = context.getBean(IRemoteFacade.class);
         Servidor servidor = context.getBean(Servidor.class);

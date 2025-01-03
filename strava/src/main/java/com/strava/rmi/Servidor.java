@@ -29,56 +29,28 @@ public class Servidor {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public Servidor(UsuarioRepository usuarioRepository) throws RemoteException {
-        this.usuarioRepository = usuarioRepository;
+    public Servidor() throws RemoteException {
+        AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
+        this.usuarioRepository = context.getBean(UsuarioRepository.class);
         this.googleAuthClient = new GoogleAuthClient(usuarioRepository);
         this.facade = new RemoteFacade(usuarioRepository);
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);  // Inicialización directa en el constructor
+        iniciarRMI();
+    }
+
+    private void iniciarRMI() {
+        try {
+            Registry registry = LocateRegistry.getRegistry(1099);
+            registry.rebind("RemoteFacade", facade);
+            System.out.println("Servidor RMI registrado correctamente.");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
         try {
-            AnnotationConfigApplicationContext context = ApplicationContextProvider.getContext();
-            System.out.println("Referencia compartida de context: " + context);
-
-            Servidor servidor = context.getBean(Servidor.class);
-            System.out.println("Referencia compartida de UsuarioRepository: " + servidor.usuarioRepository);
-
-            // Crear o obtener el registro RMI
-            Registry registry = null;
-            try {
-                registry = LocateRegistry.getRegistry(1099);
-                registry.list();  // Intenta listar servicios, si lanza una excepción significa que no está en uso
-                System.out.println("El registro RMI ya está en uso.");
-            } catch (RemoteException e) {
-                // Si no existe el registro, se crea
-                System.out.println("Creando nuevo registro RMI.");
-                registry = LocateRegistry.createRegistry(1099);
-            }
-
-            // Inicializar MetaAuthClient
-            System.out.println("MetaAuthClient inicializado correctamente.");
-
-            // Descartar exportación anterior si existe y exportar nuevamente
-            IRemoteFacade stub = null;
-            if (servidor.facade != null) {
-                try {
-                    UnicastRemoteObject.unexportObject(servidor.facade, true);
-                    stub = (IRemoteFacade) UnicastRemoteObject.exportObject(servidor.facade, 0);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Registrar el stub en el registro RMI
-            registry.rebind("RemoteFacade", stub);
-
-            // Usar el stub en el servidor (referenciar el objeto remoto)
-            IRemoteFacade remoteFacade = (IRemoteFacade) registry.lookup("RemoteFacade");
-
-            servidor.registrarUsuariosGoogle();
-            servidor.registrarUsuariosMeta();
-            servidor.registrarUsuariosYRetos();
+            Servidor servidor = new Servidor();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public UsuarioService usuarioService;
-    private UsuarioRepository usuarioRepository;//objeto de proyecto google
+    private final UsuarioRepository usuarioRepository;//objeto de proyecto google
     public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
@@ -361,6 +361,15 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     }
 
+    @Override
+    public UsuarioRepository getUsuarioRepository() throws RemoteException {
+        return usuarioRepository;
+    }
+
+    public void usarRepositorio() {
+        // Usar el repositorio
+        System.out.println("Accediendo al repositorio de usuarios: " + usuarioRepository);
+    }
 
 
 }
