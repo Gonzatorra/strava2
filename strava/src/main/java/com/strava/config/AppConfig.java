@@ -13,13 +13,12 @@ import org.springframework.stereotype.Repository;
 import java.rmi.RemoteException;
 
 @Configuration
-@ComponentScan(basePackages = {"com.strava", "com.google.server"})  // Escanea el paquete com.strava para detectar @Component, @Service, etc.
+@ComponentScan(basePackages = {"com.strava", "com.google.server"})
 public class AppConfig {
 
     @Bean
-    public Servidor servidor() throws RemoteException {
-        // Creamos el servidor, pasando el mismo usuarioRepository inyectado
-        return new Servidor();
+    public Servidor servidor(UsuarioRepository usuarioRepository) throws RemoteException {
+        return new Servidor(usuarioRepository);
     }
 
     @Bean
@@ -27,9 +26,6 @@ public class AppConfig {
         return new RemoteFacade(usuarioRepository);
     }
 
-    @Bean
-    public UsuarioRepository usuarioRepository() {
-        return new UsuarioRepository();
-    }
-
 }
+
+//spring Data JPA crea el @Bean de UsuarioRepository. 

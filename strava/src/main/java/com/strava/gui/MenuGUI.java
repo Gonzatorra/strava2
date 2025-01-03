@@ -264,18 +264,19 @@ public class MenuGUI extends JFrame {
 
 
         System.out.println("Referencia compartida de UsuarioRepository en Main GUI: " + usuarioRepository);
-        Map<String, Usuario> mapa = usuarioRepository.getUsuarios();
-        System.out.println("Usuarios registrados: " + mapa.size());
-        mapa.forEach((clave, usuario) -> {
-            System.out.println("Clave: " + clave + ", Usuario: " + usuario);
+        List<Usuario> allUsers = usuarioRepository.findAll();  // Standard JPA method
+        System.out.println("Usuarios registrados: " + allUsers.size());
+        allUsers.forEach(usuario -> {
+            System.out.println("Clave: " + usuario.getEmail()
+                + ", Username: " + usuario.getUsername());
         });
         servidor.verRepositorio();
 
 
         // Registrar la fachada en RMI
         try {
-            Naming.rebind("rmi://localhost/RemoteFacade", facade);
-            System.out.println("Servidor RMI en ejecución...");
+            //Naming.rebind("rmi://localhost/RemoteFacade", facade);
+            //System.out.println("Servidor RMI en ejecución...");
 
             // Mostrar la GUI
             SwingUtilities.invokeLater(() -> new MenuGUI(facade, usuarioRepository).setVisible(true));

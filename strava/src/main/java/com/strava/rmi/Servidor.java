@@ -2,6 +2,7 @@ package com.strava.rmi;
 
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
+import com.strava.config.AppConfig;
 import com.strava.config.ApplicationContextProvider;
 import com.strava.fachada.*;
 import com.google.server.*;
@@ -17,45 +18,54 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-
-@Service
 public class Servidor {
     private final RemoteFacade facade;
     private final GoogleAuthClient googleAuthClient;
     private final AuthClientMeta metaAuthClient;
     private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    public Servidor() throws RemoteException {
-        AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
-        this.usuarioRepository = context.getBean(UsuarioRepository.class);
+    public Servidor(UsuarioRepository usuarioRepository) throws RemoteException {
+        this.usuarioRepository = usuarioRepository;
         this.googleAuthClient = new GoogleAuthClient(usuarioRepository);
         this.facade = new RemoteFacade(usuarioRepository);
-        this.metaAuthClient = new AuthClientMeta("localhost", 1101);  // Inicialización directa en el constructor
+        this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         iniciarRMI();
+        registrarUsuariosGoogle();
+        try {
+			registrarUsuariosMeta();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        registrarUsuariosYRetos();
+        
     }
 
     private void iniciarRMI() {
         try {
-            Registry registry = LocateRegistry.getRegistry(1099);
-            registry.rebind("RemoteFacade", facade);
-            System.out.println("Servidor RMI registrado correctamente.");
+        	System.setProperty("java.rmi.server.hostname", "localhost");
+        	Registry registry = LocateRegistry.createRegistry(1099);
+        	registry.rebind("RemoteFacade", facade);
+        	System.out.println("Servidor RMI registrado correctamente en el puerto 1099.");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
-
+    /*
     public static void main(String[] args) {
         try {
-            Servidor servidor = new Servidor();
+        	SpringApplication.run(AppConfig.class, args);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-}
+	}*/
 
     private void registrarUsuariosGoogle() {
         googleAuthClient.registerUser("daniel333", "claveDaniel", "daniel333@gmail.com");

@@ -11,6 +11,7 @@ public class Usuario {
     private String token;
     private String username;
     private String contrasena;
+    private String proveedor; 
 
     public Usuario(String username, String contrasena, String email) {
         this.username = username;
@@ -58,7 +59,16 @@ public class Usuario {
     }
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+        
     }
+    
+    public String getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
+	}
 
     @Override
     public String toString() {
@@ -67,4 +77,6 @@ public class Usuario {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+	
 }

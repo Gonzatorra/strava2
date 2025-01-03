@@ -110,8 +110,8 @@ public class GoogleAuthClient {
     }
 
     //Metodo para obtener todos los usuarios registrados
-    public Map<String, Usuario> getAllUsers() {
-        return usuarioRepository.getUsuarios();  // Retorna todos los usuarios del repositorio
+    public List<Usuario> getAllUsers() {
+        return usuarioRepository.findAll();
     }
 
     public boolean validateUser(String username, String token) {

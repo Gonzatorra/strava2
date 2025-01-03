@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
-@Component
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public UsuarioService usuarioService;
@@ -174,13 +175,13 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         else {
         	//mirar si existe ese usuario en proveedor
         	//si existe, registrar en strava, asignar token
-	        if (plataforma.equalsIgnoreCase("Google")){
-	        	Map<String, Usuario> usuariosG = usuarioRepository.getUsuarios();
-
-	        	if(usuariosG.containsKey(username)) {
-	        		registrarUsuario(username, password, username+"@google.com", username, "Google");
-	        	}
-	        }
+        	if (plataforma.equalsIgnoreCase("Google")) {
+        	    // Use JPA to see if that user is in the DB
+        	    Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
+        	    if (existingGoogleUser.isPresent()) {
+        	        registrarUsuario(username, password, username + "@google.com", username, "Google");
+        	    }
+        	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
 	        	if(userStore.containsKey(username)) {
