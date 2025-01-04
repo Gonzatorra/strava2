@@ -21,10 +21,10 @@ public class AppConfig {
         return new Servidor();
     }*/
 
-    @Bean
+    /*@Bean
     public IRemoteFacade remoteFacade() throws RemoteException {
         return new RemoteFacade();
-    }
+    }*/
 
 }
 

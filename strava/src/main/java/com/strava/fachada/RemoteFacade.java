@@ -30,13 +30,13 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
     private static HashMap<String, String> tokensActivos = new HashMap<>();
-    //private final GoogleAuthClient googleAuthClient;
+    private final GoogleAuthClient googleAuthClient;
 
 
-    public RemoteFacade() throws RemoteException {
+
+    public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
-        //ApplicationContext context = SpringApplication.run(AppConfig.class); // Asegúrate de tener AppConfig como tu configuración de Spring
-        //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
+        this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
@@ -123,17 +123,16 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
         if (usuario != null) {
-	        
 	        String proveedor = usuario.getProveedor();
 	
 	        //Verificar si la plataforma del usuario coincide con la proporcionada
 	        if (plataforma.equalsIgnoreCase(proveedor)) {
 	            //Verificacion para Google
-	            /*if ("Google".equalsIgnoreCase(plataforma)) {
+	            if ("Google".equalsIgnoreCase(plataforma)) {
 	                token = googleAuthClient.loginUser(username, password);
 	                if (token != null) {
 	                    System.out.println("Login realizado correctamente en Google.");
-	                    //usuarioService.registrar(username, password, username+"@google.com", token, "Google");
+	                    usuarioService.registrar(username, password, username+"@google.com", token, "Google");
 	                    
 	                } else {
 	                    System.err.println("Error en el login de Google.");

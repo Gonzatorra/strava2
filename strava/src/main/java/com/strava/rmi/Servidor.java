@@ -23,7 +23,7 @@ public class Servidor {
 
     public Servidor(ApplicationContext context) throws RemoteException {
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
-        this.facade = new RemoteFacade();
+        this.facade = new RemoteFacade(context);
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         iniciarRMI();
         try {
