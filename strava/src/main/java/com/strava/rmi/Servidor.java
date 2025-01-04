@@ -112,9 +112,9 @@ public class Servidor {
 
     public static void main(String[] args) {
         try {
-            // Iniciar el contexto de Spring manualmente
+            //Iniciar el contexto de Spring manualmente
             ApplicationContext context = SpringApplication.run(AppConfig.class, args);
-            // Crear y ejecutar el servidor
+            //Crear y ejecutar el servidor
             Servidor servidor = new Servidor(context);
             GoogleAuthClient googleAuthClient1 = servidor.getGoogleAuthClient();
             List<Usuario> usuariosDeGoogle = googleAuthClient1.allUsers();
