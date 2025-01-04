@@ -71,14 +71,14 @@ public class AuthControllerGoogle {
         }
     }
 
-    /*@GetMapping("/all-users")
+    @GetMapping("/all-users")
     public ResponseEntity<List<Usuario>> getAllUsers() {
         List<Usuario> usuarios = usuarioRepository.findAll(); // Usa el repositorio para obtener los usuarios
         if (usuarios.isEmpty()) {
             return ResponseEntity.noContent().build(); // Responde con código 204 si no hay usuarios
         }
         return ResponseEntity.ok(usuarios); // Retorna la lista de usuarios con código 200
-    }*/
+    }
 
 
 }

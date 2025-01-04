@@ -6,7 +6,9 @@ import com.google.server.Usuario;
 import com.google.server.UsuarioRepository;
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
+import com.strava.assembler.UsuarioAssembler;
 import com.strava.config.*;
+import com.strava.dominio.Reto;
 import com.strava.fachada.*;
 import java.awt.*;
 import java.rmi.Naming;
@@ -30,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-/*
+
 @Component
 public class MenuGUI extends JFrame {
 
@@ -485,7 +487,6 @@ public class MenuGUI extends JFrame {
 
             return profilePanel;
         }
-
 
         private JPanel createTrainPanel() {
             JPanel trainPanel = new JPanel(new BorderLayout());
@@ -1022,20 +1023,20 @@ public class MenuGUI extends JFrame {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
 
-                    /*Reto reto = new Reto(
-                        0, // ID se generará
-                        sportField.getText(),
-                        UsuarioAssembler.toDomain(usuario),
-                        titleField.getText(),
-                        fecIni,
-                        fecFin,
-                        Float.parseFloat(distanceField.getText()),
-                        Float.parseFloat(timeField.getText()),
-                        new ArrayList<>()
-                    );
+                        Reto reto = new Reto(
+	                        0, // ID se generará
+	                        sportField.getText(),
+	                        UsuarioAssembler.toDomain(usuario),
+	                        titleField.getText(),
+	                        fecIni,
+	                        fecFin,
+	                        Float.parseFloat(distanceField.getText()),
+	                        Float.parseFloat(timeField.getText()),
+	                        new ArrayList<>()
+	                    );
 
                         // Llamar al método del facade para guardar el reto
-                        RetoDTO reto = facade.crearReto(
+                        RetoDTO reto1 = facade.crearReto(
                                 titleField.getText(),
                                 fecIni,
                                 fecFin,
@@ -1047,17 +1048,17 @@ public class MenuGUI extends JFrame {
                         );
                         // Añadir el reto al modelo de la tabla
                         acceptedModel.addRow(new Object[]{
-                                reto.getId(),
-                                reto.getNombre(),
-                                reto.getDeporte(),
-                                reto.getUsuarioCreador().getUsername(),
-                                reto.getFecIni().format(formatter),
-                                reto.getFecFin().format(formatter),
-                                reto.getObjetivoDistancia(),
-                                reto.getObjetivoTiempo()
+                                reto1.getId(),
+                                reto1.getNombre(),
+                                reto1.getDeporte(),
+                                reto1.getUsuarioCreador().getUsername(),
+                                reto1.getFecIni().format(formatter),
+                                reto1.getFecFin().format(formatter),
+                                reto1.getObjetivoDistancia(),
+                                reto1.getObjetivoTiempo()
                         });
 
-                        usuario.getRetos().put(reto, "prueba");
+                        usuario.getRetos().put(reto1, "prueba");
                         facade.actualizarUsuario(usuario);
 
                         JOptionPane.showMessageDialog(null, "Reto añadido con éxito.");
@@ -1236,7 +1237,7 @@ public class MenuGUI extends JFrame {
                         }
 
                         // Crear el reto actualizado
-                    /*Reto retoActualizado = new Reto(
+                    Reto retoActualizado = new Reto(
                         selectedRow, // ID del reto
                         sportField.getText(),
                         UsuarioAssembler.toDomain(usuario),
@@ -1261,10 +1262,10 @@ public class MenuGUI extends JFrame {
                                 new ArrayList<>()
                         );
 
-                        RetoDTO retoActualizado = facade.visualizarReto().get(retoActual.getId());
+                        RetoDTO retoActualizado1 = facade.visualizarReto().get(retoActual.getId());
 
                         // Agregar el nuevo reto al Map
-                        usuario.getRetos().put(retoActualizado, "prueba");
+                        usuario.getRetos().put(retoActualizado1, "prueba");
 
                         // Actualizar la tabla
                         acceptedModel.setValueAt(titleField.getText(), selectedRow, 1);
@@ -1734,4 +1735,4 @@ public class MenuGUI extends JFrame {
             return mainPanel2;
         }
     }
-}*/
+}

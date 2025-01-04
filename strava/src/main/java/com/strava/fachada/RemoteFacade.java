@@ -177,10 +177,22 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	//si existe, registrar en strava, asignar token
         	if (plataforma.equalsIgnoreCase("Google")) {
         	    // Use JPA to see if that user is in the DB
-        	    /*Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
-        	    if (existingGoogleUser.isPresent()) {
+        		List <Usuario> usuariosG = googleAuthClient.allUsers();
+        		boolean encontrado= false;
+        		int i=0;
+        		while (!encontrado & i< usuariosG.size()) {
+        			if(usuariosG.get(i).getUsername().equalsIgnoreCase(username)) {
+        				encontrado=true;
+        			}
+        			i++;
+        		}
+        		
+        	    //Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
+        	    //if (existingGoogleUser.isPresent()) {
+        		
+        		if(encontrado) {
         	        registrarUsuario(username, password, username + "@google.com", username, "Google");
-        	    }*/
+        	    }
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
