@@ -30,26 +30,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-
+/*
 @Component
 public class MenuGUI extends JFrame {
 
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
     private IRemoteFacade facade;
-    private GoogleAuthClient googleAuthClient;
+    //private GoogleAuthClient googleAuthClient;
     private AuthClientMeta metaAuthClient;
-    private Servidor servidor;
-    private final UsuarioRepository usuarioRepository;
+    //private Servidor servidor;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
-    public MenuGUI(IRemoteFacade facade, UsuarioRepository usuarioRepository) {
+    public MenuGUI(IRemoteFacade facade) {
         this.facade = facade;
-        this.usuarioRepository = usuarioRepository; // Ya tienes el repositorio inyectado
-        this.servidor = servidor;
-        googleAuthClient = new GoogleAuthClient(usuarioRepository);
-        System.out.println("UsuarioRepository instancia en MenuGUI: " + usuarioRepository);
+        //this.servidor = servidor;
+        //googleAuthClient = new GoogleAuthClient();
+        System.out.println("UsuarioRepository instancia en MenuGUI: ");
 
         setTitle("Strava - Login / Registro");
         setSize(500, 300);
@@ -256,21 +254,10 @@ public class MenuGUI extends JFrame {
     @Autowired
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
-        // Obtener las instancias desde el contexto de Spring
+        //Obtener las instancias desde el contexto de Spring
         IRemoteFacade facade = context.getBean(IRemoteFacade.class);
         Servidor servidor = context.getBean(Servidor.class);
 
-        UsuarioRepository usuarioRepository = servidor.getUsuarioRepository();
-
-
-        System.out.println("Referencia compartida de UsuarioRepository en Main GUI: " + usuarioRepository);
-        List<Usuario> allUsers = usuarioRepository.findAll();  // Standard JPA method
-        System.out.println("Usuarios registrados: " + allUsers.size());
-        allUsers.forEach(usuario -> {
-            System.out.println("Clave: " + usuario.getEmail()
-                + ", Username: " + usuario.getUsername());
-        });
-        servidor.verRepositorio();
 
 
         // Registrar la fachada en RMI
@@ -279,7 +266,7 @@ public class MenuGUI extends JFrame {
             //System.out.println("Servidor RMI en ejecución...");
 
             // Mostrar la GUI
-            SwingUtilities.invokeLater(() -> new MenuGUI(facade, usuarioRepository).setVisible(true));
+            SwingUtilities.invokeLater(() -> new MenuGUI(facade).setVisible(true));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -296,8 +283,6 @@ public class MenuGUI extends JFrame {
             this.usuario = usuario;
             try {
                 facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -402,7 +387,7 @@ public class MenuGUI extends JFrame {
                         usuario.setToken(null); // Clear the token locally
                         JOptionPane.showMessageDialog(profilePanel, "Sesión cerrada correctamente.");
                         dispose();
-                        new MenuGUI(facade, usuarioRepository).setVisible(true);
+                        new MenuGUI(facade).setVisible(true);
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(profilePanel, "Error al cerrar sesión: " + ex.getMessage());
                         ex.printStackTrace();
@@ -1047,7 +1032,7 @@ public class MenuGUI extends JFrame {
                         Float.parseFloat(distanceField.getText()),
                         Float.parseFloat(timeField.getText()),
                         new ArrayList<>()
-                    );*/
+                    );
 
                         // Llamar al método del facade para guardar el reto
                         RetoDTO reto = facade.crearReto(
@@ -1261,7 +1246,7 @@ public class MenuGUI extends JFrame {
                         Float.parseFloat(distanceField.getText()),
                         Float.parseFloat(timeField.getText()),
                         new ArrayList<>()
-                    );*/
+                    );
 
                         // Actualizar la información en el backend
                         facade.actualizarReto(
@@ -1749,4 +1734,4 @@ public class MenuGUI extends JFrame {
             return mainPanel2;
         }
     }
-}
+}*/

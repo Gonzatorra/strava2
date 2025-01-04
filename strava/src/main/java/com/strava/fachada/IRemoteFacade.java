@@ -41,6 +41,5 @@ public interface IRemoteFacade extends Remote {
     void eliminarReto(UsuarioDTO usuario, RetoDTO reto) throws RemoteException;
     List<Integer> obtenerClasificacion(RetoDTO reto) throws RemoteException;
     void calcularProgreso(UsuarioDTO usuario) throws RemoteException;
-    UsuarioRepository getUsuarioRepository() throws RemoteException;
 
 }

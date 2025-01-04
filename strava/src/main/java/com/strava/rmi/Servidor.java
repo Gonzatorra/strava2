@@ -3,40 +3,29 @@ package com.strava.rmi;
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
 import com.strava.config.AppConfig;
-import com.strava.config.ApplicationContextProvider;
 import com.strava.fachada.*;
 import com.google.server.*;
-
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.ExportException;
-import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 public class Servidor {
     private final RemoteFacade facade;
-    private final GoogleAuthClient googleAuthClient;
     private final AuthClientMeta metaAuthClient;
-    private final UsuarioRepository usuarioRepository;
+    private final GoogleAuthClient googleAuthClient; // Añadimos esta propiedad para el cliente de Google
 
-    public Servidor(UsuarioRepository usuarioRepository) throws RemoteException {
-        this.usuarioRepository = usuarioRepository;
-        this.googleAuthClient = new GoogleAuthClient(usuarioRepository);
-        this.facade = new RemoteFacade(usuarioRepository);
+    public Servidor(ApplicationContext context) throws RemoteException {
+        this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
+        this.facade = new RemoteFacade();
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         iniciarRMI();
-        registrarUsuariosGoogle();
         try {
 			registrarUsuariosMeta();
 		} catch (IOException e) {
@@ -44,7 +33,8 @@ public class Servidor {
 			e.printStackTrace();
 		}
         registrarUsuariosYRetos();
-        
+
+        System.out.println("Servidor iniciado");
     }
 
     private void iniciarRMI() {
@@ -56,25 +46,6 @@ public class Servidor {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-    /*
-    public static void main(String[] args) {
-        try {
-        	SpringApplication.run(AppConfig.class, args);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}*/
-
-    private void registrarUsuariosGoogle() {
-        googleAuthClient.registerUser("daniel333", "claveDaniel", "daniel333@gmail.com");
-        googleAuthClient.registerUser("susana555", "claveSusana", "susana555@gmail.com");
-        googleAuthClient.registerUser("manuel111", "claveManuel", "manuel111@gmail.com");
-        googleAuthClient.registerUser("isabel999", "claveIsabel", "isabel999@gmail.com");
-        googleAuthClient.registerUser("andres444", "claveAndres", "andres444@gmail.com");
-        googleAuthClient.registerUser("clara777", "claveClara", "clara777@gmail.com");
-        googleAuthClient.registerUser("pablo888", "clavePablo", "pablo888@gmail.com");
     }
 
     private void registrarUsuariosMeta() throws IOException {
@@ -135,12 +106,30 @@ public class Servidor {
 
     }
 
-    public void verRepositorio() {
-        // Usar el repositorio
-        System.out.println("Accediendo al repositorio de usuarios: " + usuarioRepository);
+    public GoogleAuthClient getGoogleAuthClient() {
+        return googleAuthClient;
     }
 
-    public UsuarioRepository getUsuarioRepository() {
-        return usuarioRepository;
+    public static void main(String[] args) {
+        try {
+            // Iniciar el contexto de Spring manualmente
+            ApplicationContext context = SpringApplication.run(AppConfig.class, args);
+            // Crear y ejecutar el servidor
+            Servidor servidor = new Servidor(context);
+            GoogleAuthClient googleAuthClient1 = servidor.getGoogleAuthClient();
+            List<Usuario> usuariosDeGoogle = googleAuthClient1.allUsers();
+            // Imprimir los usuarios
+            if (usuariosDeGoogle != null) {
+                System.out.println("Usuarios obtenidos de Google:");
+                for (Usuario usuario : usuariosDeGoogle) {
+                    System.out.println("Usuario: " + usuario.getUsername() + ", Correo: " + usuario.getEmail());
+                }
+            } else {
+                System.out.println("No se pudieron obtener los usuarios.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }

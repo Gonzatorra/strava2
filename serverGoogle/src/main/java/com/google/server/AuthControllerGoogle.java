@@ -3,6 +3,8 @@ package com.google.server;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -10,9 +12,11 @@ import java.util.Optional;
 @RequestMapping("/google")
 public class AuthControllerGoogle {
     private final UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
 
-    public AuthControllerGoogle(UsuarioService usuarioService) {
+    public AuthControllerGoogle(UsuarioService usuarioService, UsuarioRepository usuarioRepository) {
         this.usuarioService = usuarioService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     //Login: Recibir username y password, y devolver el usuario con el token si es correcto
@@ -66,5 +70,15 @@ public class AuthControllerGoogle {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no encontrado");
         }
     }
+
+    /*@GetMapping("/all-users")
+    public ResponseEntity<List<Usuario>> getAllUsers() {
+        List<Usuario> usuarios = usuarioRepository.findAll(); // Usa el repositorio para obtener los usuarios
+        if (usuarios.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Responde con código 204 si no hay usuarios
+        }
+        return ResponseEntity.ok(usuarios); // Retorna la lista de usuarios con código 200
+    }*/
+
 
 }

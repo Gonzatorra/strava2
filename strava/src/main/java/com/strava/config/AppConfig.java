@@ -16,14 +16,14 @@ import java.rmi.RemoteException;
 @ComponentScan(basePackages = {"com.strava", "com.google.server"})
 public class AppConfig {
 
-    @Bean
-    public Servidor servidor(UsuarioRepository usuarioRepository) throws RemoteException {
-        return new Servidor(usuarioRepository);
-    }
+    /*@Bean
+    public Servidor servidor(ApplicationContextProvider contextProvider) throws RemoteException {
+        return new Servidor();
+    }*/
 
     @Bean
-    public IRemoteFacade remoteFacade(UsuarioRepository usuarioRepository) throws RemoteException {
-        return new RemoteFacade(usuarioRepository);
+    public IRemoteFacade remoteFacade() throws RemoteException {
+        return new RemoteFacade();
     }
 
 }

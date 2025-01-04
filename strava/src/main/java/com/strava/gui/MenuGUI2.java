@@ -21,21 +21,19 @@ public class MenuGUI2 {
     }
 
     public static void main(String[] args) {
-        try {
+        /*try {
             AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
             UsuarioRepository usuarioRepository = context.getBean(UsuarioRepository.class);
             Servidor servidor = context.getBean(Servidor.class);
             RemoteFacade remoteFacade = context.getBean(RemoteFacade.class);
             IRemoteFacade facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
 
-            // Verificar la referencia del repositorio
-            servidor.verRepositorio();
-            remoteFacade.usarRepositorio();
+
             System.out.println("Accediendo al repositorio de usuarios GUI: " + usuarioRepository);
 
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

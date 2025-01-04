@@ -1,5 +1,6 @@
 package com.google.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
 
@@ -110,6 +111,7 @@ public class GoogleAuthClient {
     }
 
     //Metodo para obtener todos los usuarios registrados
+
     public List<Usuario> getAllUsers() {
         return usuarioRepository.findAll();
     }
@@ -170,4 +172,40 @@ public class GoogleAuthClient {
             return false;
         }
     }
+
+    public List<Usuario> allUsers() {
+        try {
+            URL url = new URL(GOOGLE_SERVER_URL + "/all-users");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");  // Cambiar a GET
+            conn.setDoOutput(false);  // No es necesario enviar parámetros, así que no se necesita output stream
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 200) {
+                // Si la respuesta es 200, leer los usuarios de la respuesta
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    // Usamos Jackson para deserializar la respuesta JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    // Suponemos que la respuesta es un array JSON de usuarios
+                    List<Usuario> usuarios = objectMapper.readValue(response.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Usuario.class));
+                    System.out.println("Usuarios recibidos: " + response.toString());
+                    return usuarios; // Los usuarios se recibieron correctamente
+                }
+            } else {
+                System.out.println("Error al obtener usuarios. Código de respuesta: " + responseCode);
+                return null;  // Si la respuesta no es 200, se reporta error
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;  // Si ocurre algún error, se maneja aquí
+        }
+    }
+
+
 }

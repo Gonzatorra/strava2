@@ -4,6 +4,7 @@ import com.google.server.GoogleAuthClient;
 import com.google.server.Usuario;
 import com.strava.DTO.*;
 import com.meta.*;
+import com.strava.config.AppConfig;
 import com.strava.servicios.*;
 import com.google.server.UsuarioRepository;
 import com.meta.RemoteAuthFacadeMeta;
@@ -18,24 +19,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
-
     public UsuarioService usuarioService;
-    private final UsuarioRepository usuarioRepository;//objeto de proyecto google
     public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
     private static HashMap<String, String> tokensActivos = new HashMap<>();
-    private GoogleAuthClient googleAuthClient;
+    //private final GoogleAuthClient googleAuthClient;
 
 
-    public RemoteFacade(UsuarioRepository usuarioRepository) throws RemoteException {
+    public RemoteFacade() throws RemoteException {
         super();
-        this.usuarioRepository = usuarioRepository;  // Repositorio de usuarios
-        this.googleAuthClient = new GoogleAuthClient(usuarioRepository);  // Inicialización de GoogleAuthClient
+        //ApplicationContext context = SpringApplication.run(AppConfig.class); // Asegúrate de tener AppConfig como tu configuración de Spring
+        //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
@@ -128,7 +129,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	        //Verificar si la plataforma del usuario coincide con la proporcionada
 	        if (plataforma.equalsIgnoreCase(proveedor)) {
 	            //Verificacion para Google
-	            if ("Google".equalsIgnoreCase(plataforma)) {
+	            /*if ("Google".equalsIgnoreCase(plataforma)) {
 	                token = googleAuthClient.loginUser(username, password);
 	                if (token != null) {
 	                    System.out.println("Login realizado correctamente en Google.");
@@ -177,10 +178,10 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	//si existe, registrar en strava, asignar token
         	if (plataforma.equalsIgnoreCase("Google")) {
         	    // Use JPA to see if that user is in the DB
-        	    Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
+        	    /*Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
         	    if (existingGoogleUser.isPresent()) {
         	        registrarUsuario(username, password, username + "@google.com", username, "Google");
-        	    }
+        	    }*/
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
@@ -257,7 +258,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             String token= usuario.getToken();
             String proveedor = usuario.getProveedor();
             if ("Google".equals(proveedor)) {
-                googleAuthClient.logoutUser(username);
+                //googleAuthClient.logoutUser(username);
             } else if ("Meta".equals(proveedor)) {
                 try {
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
@@ -360,16 +361,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     public void visualizarEntreno(EntrenamientoDTO entrenamiento) throws RemoteException {
         entrenamientoService.visualizarEntreno(entrenamiento);
 
-    }
-
-    @Override
-    public UsuarioRepository getUsuarioRepository() throws RemoteException {
-        return usuarioRepository;
-    }
-
-    public void usarRepositorio() {
-        // Usar el repositorio
-        System.out.println("Accediendo al repositorio de usuarios: " + usuarioRepository);
     }
 
 
