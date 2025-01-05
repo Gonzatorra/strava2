@@ -36,6 +36,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
+        this.remoteAuthFacadeMeta=???? //da null en linea 217 aprox
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
@@ -106,11 +107,17 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
         if(usu.getProveedor().equals("Strava")) {
             UsuarioDTO u= usuarioService.login(username, contrasena);
-            u.setToken(servicioAutentificacion.autenticar(username, contrasena, "Strava", u.getProveedor()));
-            usuarioService.actualizarUsuario(u);
-            UsuarioDTO usu2= UsuarioService.getUsuarios().get(u.getId());
-            tokensActivos.put(usu2.getUsername(), usu2.getToken());
-            return usu;
+            String token= servicioAutentificacion.autenticar(username, contrasena, "Strava", u.getProveedor());
+            if (token!=null) {
+	            u.setToken(token);
+	            usuarioService.actualizarUsuario(u);
+	            UsuarioDTO usu2= UsuarioService.getUsuarios().get(u.getId());
+	            tokensActivos.put(usu2.getUsername(), usu2.getToken());
+	            return usu;
+            }
+            else {
+            	return null;
+            }
         }
         return null;
 
@@ -129,43 +136,52 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	        if (plataforma.equalsIgnoreCase(proveedor)) {
 	            //Verificacion para Google
 	            if ("Google".equalsIgnoreCase(plataforma)) {
-	                token = googleAuthClient.loginUser(username, password);
-	                if (token != null) {
-	                    System.out.println("Login realizado correctamente en Google.");
-	                    usuarioService.registrar(username, password, username+"@google.com", token, "Google");
+	                if(usuario.getToken()!=null) {
+		                if (tokensActivos.containsKey(token)) {
+		                    System.out.println("Login realizado correctamente en Google.");
+		                    return usuario;
+		                } 
+	            	}
+	            	else {
+	                    System.err.println("Token no encontrado");
+	                    token = googleAuthClient.loginUser(username, password);
+	                    usuario.setToken(token); //Establecer el token en el usuario
+	                    usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
+		                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
+		                return usuarioActualizado; //Retornar el usuario actualizado
 	                    
-	                } else {
-	                    System.err.println("Error en el login de Google.");
 	                }
 	
 	            }
 	            //Verificacion para Meta
 	            else if ("Meta".equalsIgnoreCase(plataforma)) {
-	                try {
-	                    AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
-	                    token = metaAuthClient.login(username, password);
-	                    if (token != null) {
-	                        System.out.println("Login realizado correctamente en Meta.");
-	                        //usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");
-	                    } else {
-	                        System.err.println("Error durante el login en Meta.");
-	                    }
-	                } catch (IOException e) {
-	                    System.err.println("Error durante el login en Meta: " + e.getMessage());
-	                    e.printStackTrace();
-	                }
+	                AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
+	                if(usuario.getToken()!=null) {
+		                if (tokensActivos.containsKey(token)) {
+		                    System.out.println("Login realizado correctamente en Meta.");
+		                    return usuario;
+		                }
+	                 }
+	                 else {
+	                    System.err.println("Token no encontrado");
+	                    try {
+							token = metaAuthClient.login(username, password);
+							usuario.setToken(token); //Establecer el token en el usuario
+			                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
+			                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
+			                return usuarioActualizado; //Retornar el usuario actualizado
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							System.err.println("Error al asignar token desde "+ plataforma);
+							e.printStackTrace();
+						}
+	                    
+	                 }
+	                
 	            }
 	
-	            //Si se obtiene un token exitoso, actualizar el usuario
-	            if (token != null) {
-	                usuario.setToken(token); //Establecer el token en el usuario
-	                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
-	                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
-	                return usuarioActualizado; //Retornar el usuario actualizado
-	            } else {
-	                System.out.println("No se pudo obtener el token.");
-	                return null; //Si no se obtiene un token, retornar null
-	            }
+	         
+	            
 	        } else {
 	            //Si la plataforma no coincide con el proveedor del usuario, indicar login fallido
 	            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
@@ -186,24 +202,33 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         			}
         			i++;
         		}
-        		
-        	    //Optional<Usuario> existingGoogleUser = usuarioRepository.findByUsername(username);
-        	    //if (existingGoogleUser.isPresent()) {
-        		
         		if(encontrado) {
-        	        registrarUsuario(username, password, username + "@google.com", username, "Google");
+        			token = googleAuthClient.loginUser(username, password);
+        	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", token, "Google");
+        	        tokensActivos.put(usuarioG.getUsername(), token);
+        	        usuarioService.getUsuarios().put(usuarioG.getId(), usuarioG);
+        	        return usuarioG;
         	    }
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
+	        	
 	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
 	        	if(userStore.containsKey(username)) {
-	        		registrarUsuario(username, password, username+"@meta.com", username, "Meta");
+	        		AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
+	        		try {
+						token = metaAuthClient.login(username, password);
+						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");
+		        		tokensActivos.put(usuarioM.getUsername(), token);
+	        	        usuarioService.getUsuarios().put(usuarioM.getId(), usuarioM);
+		        		return usuarioM;
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	        	}
 	        }
-	        
-	        
-        }
-        System.out.println("Ha habido un error desconocido");
+	    }
+        System.out.println("El usuario no existe en este contexto");
     	return null;
     }
 
@@ -269,11 +294,13 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             String token= usuario.getToken();
             String proveedor = usuario.getProveedor();
             if ("Google".equals(proveedor)) {
+            	tokensActivos.remove(usuario.getUsername());
                 //googleAuthClient.logoutUser(username);
             } else if ("Meta".equals(proveedor)) {
                 try {
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
                     metaAuthClient.sendRequest("LOGOUT;" + username);
+                    tokensActivos.remove(usuario.getUsername());
                     System.out.println("Logout realizado correctamente en Meta.");
                 } catch (IOException e) {
                     System.err.println("Error durante el logout en Meta: " + e.getMessage());
