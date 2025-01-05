@@ -339,7 +339,7 @@ public class MenuGUI extends JFrame {
         private IRemoteFacade facade;
 
         public MainAppGUI(UsuarioDTO usuario) {
-
+        	
             this.usuario = usuario;
             try {
                 facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");

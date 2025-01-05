@@ -1,5 +1,6 @@
 package com.strava.servicios;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import com.strava.DTO.*;
 import com.strava.assembler.*;
 import com.strava.dominio.*;
 
-public class UsuarioService {
+public class UsuarioService implements Serializable {
 
     public static HashMap<Integer, UsuarioDTO> usuarios = new HashMap<>();
     public static int idCounter = 1;  //para signar IDs unicos
