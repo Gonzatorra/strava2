@@ -33,10 +33,24 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private final GoogleAuthClient googleAuthClient;
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //error tremendo por ser ilegal
+    public ArrayList<String> getUsersActivos() {
+        ArrayList<String> usernamesActivos = new ArrayList<>();
+        for (String username : tokensActivos.values()) {
+            usernamesActivos.add(username);
+        }
+        return usernamesActivos;
+    }
 
-    public RemoteFacade(ApplicationContext context) throws RemoteException {
+
+	public static void setTokensActivos(HashMap<String, String> tokensActivos) {
+		RemoteFacade.tokensActivos = tokensActivos;
+	}
+
+	public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
-        this.remoteAuthFacadeMeta=???? //da null en linea 217 aprox
+        //this.remoteAuthFacadeMeta=???? //da null en linea 217 aprox
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
@@ -211,9 +225,10 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	    }
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
-	        	
-	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
-	        	if(userStore.containsKey(username)) {
+	        	//////////////////////////////////////////////////////////////////////////////////////////////
+	        	//Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
+	        	//if(userStore.containsKey(username)) {
+	        	if(true) {
 	        		AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
 	        		try {
 						token = metaAuthClient.login(username, password);

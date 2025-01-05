@@ -45,13 +45,13 @@ public class MenuGUI extends JFrame {
         //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         System.out.println("UsuarioRepository instancia en MenuGUI: ");
 
-        setTitle("Strava - Login / Registro");
+        setTitle("Acceso a Strava - Login / Registro");
         setSize(500, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-
+        tabbedPane.addTab("Acceso", createAccesPanel());
         tabbedPane.addTab("Login", createLoginPanel());
         tabbedPane.addTab("Registro", createRegisterPanel());
 
@@ -94,10 +94,77 @@ public class MenuGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Error de conexión con el servidor. Por favor, intente nuevamente.");
             ex.printStackTrace();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error en autenticacion");
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al autenticar el inicio de sesión. Intentélo de nuevo.");
 
         }
+    }
+
+    private JPanel createAccesPanel() {
+        JPanel accessPanel = new JPanel(new GridBagLayout());
+        accessPanel.setBackground(Color.WHITE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Título grande en el centro
+        JLabel titleLabel = new JLabel("ACCESO A STRAVA", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2; // Abarca dos columnas
+        accessPanel.add(titleLabel, gbc);
+
+        // ComboBox para seleccionar el usuario activo
+        JLabel userLabel = new JLabel("Seleccione un usuario:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        accessPanel.add(userLabel, gbc);
+
+        String[] activeUsers = facade.getUsersActivos().toArray(new String[0]);
+        JComboBox<String> userComboBox = new JComboBox<>(activeUsers);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        accessPanel.add(userComboBox, gbc);
+
+        // Botón para acceder
+        JButton accessButton = new JButton("ACCEDER");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2; // Centrado bajo el ComboBox
+        accessPanel.add(accessButton, gbc);
+        
+        if (activeUsers.length == 0) {
+            userComboBox.setEnabled(false);
+            accessButton.setEnabled(false);
+            JOptionPane.showMessageDialog(accessPanel, 
+                "No hay usuarios activos disponibles en este momento.", 
+                "Información", 
+                JOptionPane.INFORMATION_MESSAGE);
+
+        // Acción del botón
+        accessButton.addActionListener(e -> {
+            String selectedUser = (String) userComboBox.getSelectedItem();
+            if (selectedUser != null) {
+                JOptionPane.showMessageDialog(accessPanel, "¡Inicio de sesión exitoso con " + selectedUser + "!");
+                SwingUtilities.invokeLater(() -> {
+					try {
+						new MainAppGUI(facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser)).setVisible(true);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				});
+                // Aquí puedes cerrar la ventana actual si es necesario
+                SwingUtilities.getWindowAncestor(accessPanel).dispose();
+            } else {
+                JOptionPane.showMessageDialog(accessPanel, "Por favor, seleccione un usuario válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        }
+        return accessPanel;
     }
 
     private JPanel createLoginPanel() {
@@ -149,7 +216,6 @@ public class MenuGUI extends JFrame {
 
         return loginPanel;
     }
-
 
     private JPanel createRegisterPanel() {
         JPanel registerPanel = new JPanel(new GridBagLayout());
