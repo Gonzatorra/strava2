@@ -143,12 +143,23 @@ public class MenuGUI extends JFrame {
                 "Información", 
                 JOptionPane.INFORMATION_MESSAGE);
         }
+        else {
+        	userComboBox.setEnabled(true);
+            accessButton.setEnabled(true);
+        }
         // Acción del botón
         accessButton.addActionListener(e -> {
             String selectedUser = (String) userComboBox.getSelectedItem();
             if (selectedUser != null) {
                 try {
-                    UsuarioDTO usuario = facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser);
+                	// Busca el usuario utilizando Streams
+                    UsuarioDTO usuario = facade.getUsuarios().values()
+                        .stream()
+                        .filter(u -> selectedUser.equals(u.getUsername()))
+                        .findFirst()
+                        .orElse(null);
+                    
+                    //usuario = facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser);
                     if (usuario != null) {
                         SwingUtilities.invokeLater(() -> new MainAppGUI(usuario).setVisible(true));
                         SwingUtilities.getWindowAncestor(accessPanel).dispose();
@@ -373,9 +384,10 @@ public class MenuGUI extends JFrame {
                             JOptionPane.YES_NO_OPTION);
 
                     if (respuesta == JOptionPane.YES_OPTION) {
-                        System.out.println("Guardando datos antes de cerrar... NO FUNCIONA NO GUARDA JEEJE");
+                        System.out.println("Guardando datos antes de cerrar...");
                         try {
                             facade.actualizarUsuario(usuario);
+                            
                         } catch (RemoteException e1) {
                             e1.printStackTrace();
                         }
