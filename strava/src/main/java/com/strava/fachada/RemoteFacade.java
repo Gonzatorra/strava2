@@ -35,7 +35,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
     //error tremendo por ser ilegal
-    public ArrayList<String> getUsersActivos() {
+    @Override
+    public ArrayList<String> getUsersActivos() throws RemoteException {
         ArrayList<String> usernamesActivos = new ArrayList<>();
         for (String username : tokensActivos.values()) {
             usernamesActivos.add(username);

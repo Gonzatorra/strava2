@@ -40,7 +40,7 @@ public class MenuGUI extends JFrame {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public MenuGUI(IRemoteFacade facade) {
+    public MenuGUI(IRemoteFacade facade) throws RemoteException {
         this.facade = facade;
         //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         System.out.println("UsuarioRepository instancia en MenuGUI: ");
@@ -99,7 +99,7 @@ public class MenuGUI extends JFrame {
         }
     }
 
-    private JPanel createAccesPanel() {
+    private JPanel createAccesPanel() throws RemoteException {
         JPanel accessPanel = new JPanel(new GridBagLayout());
         accessPanel.setBackground(Color.WHITE);
 
@@ -318,7 +318,14 @@ public class MenuGUI extends JFrame {
         try {
             IRemoteFacade facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
 
-            SwingUtilities.invokeLater(() -> new MenuGUI(facade).setVisible(true));
+            SwingUtilities.invokeLater(() -> {
+				try {
+					new MenuGUI(facade).setVisible(true);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
         } catch (Exception e) {
             e.printStackTrace();
         }
