@@ -37,6 +37,7 @@ public class UsuarioService implements Serializable {
     }
 
     public UsuarioDTO login(String username, String contrasena) {
+    	/*
         for (UsuarioDTO usuario : usuarios.values()) {
             if (usuario.getUsername().equals(username) && usuario.getContrasena().equals(contrasena)) {
                 System.out.println("Login exitoso para: " + username);
@@ -46,9 +47,22 @@ public class UsuarioService implements Serializable {
         }
         System.out.println("Login fallido para: " + username);
         return null;
+        */
+    	for (UsuarioDTO usuario : usuarios.values()) {
+            if (usuario.getUsername().equals(username) && usuario.getContrasena().equals(contrasena)) {
+                String token = UUID.randomUUID().toString();
+                usuario.setToken(token);
+                actualizarUsuario(usuario);
+                System.out.println("Login exitoso para: " + username);
+                return usuario;
+            }
+        }
+        System.out.println("Login fallido para: " + username);
+        return null;
     }
 
     public void logout(String token) { //He añadido esto para que haga el logout
+    	/*
         for (UsuarioDTO usu : usuarios.values()) {
             if (usu.getToken() != null && usu.getToken().equals(token)) { 
                 usu.setToken(null);
@@ -58,6 +72,18 @@ public class UsuarioService implements Serializable {
             }
         }
         System.out.println("Token no encontrado");
+        */
+    	UsuarioDTO usuario = usuarios.values().stream()
+    	        .filter(u -> token.equals(u.getToken()))
+    	        .findFirst()
+    	        .orElse(null);
+    	    if (usuario != null) {
+    	        usuario.setToken(null);
+    	        actualizarUsuario(usuario);
+    	        System.out.println("Logout exitoso para: " + usuario.getUsername());
+    	    } else {
+    	        System.out.println("Token no encontrado");
+    	    }
     }
 
 
@@ -99,10 +125,21 @@ public class UsuarioService implements Serializable {
     }
 
     public UsuarioDTO obtenerUsuarioPorNombre(String username) {
-        return usuarios.values().stream()
+        /*
+    	return usuarios.values().stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+        */
+    	System.out.println("Attempting to fetch user by username: " + username);
+        for (UsuarioDTO user : usuarios.values()) {
+            if (user.getUsername().equals(username)) {
+                System.out.println("User found: " + username);
+                return user;
+            }
+        }
+        System.err.println("User not found in memory: " + username);
+        return null;
     }
 
 
@@ -184,6 +221,13 @@ public class UsuarioService implements Serializable {
         }
 
         return progresoPorReto;
+    }
+    
+    public UsuarioDTO findByToken(String token) {
+        return usuarios.values().stream()
+            .filter(u -> token.equals(u.getToken()))
+            .findFirst()
+            .orElse(null);
     }
 
 

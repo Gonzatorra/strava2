@@ -147,22 +147,22 @@ public class MenuGUI extends JFrame {
         accessButton.addActionListener(e -> {
             String selectedUser = (String) userComboBox.getSelectedItem();
             if (selectedUser != null) {
-                JOptionPane.showMessageDialog(accessPanel, "¡Inicio de sesión exitoso con " + selectedUser + "!");
-                SwingUtilities.invokeLater(() -> {
-					try {
-						new MainAppGUI(facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser)).setVisible(true);
-					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				});
-                // Aquí puedes cerrar la ventana actual si es necesario
-                SwingUtilities.getWindowAncestor(accessPanel).dispose();
+                try {
+                    UsuarioDTO usuario = facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser);
+                    if (usuario != null) {
+                        SwingUtilities.invokeLater(() -> new MainAppGUI(usuario).setVisible(true));
+                        SwingUtilities.getWindowAncestor(accessPanel).dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(accessPanel, "El usuario seleccionado no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(accessPanel, "Error al recuperar el usuario. Intente de nuevo.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(accessPanel, "Por favor, seleccione un usuario válido.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         
         return accessPanel;
     }

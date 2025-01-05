@@ -19,29 +19,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
-    public UsuarioService usuarioService;
+    //public UsuarioService usuarioService;
     public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
     private static HashMap<String, String> tokensActivos = new HashMap<>();
     private final GoogleAuthClient googleAuthClient;
-
+    
+    @Autowired
+    private UsuarioService usuarioService;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
     //error solucionado
     @Override
     public List<String> getUsersActivos() throws RemoteException {
-        List<String> usernamesActivos = new ArrayList<>();
+        /*
+    	List<String> usernamesActivos = new ArrayList<>();
         for (String username : tokensActivos.keySet()) {
             usernamesActivos.add(username);
         }
         return usernamesActivos;
+        */
+    	return new ArrayList<>(tokensActivos.keySet());
     }
 
 
@@ -57,6 +63,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
         this.servicioAutentificacion = new ServicioAutentificacion();
+        
 
     }
 
@@ -109,6 +116,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     @Override
     public UsuarioDTO login(String username, String contrasena) throws RemoteException {
+    	/*
         for (UsuarioDTO u: usuarioService.getUsuarios().values()) {
             if (u.getUsername().equals(username) && u.getProveedor().equals("Strava")) {
                 System.out.println(u.getUsername()+u.getProveedor());
@@ -135,7 +143,38 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             }
         }
         return null;
+		*/
+    	
+    	System.out.println("Usuario que quiere iniciar sesión: " + username);
+        
+        if (tokensActivos.containsKey(username)) {
+            System.out.println("Usuario ya loggead.");
+            return usuarioService.obtenerUsuarioPorNombre(username);
+        }
 
+        UsuarioDTO user = usuarioService.obtenerUsuarioPorNombre(username);
+        if (user == null) {
+            System.err.println("No encontrado: " + username);
+            return null;
+        }
+
+        if (!user.getContrasena().equals(contrasena)) {
+            System.err.println("Credenciales invalidas: " + username);
+            return null;
+        }
+
+        String token = servicioAutentificacion.autenticar(username, contrasena, "Strava", user.getProveedor());
+        if (token == null) {
+            System.err.println("Autenticación fallida: " + username);
+            return null;
+        }
+
+        user.setToken(token);
+        usuarioService.actualizarUsuario(user);
+        tokensActivos.put(username, token);
+        UsuarioService.getUsuarios().put(user.getId(), user); // Ensure user data is consistent
+        System.out.println("Login exitoso para: " + username);
+        return user;
 
     }
 
@@ -305,6 +344,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     @Override
     public void logout(String username) throws RemoteException {
+    	/*
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
         if (usuario != null) {
             String token= usuario.getToken();
@@ -327,6 +367,36 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
                 usuarioService.logout(token);
                 tokensActivos.remove(username);
             }
+
+            System.out.println("Logout completo para el usuario: " + username);
+        } else {
+            System.out.println("Usuario no encontrado para logout: " + username);
+        }
+        */
+    	UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
+        if (usuario != null) {
+            String token = usuario.getToken();
+            String proveedor = usuario.getProveedor();
+
+            if ("Google".equals(proveedor)) {
+                tokensActivos.remove(username);
+            } else if ("Meta".equals(proveedor)) {
+                try {
+                    AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
+                    metaAuthClient.sendRequest("LOGOUT;" + username);
+                    tokensActivos.remove(username);
+                    System.out.println("Logout realizado correctamente en Meta.");
+                } catch (IOException e) {
+                    System.err.println("Error durante el logout en Meta: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                usuarioService.logout(token);
+                tokensActivos.remove(username);
+            }
+
+            usuario.setToken(null);
+            usuarioService.actualizarUsuario(usuario);
 
             System.out.println("Logout completo para el usuario: " + username);
         } else {
