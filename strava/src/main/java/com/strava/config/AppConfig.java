@@ -19,9 +19,9 @@ public class AppConfig {
     /*@Bean
     public Servidor servidor(ApplicationContextProvider contextProvider) throws RemoteException {
         return new Servidor();
-    }*/
+    }
 
-    /*@Bean
+    @Bean
     public IRemoteFacade remoteFacade() throws RemoteException {
         return new RemoteFacade();
     }*/

@@ -1,9 +1,8 @@
 package com.strava.gui;
 
 import javax.swing.*;
+
 import com.google.server.GoogleAuthClient;
-import com.google.server.Usuario;
-import com.google.server.UsuarioRepository;
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
 import com.strava.assembler.UsuarioAssembler;
@@ -27,28 +26,23 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.table.TableCellRenderer;
 
-import com.strava.rmi.Servidor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
-@Component
+
 public class MenuGUI extends JFrame {
 
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
     private IRemoteFacade facade;
-    //private GoogleAuthClient googleAuthClient;
+    //private final GoogleAuthClient googleAuthClient;
     private AuthClientMeta metaAuthClient;
-    //private Servidor servidor;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Autowired
     public MenuGUI(IRemoteFacade facade) {
         this.facade = facade;
-        //this.servidor = servidor;
-        //googleAuthClient = new GoogleAuthClient();
+        //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         System.out.println("UsuarioRepository instancia en MenuGUI: ");
 
         setTitle("Strava - Login / Registro");
@@ -253,25 +247,16 @@ public class MenuGUI extends JFrame {
         return button;
     }
 
-    @Autowired
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
-        //Obtener las instancias desde el contexto de Spring
-        IRemoteFacade facade = context.getBean(IRemoteFacade.class);
-        Servidor servidor = context.getBean(Servidor.class);
-
-
-
-        // Registrar la fachada en RMI
         try {
-            //Naming.rebind("rmi://localhost/RemoteFacade", facade);
-            //System.out.println("Servidor RMI en ejecución...");
+            IRemoteFacade facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
 
-            // Mostrar la GUI
             SwingUtilities.invokeLater(() -> new MenuGUI(facade).setVisible(true));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     //nueva clase para la ventana principal después del login
