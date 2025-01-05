@@ -141,7 +141,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         
         if (tokensActivos.containsKey(username)) {
             System.out.println("Usuario ya loggead.");
-            return usuarioService.obtenerUsuarioPorNombre(username);
+            return null;//usuarioService.obtenerUsuarioPorNombre(username);
         }
 
         UsuarioDTO user = usuarioService.obtenerUsuarioPorNombre(username);
@@ -175,7 +175,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         String token = null;
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
-        if (usuario != null) {
+        /*if (usuario != null) {
 	        String proveedor = usuario.getProveedor();
 	
 	        //Verificar si la plataforma del usuario coincide con la proporcionada
@@ -233,8 +233,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
 	            return null;
 	        }
-        }
-        else {
+        }*/
+        //else {
         	//mirar si existe ese usuario en proveedor
         	//si existe, registrar en strava, asignar token
         	if (plataforma.equalsIgnoreCase("Google")) {
@@ -258,8 +258,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	//////////////////////////////////////////////////////////////////////////////////////////////
-	        	//Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
-	        	//if(userStore.containsKey(username)) {
+	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
+	        	if(userStore.containsKey(username)) {
 	        	if(true) {
 	        		AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
 	        		try {
@@ -275,7 +275,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	        	}
 	        }
 	    }
-        System.out.println("El usuario no existe en este contexto");
+        
     	return null;
     }
 

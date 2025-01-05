@@ -69,7 +69,13 @@ public class MenuGUI extends JFrame {
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                	if(facade.getUsersActivos().contains(username)) {
+                		JOptionPane.showMessageDialog(this, "Usuario ya loggeado.");
+
+                	}
+                	else {
+                		JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                	}
                 }
             } else if ("Google".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.loginConProveedor(username, password, "Google");
@@ -138,10 +144,6 @@ public class MenuGUI extends JFrame {
         if (activeUsers.length == 0) {
             userComboBox.setEnabled(false);
             accessButton.setEnabled(false);
-            JOptionPane.showMessageDialog(accessPanel, 
-                "No hay usuarios activos disponibles en este momento.", 
-                "Información", 
-                JOptionPane.INFORMATION_MESSAGE);
         }
         else {
         	userComboBox.setEnabled(true);
