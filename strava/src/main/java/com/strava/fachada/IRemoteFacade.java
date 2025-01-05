@@ -26,7 +26,7 @@ public interface IRemoteFacade extends Remote {
     ArrayList<Integer> getAmigos(UsuarioDTO usuario) throws RemoteException;
     UsuarioService getUsuarioService() throws RemoteException;
     HashMap<Integer, UsuarioDTO> getUsuarios() throws RemoteException;
-    ArrayList<String> getUsersActivos() throws RemoteException;
+    List<String> getUsersActivos() throws RemoteException;
 
     //entrenamiento
     EntrenamientoDTO crearEntreno(UsuarioDTO usuario, String titulo, String deporte, double distancia, LocalDate fechaIni, float horaInicio, double duracion) throws java.rmi.RemoteException;

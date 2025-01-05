@@ -142,7 +142,7 @@ public class MenuGUI extends JFrame {
                 "No hay usuarios activos disponibles en este momento.", 
                 "Información", 
                 JOptionPane.INFORMATION_MESSAGE);
-
+        }
         // Acción del botón
         accessButton.addActionListener(e -> {
             String selectedUser = (String) userComboBox.getSelectedItem();
@@ -163,7 +163,7 @@ public class MenuGUI extends JFrame {
             }
         });
 
-        }
+        
         return accessPanel;
     }
 
