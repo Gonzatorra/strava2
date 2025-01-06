@@ -172,7 +172,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     @Override
     public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws IOException {
         String token = null;
-        UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
+        //UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
         /*if (usuario != null) {
 	        String proveedor = usuario.getProveedor();
@@ -259,7 +259,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	        	//////////////////////////////////////////////////////////////////////////////////////////////
 	        	Map<String, String> userStore = metaAuthClient.getUserStore();
 	        	if(userStore.containsKey(username)) {
-	        	if(true) {
 	        		try {
 						token = metaAuthClient.login(username, password);
 						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");
@@ -271,7 +270,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 						e.printStackTrace();
 					}
 	        	}
-	        }
 	    }
         
     	return null;
