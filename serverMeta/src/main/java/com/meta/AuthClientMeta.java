@@ -3,6 +3,7 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AuthClientMeta {
@@ -49,12 +50,15 @@ public class AuthClientMeta {
         return parseJsonToMap(jsonResponse);
     }
 
-    public String getUserInfoStore() throws IOException {
-        return sendRequest("GETUSERINFOSTORE");
+    public Map<String, String> getUserInfoStore() throws IOException {
+        String jsonResponse = sendRequest("GETUSERINFOSTORE");
+        return parseJsonToMap(jsonResponse);
     }
 
-    public String getTokenStore() throws IOException {
-        return sendRequest("GETTOKENSTORE");
+    public Map<String, String> getTokenStore() throws IOException {
+        String jsonResponse = sendRequest("GETTOKENSTORE");
+        return parseJsonToMap(jsonResponse);
+
     }
 
     private Map<String, String> parseJsonToMap(String json) {

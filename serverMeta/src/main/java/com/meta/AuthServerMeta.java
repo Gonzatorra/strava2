@@ -74,11 +74,11 @@ public class AuthServerMeta {
         return mapToJson(userStore);
     }
 
-    public String getUserInfoStoreAsString() {
+    public String getUserInfoStoreAsJson() {
         return mapToJson(userInfoStore);
     }
 
-    public String getTokenStoreAsString() {
+    public String getTokenStoreAsJson() {
         return mapToJson(tokenStore);
     }
 

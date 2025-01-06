@@ -41,10 +41,10 @@ public class ClientHandlerMeta extends Thread{
                     response = server.getUserStoreAsJson();
                     break;
                 case "GETUSERINFOSTORE":
-                    response = server.getUserInfoStoreAsString();
+                    response = server.getUserInfoStoreAsJson();
                     break;
                 case "GETTOKENSTORE":
-                    response = server.getTokenStoreAsString();
+                    response = server.getTokenStoreAsJson();
                     break;
                 default:
                     response = "Invalid action";
