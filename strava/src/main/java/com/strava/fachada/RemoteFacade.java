@@ -34,8 +34,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private UsuarioService usuarioService;
     private AuthClientMeta metaAuthClient;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //error solucionado
+
     @Override
     public List<String> getUsersActivos() throws RemoteException {
         return new ArrayList<>(tokensActivos.keySet());
