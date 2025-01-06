@@ -3,5 +3,4 @@ include ':serverGoogle'
 include ':serverMeta'
 include ':strava'
 include 'BD'
-include 'BD'
 

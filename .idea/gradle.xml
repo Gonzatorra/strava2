@@ -23,6 +23,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/BD" />
             <option value="$PROJECT_DIR$/serverGoogle" />
             <option value="$PROJECT_DIR$/serverMeta" />
             <option value="$PROJECT_DIR$/strava" />
@@ -36,6 +37,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/BD" />
             <option value="$PROJECT_DIR$/serverGoogle" />
             <option value="$PROJECT_DIR$/serverMeta" />
             <option value="$PROJECT_DIR$/strava" />
