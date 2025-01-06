@@ -237,6 +237,15 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	//si existe, registrar en strava, asignar token
         	if (plataforma.equalsIgnoreCase("Google")) {
         	    // Use JPA to see if that user is in the DB
+        		for(UsuarioDTO u: this.getUsuarios().values()) {
+        			if(u.getUsername().equals(username)) {
+        				token = googleAuthClient.loginUser(username, password);
+            	        tokensActivos.put(u.getUsername(), token);
+            	        return u;
+        			}
+        			
+        		}
+        		token=null;
         		List <Usuario> usuariosG = googleAuthClient.allUsers();
         		boolean encontrado= false;
         		int i=0;
@@ -256,6 +265,15 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	//////////////////////////////////////////////////////////////////////////////////////////////
+	        	for(UsuarioDTO u: this.getUsuarios().values()) {
+        			if(u.getUsername().equals(username)) {
+        				token = metaAuthClient.login(username, password);
+		        		tokensActivos.put(u.getUsername(), token);
+		        		return u;
+        			}
+        			
+        		}
+	        	
 	        	Map<String, String> userStore = metaAuthClient.getUserStore();
 	        	if(userStore.containsKey(username)) {
 	        		try {
@@ -367,11 +385,15 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
             if ("Google".equals(proveedor)) {
                 tokensActivos.remove(username);
+                usuario.setToken(null);
+                actualizarUsuario(usuario);
             } else if ("Meta".equals(proveedor)) {
                 try {
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
                     metaAuthClient.sendRequest("LOGOUT;" + username);
                     tokensActivos.remove(username);
+                    usuario.setToken(null);
+                    actualizarUsuario(usuario);
                     System.out.println("Logout realizado correctamente en Meta.");
                 } catch (IOException e) {
                     System.err.println("Error durante el logout en Meta: " + e.getMessage());
@@ -380,10 +402,11 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             } else {
                 usuarioService.logout(token);
                 tokensActivos.remove(username);
+                usuario.setToken(null);
+                actualizarUsuario(usuario);
             }
 
-            usuario.setToken(null);
-            usuarioService.actualizarUsuario(usuario);
+            
 
             System.out.println("Logout completo para el usuario: " + username);
         } else {

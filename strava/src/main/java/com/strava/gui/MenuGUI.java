@@ -458,7 +458,7 @@ public class MenuGUI extends JFrame {
                             facade.logout(usuario.getUsername());
                         }
 
-                        usuario.setToken(null); // Clear the token locally
+                        //usuario.setToken(null); // Clear the token locally  ya se hace
                         JOptionPane.showMessageDialog(profilePanel, "Sesión cerrada correctamente.");
                         dispose();
                         new MenuGUI(facade).setVisible(true);
