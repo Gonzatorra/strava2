@@ -890,6 +890,15 @@ public class MenuGUI extends JFrame {
                 }
                 // Filtrar retos basados en el criterio seleccionado
                 for (RetoDTO r : usuario2.getRetos().keySet()) {
+                	
+                	if (r == null) {
+                        continue;
+                    }
+
+                    if (r.getUsuarioCreador() == null) {
+                        continue;
+                    }
+                    
                     String estado = usuario2.getRetos().get(r);
 
                     if ("Todos".equals(criteria) || criteria.equals(estado)) {
@@ -1379,29 +1388,39 @@ public class MenuGUI extends JFrame {
                         int retoId = (int) acceptedModel.getValueAt(selectedRow, 0);
                         HashMap<Integer, RetoDTO> retosD = facade.visualizarReto();
                         RetoDTO r = retosD.get(retoId);
-                        if (usuario.equals(r.getUsuarioCreador())) {
+                        
+                        if (r == null) {
+                            JOptionPane.showMessageDialog(this, "Este reto ya no existe.");
+                            return;
+                        }
+                        
+                        
+                        if (usuario.getId() == r.getUsuarioCreador().getId()) {
                             //eliminar reto completo
                             System.out.println("El creador elimina el reto.");
                             ArrayList<Integer> participantes = r.getParticipantes();
                             for (Integer participante : participantes) {
                                 if (r.getParticipantes().contains(participante)) {
                                     UsuarioDTO usu = facade.getUsuarios().get(participante);
-                                    usu.getRetos().remove(r.getId());
+                                    usu.getRetos().remove(r);
                                     facade.actualizarUsuario(usu);
 
                                 }
 
                             }
-                            facade.eliminarReto(usuario, retosD.get(retoId));
+                            
+                            facade.eliminarReto(usuario, r);
+                            usuario.getRetos().remove(r);
+                            retosD.remove(retoId);
+                            facade.actualizarUsuario(usuario);
 
                         } else {
                             //eliminar al participante de la lista
-
                             ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
                             HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                             for (UsuarioDTO participante : usuarios.values()) {
                                 if (participante.getId() == retoId) {
-                                    participante.getRetos().remove(retosD.get(retoId).getId());
+                                    participante.getRetos().remove(retosD.get(retoId));
                                     facade.actualizarUsuario(participante);
                                 }
 
@@ -1418,6 +1437,7 @@ public class MenuGUI extends JFrame {
                                     retosD.get(retoId).getDeporte(), IDs);
 
                             facade.eliminarReto(usuario, retosD.get(retoId));
+                            facade.actualizarUsuario(usuario);
 
                             System.out.println("El usuario se elimina del reto.");
                         }

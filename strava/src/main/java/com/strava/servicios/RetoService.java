@@ -79,8 +79,11 @@ public class RetoService {
         }
         else {
             //retos.put(reto.getId(), reto);
+        	/*
             RetoDTO r= retos.get(reto.getId());
             retos.put(r.getId(), r);
+            */
+
         }
     }
     public List<Integer> obtenerClasificacion(RetoDTO reto) {
