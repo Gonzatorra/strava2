@@ -25,15 +25,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
-    //public UsuarioService usuarioService;
     public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
     private static HashMap<String, String> tokensActivos = new HashMap<>();
     private final GoogleAuthClient googleAuthClient;
-    
-    @Autowired
     private UsuarioService usuarioService;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
