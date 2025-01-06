@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group = 'com.BD'
@@ -7,11 +8,30 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://repo1.maven.org/maven2/'
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/releases/'
+    }
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    
+    implementation 'org.datanucleus:datanucleus-core:5.2.6'
+    implementation 'org.datanucleus:datanucleus-api-jpa:5.2.6'
+    
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    implementation 'org.hibernate.orm:hibernate-core:6.2.10.Final'
+        
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    
+    implementation project (':serverMeta')
+    implementation project (':serverGoogle')
+    implementation project (':strava')
+    
 }
 
 test {

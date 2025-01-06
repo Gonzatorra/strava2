@@ -1,0 +1,9 @@
+rootProject.name = 'BD'
+
+include 'serverMeta'
+include 'serverGoogle'
+include 'strava'
+
+project(':serverMeta').projectDir = file('../serverMeta')
+project(':serverGoogle').projectDir = file('../serverGoogle')
+project(':strava').projectDir = file('../strava')
