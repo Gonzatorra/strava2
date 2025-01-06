@@ -5,6 +5,7 @@ import com.strava.DTO.*;
 import com.strava.dominio.*;
 import com.strava.servicios.*;
 
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public interface IRemoteFacade extends Remote {
     //usuario
     UsuarioDTO registrarUsuario(String username, String contrasena, String email, String nombre, String proveedor) throws RemoteException;
     UsuarioDTO login(String email, String contrasena) throws RemoteException;
-    UsuarioDTO loginConProveedor(String username, String password, String proveedor) throws RemoteException;
+    UsuarioDTO loginConProveedor(String username, String password, String proveedor) throws IOException;
     void logout(String token) throws RemoteException;
     void eliminarUsuario(int userId) throws RemoteException;
     void actualizarUsuario(UsuarioDTO usuarioDTO) throws RemoteException;

@@ -32,6 +32,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private static HashMap<String, String> tokensActivos = new HashMap<>();
     private final GoogleAuthClient googleAuthClient;
     private UsuarioService usuarioService;
+    private AuthClientMeta metaAuthClient;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
     //error solucionado
@@ -47,6 +48,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
 	public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
+        this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         //this.remoteAuthFacadeMeta=???? //da null en linea 217 aprox
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
@@ -168,7 +170,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     }
 
     @Override
-    public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws RemoteException {
+    public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws IOException {
         String token = null;
         UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
 
@@ -255,10 +257,9 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         	} 
 	        else if (plataforma.equalsIgnoreCase("Meta")){
 	        	//////////////////////////////////////////////////////////////////////////////////////////////
-	        	Map<String, String> userStore = remoteAuthFacadeMeta.getUserStore();
+	        	Map<String, String> userStore = metaAuthClient.getUserStore();
 	        	if(userStore.containsKey(username)) {
 	        	if(true) {
-	        		AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
 	        		try {
 						token = metaAuthClient.login(username, password);
 						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");

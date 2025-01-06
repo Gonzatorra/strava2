@@ -1,6 +1,7 @@
 package com.strava.controlador;
 
 import javax.swing.JOptionPane;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import com.strava.DTO.*;
 import com.strava.fachada.*;
@@ -35,6 +36,8 @@ public class GestionAutentificacion {
         } catch (RemoteException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,6 +1,10 @@
 package com.meta;
+import com.google.gson.Gson;
+
 import java.io.*;
 import java.net.*;
+import java.util.Map;
+
 public class AuthClientMeta {
     private final String host;
     private final int port;
@@ -39,6 +43,26 @@ public class AuthClientMeta {
     public String getUserInfo(String token) throws IOException {
         return sendRequest("GETINFO;" + token);
     }
+
+    public Map<String, String> getUserStore() throws IOException {
+        String jsonResponse = sendRequest("GETUSERSTORE");
+        return parseJsonToMap(jsonResponse);
+    }
+
+    public String getUserInfoStore() throws IOException {
+        return sendRequest("GETUSERINFOSTORE");
+    }
+
+    public String getTokenStore() throws IOException {
+        return sendRequest("GETTOKENSTORE");
+    }
+
+    private Map<String, String> parseJsonToMap(String json) {
+        Gson gson = new Gson();
+        // Convierte el JSON en un Map<String, String>
+        return gson.fromJson(json, Map.class);
+    }
+
 
     public void logout(String username) throws IOException {
         sendRequest("LOGOUT;" + username);

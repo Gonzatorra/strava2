@@ -37,6 +37,15 @@ public class ClientHandlerMeta extends Thread{
                 case "LOGOUT":
                     response = server.logout(parts[1]);
                     break;
+                case "GETUSERSTORE":
+                    response = server.getUserStoreAsJson();
+                    break;
+                case "GETUSERINFOSTORE":
+                    response = server.getUserInfoStoreAsString();
+                    break;
+                case "GETTOKENSTORE":
+                    response = server.getTokenStoreAsString();
+                    break;
                 default:
                     response = "Invalid action";
             }

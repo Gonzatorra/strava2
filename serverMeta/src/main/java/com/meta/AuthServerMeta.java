@@ -70,6 +70,31 @@ public class AuthServerMeta {
         }
 
     }
+    public String getUserStoreAsJson() {
+        return mapToJson(userStore);
+    }
+
+    public String getUserInfoStoreAsString() {
+        return mapToJson(userInfoStore);
+    }
+
+    public String getTokenStoreAsString() {
+        return mapToJson(tokenStore);
+    }
+
+    private String mapToJson(Map<String, String> map) {
+        StringBuilder jsonBuilder = new StringBuilder("{");
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            jsonBuilder.append("\"").append(entry.getKey()).append("\":\"").append(entry.getValue()).append("\",");
+        }
+        if (jsonBuilder.length() > 1) {
+            jsonBuilder.setLength(jsonBuilder.length() - 1); // Elimina la última coma
+        }
+        jsonBuilder.append("}");
+        return jsonBuilder.toString();
+    }
+
+
     public static void main(String[] args) {
         new AuthServerMeta().start();
     }
