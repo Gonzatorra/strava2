@@ -15,7 +15,15 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        // Inicializar el EntityManagerFactory
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+
+        // Aquí va la lógica de tu aplicación
+
+        em.close();
+        emf.close();
+        /*EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
@@ -78,6 +86,6 @@ public class Main {
         } finally {
             entityManager.close();
             entityManagerFactory.close();
-        }
+        }*/
     }
 }

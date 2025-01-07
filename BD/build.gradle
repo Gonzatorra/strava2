@@ -34,8 +34,8 @@ dependencies {
     
 }
 
-task prepareKotlinBuildScriptModel {
-
+application {
+    mainClassName = 'com.BD' // Asegúrate de que esta clase sea la correcta
 }
 
 test {

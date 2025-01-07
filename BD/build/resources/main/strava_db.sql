@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS strava_db;
 USE strava_db;
 
+
 DROP TABLE IF EXISTS reto_participantes;
 DROP TABLE IF EXISTS entrenamientos;
 DROP TABLE IF EXISTS retos;
