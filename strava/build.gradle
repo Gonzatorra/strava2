@@ -26,7 +26,9 @@ dependencies {
 
     implementation 'com.toedter:jcalendar:1.4'
 }
+task prepareKotlinBuildScriptModel {
 
+}
 dependencyManagement {
     imports {
         mavenBom 'org.junit:junit-bom:5.10.0'
