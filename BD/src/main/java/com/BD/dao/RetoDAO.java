@@ -1,6 +1,6 @@
 package com.BD.dao;
 
-import com.strava.dominio.Reto;
+import com.BD.entity.RetoEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -12,31 +12,63 @@ public class RetoDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
+    public RetoDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     @Transactional
-    public void createReto(Reto reto) {
+    public void createReto(RetoEntity retoEntity) {
         try {
-            entityManager.persist(reto);
+            entityManager.getTransaction().begin();
+            entityManager.persist(retoEntity);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
             e.printStackTrace();
         }
     }
 
-    public Reto findRetoById(Long id) {
-        return entityManager.find(Reto.class, id);
+    public RetoEntity findRetoByCreador(String username) {
+        TypedQuery<RetoEntity> query = entityManager.createQuery(
+                "SELECT u FROM RetoEntity u WHERE u.usuarioCreador = :username", RetoEntity.class);
+        query.setParameter("username", username);
+        return query.getSingleResult();
     }
 
-    public List<Reto> findAllRetos() {
-        TypedQuery<Reto> query = entityManager.createQuery(
-            "SELECT r FROM Reto r", Reto.class
-        );
-        return query.getResultList();
+    public RetoEntity findRetoById(int id) {
+        return entityManager.find(RetoEntity.class, id);
+    }
+
+    public List<RetoEntity> findAllRetos() {
+        return entityManager.createQuery("SELECT r FROM RetoEntity r", RetoEntity.class).getResultList();
     }
 
     @Transactional
-    public void updateReto(Reto reto) {
+    public void updateReto(long id, RetoEntity retoActualizado) {
         try {
-            entityManager.merge(reto);
+            RetoEntity retoExistente = entityManager.find(RetoEntity.class, id);
+            if (retoExistente != null) {
+                retoExistente.setDeporte(retoActualizado.getDeporte());
+                retoExistente.setFecFin(retoActualizado.getFecFin());
+                retoExistente.setObjetivoDistancia(retoActualizado.getObjetivoDistancia());
+                retoExistente.setObjetivoTiempo(retoActualizado.getObjetivoTiempo());
+                retoExistente.setParticipantes(retoActualizado.getParticipantes());
+                retoExistente.setNombre(retoActualizado.getNombre());
+                retoExistente.setFecIni(retoActualizado.getFecIni());
+
+                // Persistir los cambios del usuario
+                entityManager.getTransaction().begin();
+                entityManager.merge(retoExistente);
+                entityManager.getTransaction().commit();
+            } else {
+                System.out.println("Retoo no encontrado");
+            }
         } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
             e.printStackTrace();
         }
     }
@@ -44,11 +76,17 @@ public class RetoDAO {
     @Transactional
     public void deleteReto(Long id) {
         try {
-            Reto reto = findRetoById(id);
+            entityManager.getTransaction().begin();
+            RetoEntity reto = entityManager.find(RetoEntity.class, id);
             if (reto != null) {
                 entityManager.remove(reto);
             }
+            entityManager.getTransaction().commit();
+
         } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
             e.printStackTrace();
         }
     }

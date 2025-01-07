@@ -28,8 +28,6 @@ dependencies {
         
     implementation 'mysql:mysql-connector-java:8.0.33'
     
-    implementation project (':serverMeta')
-    implementation project (':serverGoogle')
     implementation project (':strava')
     
 }

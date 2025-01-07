@@ -1,34 +1,23 @@
 package com.BD;
 
+import com.BD.dao.UsuarioDAO;
 import com.BD.entity.UsuarioEntity;
-import com.BD.entity.RetoEntity;
-import com.BD.entity.EntrenamientoEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main {
 
     public static void main(String[] args) {
-        // Inicializar el EntityManagerFactory
-        /*EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-
-        // Aquí va la lógica de tu aplicación
-
-        em.close();
-        emf.close();*/
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
         try {
-            entityManager.getTransaction().begin();
+            UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
 
             UsuarioEntity usuario = new UsuarioEntity();
             usuario.setUsername("anamari");
@@ -44,9 +33,27 @@ public class Main {
             usuario.setProveedor("Strava");
             usuario.setAmigos(new ArrayList<>());
             usuario.setRetos(new HashMap<>());
+            //usuarioDAO.createUsuario(usuario);
 
-            entityManager.persist(usuario);
+            UsuarioEntity usuario2 = new UsuarioEntity();
+            usuario2.setUsername("aa");
+            usuario2.setEmail("aa@ewa.eus");
+            usuario2.setContrasena("1234");
+            usuario2.setNombre("Ana Maria Martikorena");
+            usuario2.setPeso(70.5f);
+            usuario2.setAltura(175.0f);
+            usuario2.setfNacimiento(new java.util.Date());
+            usuario2.setFrecCMax(180);
+            usuario2.setFrecCReposo(60);
+            usuario2.setToken("abc123");
+            usuario2.setProveedor("Strava");
+            usuario2.setAmigos(new ArrayList<>());
+            usuario2.setRetos(new HashMap<>());
+            usuarioDAO.updateUsuario(1L, usuario2);
 
+
+            //entityManager.persist(usuario);
+/*
             RetoEntity reto = new RetoEntity();
             reto.setDeporte("Running");
             reto.setNombre("Marathon Challenge");
@@ -76,7 +83,7 @@ public class Main {
 
             entityManager.getTransaction().commit();
 
-            System.out.println("Bien!");
+            System.out.println("Bien!");*/
 
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
@@ -84,7 +91,6 @@ public class Main {
             }
             e.printStackTrace();
         } finally {
-            entityManager.close();
             entityManagerFactory.close();
         }
     }
