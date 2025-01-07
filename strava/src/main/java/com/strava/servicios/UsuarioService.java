@@ -10,9 +10,14 @@ import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
+import com.BD.dao.UsuarioDAO;
+import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
 import com.strava.dominio.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 public class UsuarioService implements Serializable {
 
@@ -29,6 +34,20 @@ public class UsuarioService implements Serializable {
     }
 
     public UsuarioDTO registrar(String username, String contrasena, String email, String nombre, String proveedor) {
+        //Prueba para BD
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+        UsuarioEntity usuarioBD = new UsuarioEntity();
+        usuarioBD.setUsername(username);
+        usuarioBD.setEmail(email);
+        usuarioBD.setContrasena(contrasena);
+        usuarioBD.setNombre(nombre);
+        usuarioBD.setProveedor(proveedor);
+        usuarioBD.setAmigos(new ArrayList<>());
+        usuarioBD.setRetos(new HashMap<>());
+        usuarioDAO.createUsuario(usuarioBD);
+        //
         int nuevoId = idCounter++;
         Usuario usuario = new Usuario(nuevoId, username, email, contrasena, nombre, null, proveedor, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
         usuarios.put(UsuarioAssembler.toDTO(usuario).getId(), UsuarioAssembler.toDTO(usuario));

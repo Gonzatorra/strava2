@@ -23,6 +23,7 @@ dependencies {
 
     implementation project(':serverMeta')
     implementation project(':serverGoogle')
+    implementation project(':BD')
     implementation 'com.toedter:jcalendar:1.4'
 }
 task prepareKotlinBuildScriptModel {

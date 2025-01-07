@@ -1,8 +1,6 @@
 package com.BD.dao;
 
 import com.BD.entity.UsuarioEntity;
-import com.strava.dominio.*;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
