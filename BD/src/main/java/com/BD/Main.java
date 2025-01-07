@@ -16,14 +16,14 @@ public class Main {
 
     public static void main(String[] args) {
         // Inicializar el EntityManagerFactory
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        /*EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
         EntityManager em = emf.createEntityManager();
 
         // Aquí va la lógica de tu aplicación
 
         em.close();
-        emf.close();
-        /*EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        emf.close();*/
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
 
@@ -86,6 +86,6 @@ public class Main {
         } finally {
             entityManager.close();
             entityManagerFactory.close();
-        }*/
+        }
     }
 }

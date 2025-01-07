@@ -1,10 +1,8 @@
 package com.BD.entity;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.*;
 
 @Entity
 @Table(name = "usuarios")
@@ -63,7 +61,7 @@ public class UsuarioEntity {
     @CollectionTable(name = "usuario_retos", joinColumns = @JoinColumn(name = "usuario_id"))
     @MapKeyJoinColumn(name = "reto_id")
     @Column(name = "estado")
-    private HashMap<RetoEntity, String> retos = new HashMap<>();
+    private Map<RetoEntity, String> retos = new HashMap<>();
 
     public int getId() {
         return id;
@@ -186,7 +184,7 @@ public class UsuarioEntity {
     }
 
     public HashMap<RetoEntity, String> getRetos() {
-        return retos;
+        return (HashMap<RetoEntity, String>) retos;
     }
 
     public void setRetos(HashMap<RetoEntity, String> retos) {
