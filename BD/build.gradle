@@ -30,9 +30,11 @@ dependencies {
 
 }
 
+
 application {
-    mainClassName = 'com.BD' // Asegúrate de que esta clase sea la correcta
+    mainClassName = 'com.BD.Main'
 }
+
 
 test {
     useJUnitPlatform()

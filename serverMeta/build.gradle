@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group = 'com.meta'
@@ -15,10 +16,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
 }
 
-task prepareKotlinBuildScriptModel {
-
-}
-
 tasks.test {
     useJUnitPlatform()
 }
+
