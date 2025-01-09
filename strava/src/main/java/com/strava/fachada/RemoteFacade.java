@@ -468,7 +468,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     @Override
     public void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fechaIni, LocalDateTime fechaFin, float distancia,
-                               float tiempo, UsuarioDTO usuarioCreador, String deporte, ArrayList<Integer> participantes) throws RemoteException {
+                               float tiempo, String usuarioCreador, String deporte, ArrayList<Integer> participantes) throws RemoteException {
         retoService.actualizarReto(reto, nombre, fechaIni, fechaFin, distancia, tiempo, usuarioCreador, deporte, participantes);
     }
 

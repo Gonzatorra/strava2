@@ -11,7 +11,7 @@ public class RetoDTO implements Serializable{
     //atributos
     private int id;
     private String deporte;
-    private UsuarioDTO usuarioCreador;
+    private String usuarioCreador;
     private String nombre;
     private LocalDateTime fecIni;
     private LocalDateTime fecFin;
@@ -34,7 +34,7 @@ public class RetoDTO implements Serializable{
         return deporte;
     }
 
-    public UsuarioDTO getUsuarioCreador() {
+    public String getUsuarioCreador() {
         return usuarioCreador;
     }
 
@@ -71,7 +71,7 @@ public class RetoDTO implements Serializable{
         this.deporte = deporte;
     }
 
-    public void setUsuarioCreador(UsuarioDTO usuarioCreador) {
+    public void setUsuarioCreador(String usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
 

@@ -10,7 +10,7 @@ public class RetoAssembler {
         RetoDTO dto = new RetoDTO();
         dto.setId(reto.getId());
         dto.setDeporte(reto.getDeporte());
-        dto.setUsuarioCreador(UsuarioAssembler.toDTO(reto.getUsuarioCreador()));
+        dto.setUsuarioCreador(reto.getUsuarioCreador());
         dto.setNombre(reto.getNombre());
         dto.setFecIni(reto.getFecIni());
         dto.setFecFin(reto.getFecFin());
@@ -24,7 +24,7 @@ public class RetoAssembler {
         Reto reto = new Reto();
         reto.setId(retoDTO.getId());
         reto.setDeporte(retoDTO.getDeporte());
-        reto.setUsuarioCreador(UsuarioAssembler.toDomain(retoDTO.getUsuarioCreador()));
+        reto.setUsuarioCreador(retoDTO.getUsuarioCreador());
         reto.setNombre(retoDTO.getNombre());
         reto.setFecIni(retoDTO.getFecIni());
         reto.setFecFin(retoDTO.getFecFin());

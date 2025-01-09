@@ -11,7 +11,7 @@ public class Reto implements Serializable{
     //atributos
     private int id;
     private String deporte;
-    private Usuario usuarioCreador;
+    private String usuarioCreador;
     private String nombre;
     private LocalDateTime fecIni;
     private LocalDateTime fecFin;
@@ -24,7 +24,7 @@ public class Reto implements Serializable{
         //constructor vacío
     }
 
-    public Reto(int id, String deporte, Usuario usuarioCreador, String nombre, LocalDateTime fecIni, LocalDateTime fecFin,
+    public Reto(int id, String deporte, String usuarioCreador, String nombre, LocalDateTime fecIni, LocalDateTime fecFin,
                 float objetivoDistancia, float objetivoTiempo, ArrayList<Integer> participantes) {
         this.id = id;
         this.deporte = deporte;
@@ -54,11 +54,11 @@ public class Reto implements Serializable{
         this.deporte = deporte;
     }
 
-    public Usuario getUsuarioCreador() {
+    public String getUsuarioCreador() {
         return usuarioCreador;
     }
 
-    public void setUsuarioCreador(Usuario usuarioCreador) {
+    public void setUsuarioCreador(String usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
 
@@ -112,7 +112,7 @@ public class Reto implements Serializable{
 
     //metodos
     public void crearReto(String nombre, LocalDateTime fecIni, LocalDateTime fecFin, float objetivoDistancia, float objetivoTiempo,
-                          String deporte, Usuario usuarioCreador, ArrayList<Integer> participantes) {
+                          String deporte, String usuarioCreador, ArrayList<Integer> participantes) {
         this.nombre = nombre;
         this.fecIni = fecIni;
         this.fecFin = fecFin;
@@ -125,7 +125,7 @@ public class Reto implements Serializable{
 
 
     public Reto actualizarReto( String nombre, LocalDateTime fecIni, LocalDateTime fecFin, float objetivoDistancia,
-                                float objetivoTiempo, Usuario usuarioCreador, String deporte, ArrayList<Integer> participantes) {
+                                float objetivoTiempo, String usuarioCreador, String deporte, ArrayList<Integer> participantes) {
         System.out.println("Se actualiza el reto");
 
         this.setNombre(nombre);

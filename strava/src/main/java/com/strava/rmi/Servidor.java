@@ -102,7 +102,7 @@ public class Servidor {
         facade.registrarUsuario("laura999", "lauraKey", "laura999@strava.com", "Laura", "Strava");
         facade.registrarUsuario("david111", "davidKey", "david111@strava.com", "David", "Strava");
         facade.registrarUsuario("sofia777", "sofiaKey", "sofia777@strava.com", "Sofía", "Strava");
-        //facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
+        facade.registrarUsuario("carlos888", "carlosKey", "carlos888@strava.com", "Carlos", "Strava");
 
     }
 

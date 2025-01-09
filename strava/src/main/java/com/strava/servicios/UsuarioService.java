@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
 import com.BD.dao.UsuarioDAO;
+import com.BD.entity.RetoEntity;
 import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
@@ -117,6 +119,55 @@ public class UsuarioService implements Serializable {
     public void actualizarUsuario(UsuarioDTO usuarioDTO) {
         UsuarioDTO usuario = usuarios.get(usuarioDTO.getId());
         if (usuario != null) {
+        	
+        	
+        	//Prueba para BD
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+            UsuarioEntity usuarioBD = new UsuarioEntity();
+            usuarioBD.setUsername(usuarioDTO.getUsername());
+            usuarioBD.setEmail(usuarioDTO.getEmail());
+            usuarioBD.setContrasena(usuarioDTO.getContrasena());
+            usuarioBD.setNombre(usuarioDTO.getNombre());
+            usuarioBD.setProveedor(usuarioDTO.getProveedor());
+            usuarioBD.setAmigos(usuarioDTO.getAmigos());
+            //RETO
+            HashMap<RetoEntity,String> retosBD = new HashMap<RetoEntity, String>();
+            for(Entry<RetoDTO, String> r: usuarioDTO.getRetos().entrySet()) {
+            	RetoDTO reto= r.getKey();
+            	String estado= r.getValue();
+            	RetoEntity retoBD = new RetoEntity();
+                retoBD.setNombre(reto.getNombre().toString());
+                retoBD.setFecIni(reto.getFecIni());
+                retoBD.setFecFin(reto.getFecFin());
+                retoBD.setObjetivoDistancia(reto.getObjetivoDistancia());
+                retoBD.setObjetivoTiempo(reto.getObjetivoTiempo());
+                retoBD.setUsuarioCreador(reto.getUsuarioCreador());
+                retoBD.setDeporte(reto.getDeporte());
+                retoBD.setParticipantes(reto.getParticipantes());
+                retosBD.put(retoBD, estado);
+                
+            }
+            
+            
+            usuarioBD.setRetos(retosBD);
+            usuarioBD.setToken(usuarioDTO.getToken());
+            usuarioBD.setFrecCMax(usuarioDTO.getFecCMax());
+            usuarioBD.setAltura(usuarioDTO.getAltura());
+            ///////////////////////////////////////usuarioBD.setEntrenamientos(usuarioDTO.getEntrenamientos());
+            usuarioBD.setfNacimiento(usuarioDTO.getfNacimiento());
+            usuarioBD.setFrecCReposo(usuarioDTO.getFecCReposo());
+            usuarioBD.setId(usuarioDTO.getId());
+            usuarioBD.setPeso(usuarioDTO.getPeso());
+            //usuarioBD.setRetosCreados(usuarioDTO.getRetos());
+            usuarioDAO.createUsuario(usuarioBD);
+        	
+        	
+        	
+        	
+        	
+        	
             usuario.setUsername(usuarioDTO.getUsername());
             usuario.setEmail(usuarioDTO.getEmail());
             usuario.setContrasena(usuarioDTO.getContrasena());

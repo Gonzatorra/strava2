@@ -916,7 +916,7 @@ public class MenuGUI extends JFrame {
                                     r.getId(),
                                     r.getNombre(),
                                     r.getDeporte(),
-                                    r.getUsuarioCreador().getUsername(),
+                                    r.getUsuarioCreador(),
                                     r.getFecIni().format(formatter),
                                     r.getFecFin().format(formatter),
                                     r.getObjetivoDistancia(),
@@ -1107,7 +1107,7 @@ public class MenuGUI extends JFrame {
                         Reto reto = new Reto(
 	                        0, // ID se generará
 	                        sportField.getText(),
-	                        UsuarioAssembler.toDomain(usuario),
+	                        usuario.getUsername(),
 	                        titleField.getText(),
 	                        fecIni,
 	                        fecFin,
@@ -1132,7 +1132,7 @@ public class MenuGUI extends JFrame {
                                 reto1.getId(),
                                 reto1.getNombre(),
                                 reto1.getDeporte(),
-                                reto1.getUsuarioCreador().getUsername(),
+                                reto1.getUsuarioCreador(),
                                 reto1.getFecIni().format(formatter),
                                 reto1.getFecFin().format(formatter),
                                 reto1.getObjetivoDistancia(),
@@ -1321,7 +1321,7 @@ public class MenuGUI extends JFrame {
                     Reto retoActualizado = new Reto(
                         selectedRow, // ID del reto
                         sportField.getText(),
-                        UsuarioAssembler.toDomain(usuario),
+                        usuario.getUsername(),
                         titleField.getText(),
                         fecIni,
                         fecFin,
@@ -1338,7 +1338,7 @@ public class MenuGUI extends JFrame {
                                 fecFin,
                                 Float.parseFloat(distanceField.getText()),
                                 Float.parseFloat(timeField.getText()),
-                                usuario,
+                                usuario.getUsername(),
                                 sportField.getText(),
                                 new ArrayList<>()
                         );
@@ -1395,7 +1395,7 @@ public class MenuGUI extends JFrame {
                         }
                         
                         
-                        if (usuario.getId() == r.getUsuarioCreador().getId()) {
+                        if (usuario.getUsername().equals(r.getUsuarioCreador())) {
                             //eliminar reto completo
                             System.out.println("El creador elimina el reto.");
                             ArrayList<Integer> participantes = r.getParticipantes();
@@ -1513,7 +1513,7 @@ public class MenuGUI extends JFrame {
                                     r.getId(),
                                     r.getNombre(),
                                     r.getDeporte(),
-                                    r.getUsuarioCreador().getUsername(),
+                                    r.getUsuarioCreador(),
                                     r.getFecIni().toString(),
                                     r.getFecFin().toString(),
                                     r.getObjetivoDistancia(),
@@ -1592,7 +1592,7 @@ public class MenuGUI extends JFrame {
                                     retoSeleccionado.getId(),
                                     retoSeleccionado.getNombre(),
                                     retoSeleccionado.getDeporte(),
-                                    retoSeleccionado.getUsuarioCreador().getUsername(),
+                                    retoSeleccionado.getUsuarioCreador(),
                                     retoSeleccionado.getFecIni().toString(),
                                     retoSeleccionado.getFecFin().toString(),
                                     retoSeleccionado.getObjetivoDistancia(),

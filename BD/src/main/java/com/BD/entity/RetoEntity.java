@@ -17,8 +17,8 @@ public class RetoEntity {
     private String deporte;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_creador_id", nullable = false)
-    private UsuarioEntity usuarioCreador;
+    @JoinColumn(name = "creador", nullable = false)
+    private String usuarioCreador;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;
@@ -56,11 +56,11 @@ public class RetoEntity {
         this.deporte = deporte;
     }
 
-    public UsuarioEntity getUsuarioCreador() {
+    public String getUsuarioCreador() {
         return usuarioCreador;
     }
 
-    public void setUsuarioCreador(UsuarioEntity usuarioCreador) {
+    public void setUsuarioCreador(String usuarioCreador) {
         this.usuarioCreador = usuarioCreador;
     }
 
