@@ -16,8 +16,7 @@ public class RetoEntity {
     @Column(name = "deporte", nullable = false)
     private String deporte;
 
-    @ManyToOne
-    @JoinColumn(name = "creador", nullable = false)
+    @Column(name = "creador", nullable = false)
     private String usuarioCreador;
 
     @Column(name = "nombre", nullable = false)
@@ -111,4 +110,5 @@ public class RetoEntity {
     public void setParticipantes(List<Integer> participantes) {
         this.participantes = participantes;
     }
+    
 }
