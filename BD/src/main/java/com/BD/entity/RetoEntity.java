@@ -16,8 +16,9 @@ public class RetoEntity {
     @Column(name = "deporte", nullable = false)
     private String deporte;
 
-    @Column(name = "creador", nullable = false)
-    private String usuarioCreador;
+    @ManyToOne
+    @JoinColumn(name = "creador", referencedColumnName = "username") 
+    private UsuarioEntity usuarioCreador;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;
@@ -55,15 +56,16 @@ public class RetoEntity {
         this.deporte = deporte;
     }
 
-    public String getUsuarioCreador() {
-        return usuarioCreador;
-    }
 
-    public void setUsuarioCreador(String usuarioCreador) {
-        this.usuarioCreador = usuarioCreador;
-    }
+    public UsuarioEntity getUsuarioCreador() {
+		return usuarioCreador;
+	}
 
-    public String getNombre() {
+	public void setUsuarioCreador(UsuarioEntity usuarioCreador) {
+		this.usuarioCreador = usuarioCreador;
+	}
+
+	public String getNombre() {
         return nombre;
     }
 
