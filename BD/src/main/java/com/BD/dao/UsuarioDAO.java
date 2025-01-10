@@ -66,7 +66,6 @@ public class UsuarioDAO {
                 usuarioExistente.setFrecCReposo(usuarioActualizado.getFrecCReposo());
                 usuarioExistente.setToken(usuarioActualizado.getToken());
                 usuarioExistente.setProveedor(usuarioActualizado.getProveedor());
-                usuarioExistente.setRetosCreados(usuarioActualizado.getRetosCreados());
                 usuarioExistente.setEntrenamientos(usuarioActualizado.getEntrenamientos());
                 usuarioExistente.setAmigos(usuarioActualizado.getAmigos());
                 usuarioExistente.setRetos(usuarioActualizado.getRetos());

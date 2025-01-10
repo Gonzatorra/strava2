@@ -46,8 +46,8 @@ public class UsuarioEntity {
     @Column(name = "proveedor")
     private String proveedor;
 
-    @OneToMany(mappedBy = "usuarioCreador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<RetoEntity> retosCreados = new ArrayList<>();
+    //@OneToMany(mappedBy = "usuarioCreador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //private List<RetoEntity> retosCreados = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<EntrenamientoEntity> entrenamientos = new ArrayList<>();
@@ -159,13 +159,6 @@ public class UsuarioEntity {
         this.proveedor = proveedor;
     }
 
-    public List<RetoEntity> getRetosCreados() {
-        return retosCreados;
-    }
-
-    public void setRetosCreados(List<RetoEntity> retosCreados) {
-        this.retosCreados = retosCreados;
-    }
 
     public List<EntrenamientoEntity> getEntrenamientos() {
         return entrenamientos;

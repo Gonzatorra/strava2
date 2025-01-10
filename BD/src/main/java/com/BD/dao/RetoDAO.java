@@ -30,11 +30,13 @@ public class RetoDAO {
         }
     }
 
-    public RetoEntity findRetoByCreador(String username) {
+    public List<RetoEntity> findRetoByCreador(String creador) {
         TypedQuery<RetoEntity> query = entityManager.createQuery(
-                "SELECT u FROM RetoEntity u WHERE u.usuarioCreador = :username", RetoEntity.class);
-        query.setParameter("username", username);
-        return query.getSingleResult();
+            "SELECT r FROM RetoEntity r WHERE r.creador = :creador",
+            RetoEntity.class
+        );
+        query.setParameter("creador", creador);
+        return query.getResultList();
     }
 
     public RetoEntity findRetoById(int id) {
