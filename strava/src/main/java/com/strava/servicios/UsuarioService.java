@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 import javax.swing.JOptionPane;
 
 import com.BD.dao.UsuarioDAO;
+import com.BD.entity.EntrenamientoEntity;
 import com.BD.entity.RetoEntity;
 import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
@@ -120,8 +124,7 @@ public class UsuarioService implements Serializable {
         UsuarioDTO usuario = usuarios.get(usuarioDTO.getId());
         if (usuario != null) {
         	
-        	
-        	//Prueba para BD
+        	//BD
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
@@ -132,6 +135,7 @@ public class UsuarioService implements Serializable {
             usuarioBD.setNombre(usuarioDTO.getNombre());
             usuarioBD.setProveedor(usuarioDTO.getProveedor());
             usuarioBD.setAmigos(usuarioDTO.getAmigos());
+            
             //RETO
             HashMap<RetoEntity,String> retosBD = new HashMap<RetoEntity, String>();
             for(Entry<RetoDTO, String> r: usuarioDTO.getRetos().entrySet()) {
@@ -150,22 +154,33 @@ public class UsuarioService implements Serializable {
                 
             }
             
-            
             usuarioBD.setRetos(retosBD);
             usuarioBD.setToken(usuarioDTO.getToken());
             usuarioBD.setFrecCMax(usuarioDTO.getFecCMax());
             usuarioBD.setAltura(usuarioDTO.getAltura());
-            ///////////////////////////////////////usuarioBD.setEntrenamientos(usuarioDTO.getEntrenamientos());
+            
+            //Entrenamientos
+            ArrayList<EntrenamientoEntity> entrenamientosBD = new ArrayList<EntrenamientoEntity>();
+            for(EntrenamientoDTO e: usuarioDTO.getEntrenamientos()) {
+            	EntrenamientoEntity entrenoBD = new EntrenamientoEntity();
+            	entrenoBD.setTitulo(e.getTitulo());
+            	entrenoBD.setFechaInicio(e.getFecIni());
+            	entrenoBD.setHoraInicio(e.getHoraIni());
+            	entrenoBD.setDistancia(e.getDistancia());
+            	entrenoBD.setDuracion(e.getDuracion());
+            	entrenoBD.setDeporte(e.getDeporte());
+            	entrenoBD.setId(e.getId());
+            	entrenoBD.setUsuario(usuarioBD);
+                entrenamientosBD.add(entrenoBD);
+            }
+            
+            usuarioBD.setEntrenamientos(entrenamientosBD);
             usuarioBD.setfNacimiento(usuarioDTO.getfNacimiento());
             usuarioBD.setFrecCReposo(usuarioDTO.getFecCReposo());
             usuarioBD.setId(usuarioDTO.getId());
             usuarioBD.setPeso(usuarioDTO.getPeso());
-            //usuarioBD.setRetosCreados(usuarioDTO.getRetos());
-            usuarioDAO.createUsuario(usuarioBD);
-        	
-        	
-        	
-        	
+            usuarioDAO.updateUsuario(usuarioBD.getId(), usuarioBD);
+        	//
         	
         	
             usuario.setUsername(usuarioDTO.getUsername());

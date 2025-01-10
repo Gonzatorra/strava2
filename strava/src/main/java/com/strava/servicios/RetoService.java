@@ -7,9 +7,18 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.BD.dao.RetoDAO;
+import com.BD.dao.UsuarioDAO;
+import com.BD.entity.RetoEntity;
+import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
 import com.strava.dominio.*;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 import com.strava.assembler.*;
 
 public class RetoService {
@@ -35,7 +44,24 @@ public class RetoService {
         for (Usuario u: particips) {
             ids.add(u.getId());
         }
-
+        //BD
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        RetoDAO retoDAO = new RetoDAO(entityManager);
+        RetoEntity retoBD = new RetoEntity();
+        retoBD.setDeporte(deporte);
+        retoBD.setFecFin(fecFin);
+        retoBD.setFecIni(fecIni);
+        retoBD.setId(nuevoId);
+        retoBD.setNombre(nombre);
+        retoBD.setObjetivoDistancia(objetivoDistancia);
+        retoBD.setObjetivoTiempo(objetivoTiempo);
+        retoBD.setParticipantes(ids);
+        retoBD.setUsuarioCreador(usuarioCreador.getUsername());
+        
+        retoDAO.createReto(retoBD);
+        //
+        
         RetoDTO reto = RetoAssembler.toDTO(new Reto(nuevoId, deporte, usu.getUsername(), nombre, fecIni, fecFin, objetivoDistancia, objetivoTiempo, ids));
         UsuarioAssembler.toDomain(usuarioCreador).getRetos().put(RetoAssembler.toDomain(reto), "prueba");
         retos.put(nuevoId,reto);
@@ -44,7 +70,12 @@ public class RetoService {
     }
 
     public void aceptarReto(UsuarioDTO usuario, RetoDTO reto) {
+    	ArrayList<Integer> ids = reto.getParticipantes();
+    	ids.add(usuario.getId());
+    	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
+    			reto.getUsuarioCreador(), reto.getDeporte(), ids);
         RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
+        
     }
 
     public HashMap<Integer,RetoDTO> visualizarReto() {
@@ -57,6 +88,26 @@ public class RetoService {
         Reto retoExistente = RetoAssembler.toDomain(retos.get(reto.getId()));
         if (retoExistente != null && retoExistente.getUsuarioCreador().equals(usuarioCreador)) {
 
+        	
+        	//BD
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            RetoDAO retoDAO = new RetoDAO(entityManager);
+            RetoEntity retoBD = new RetoEntity();
+            retoBD.setDeporte(deporte);
+            retoBD.setFecFin(fecFin);
+            retoBD.setFecIni(fecIni);
+            retoBD.setId(reto.getId());
+            retoBD.setNombre(nombre);
+            retoBD.setObjetivoDistancia(objetivoDistancia);
+            retoBD.setObjetivoTiempo(objetivoTiempo);
+            retoBD.setParticipantes(participantes);
+            retoBD.setUsuarioCreador(usuarioCreador);
+            
+            retoDAO.updateReto(retoBD.getId(), retoBD);
+            //
+        	
+        	
 
             // Actualizar los datos del reto existente
             retoExistente.actualizarReto(nombre, fecIni, fecFin, objetivoDistancia, objetivoTiempo, usuarioCreador, deporte,
@@ -73,7 +124,11 @@ public class RetoService {
     public void eliminarReto(UsuarioDTO usuario, RetoDTO reto) {
         RetoAssembler.toDomain(reto).eliminarReto(UsuarioAssembler.toDomain(usuario));
         if(usuario.getUsername().equals(reto.getUsuarioCreador())) {
-            retos.remove(reto.getId());
+        	 EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+             EntityManager entityManager = entityManagerFactory.createEntityManager();
+             RetoDAO retoDAO = new RetoDAO(entityManager);
+             retoDAO.deleteReto((long) reto.getId());
+             retos.remove(reto.getId());
 
         }
         else {

@@ -5,8 +5,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.BD.dao.EntrenamientoDAO;
+import com.BD.dao.UsuarioDAO;
+import com.BD.entity.EntrenamientoEntity;
+import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.dominio.*;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
 import com.strava.assembler.*;
 
 public class EntrenamientoService {
@@ -19,6 +28,8 @@ public class EntrenamientoService {
 
     public EntrenamientoDTO crearEntreno(UsuarioDTO usuario, String titulo, String deporte, double distancia, LocalDate fechaIni,
                                          float horaInicio, double duracion) {
+    	
+    	
         // Crear el nuevo entrenamiento
         Integer idUEntreno=entrenoIdxUsuario.getOrDefault(usuario.getId(), 0); //si no tiene entrenamientos
         if(idUEntreno==null) {
@@ -26,6 +37,20 @@ public class EntrenamientoService {
         }
         entrenoIdxUsuario.put(usuario.getId(), idUEntreno+1);
         EntrenamientoDTO entreno = new EntrenamientoDTO(idUEntreno+1, usuario.getUsername(), titulo, deporte, (float) distancia, fechaIni, horaInicio, duracion);
+        //BD
+    	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO(entityManager);
+        EntrenamientoEntity entrenamientoBD = new EntrenamientoEntity();
+        entrenamientoBD.setDistancia(distancia);
+        entrenamientoBD.setDeporte(deporte);
+        entrenamientoBD.setDuracion(duracion);
+        entrenamientoBD.setFechaInicio(fechaIni);
+        entrenamientoBD.setHoraInicio(horaInicio);
+        entrenamientoBD.setId(entreno.getId());
+        entrenamientoBD.setUsuario(usuario.getUsername());
+        entrenamientoDAO.createEntrenamiento(entrenamientoBD);
+    	//
         return entreno;
     }
 
@@ -37,6 +62,22 @@ public class EntrenamientoService {
                 e.setDeporte(deporte);
                 e.setDistancia((float) distancia);
                 e.setDuracion(duracion);
+                
+              //BD
+            	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+                EntityManager entityManager = entityManagerFactory.createEntityManager();
+                EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO(entityManager);
+                EntrenamientoEntity entrenamientoBD = new EntrenamientoEntity();
+                entrenamientoBD.setDistancia(distancia);
+                entrenamientoBD.setDeporte(deporte);
+                entrenamientoBD.setDuracion(duracion);
+                entrenamientoBD.setFechaInicio(entrenamiento.getFecIni());
+                entrenamientoBD.setHoraInicio(entrenamiento.getHoraIni());
+                entrenamientoBD.setId(entrenamiento.getId());
+                entrenamientoBD.setUsuario(usu.getUsername());
+                entrenamientoDAO.updateEntrenamiento(entrenamientoBD.getId(), entrenamientoBD);
+            	//
+                
 
                 System.out.println("Entrenamiento actualizado: " + titulo);
                 return;  // Sale del método después de actualizar el entrenamiento
@@ -50,6 +91,14 @@ public class EntrenamientoService {
 
 
     public void eliminarEntreno(int index, EntrenamientoDTO entrenamiento) {
+    	
+    	//BD
+    	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO(entityManager);
+        entrenamientoDAO.deleteEntrenamiento(entrenamiento.getId());
+        //
+        
         System.out.println("Entrenamiento eliminado: " + entrenamiento.getTitulo());
     }
 

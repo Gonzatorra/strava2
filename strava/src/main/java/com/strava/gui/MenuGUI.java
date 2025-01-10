@@ -1139,7 +1139,8 @@ public class MenuGUI extends JFrame {
                                 reto1.getObjetivoTiempo()
                         });
 
-                        usuario.getRetos().put(reto1, "prueba");
+                        usuario.getRetos().put(reto1, "inicial");
+                        facade.aceptarReto(usuario, reto1);
                         facade.actualizarUsuario(usuario);
 
                         JOptionPane.showMessageDialog(null, "Reto añadido con éxito.");

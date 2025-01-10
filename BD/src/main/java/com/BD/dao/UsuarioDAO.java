@@ -19,7 +19,8 @@ public class UsuarioDAO {
     public void createUsuario(UsuarioEntity usuario) {
         try {
             entityManager.getTransaction().begin();
-            entityManager.persist(usuario);
+            ///entityManager.persist(usuario);
+            entityManager.merge(usuario);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
