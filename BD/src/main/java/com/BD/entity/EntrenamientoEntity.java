@@ -1,7 +1,8 @@
 package com.BD.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "entrenamientos")
@@ -11,9 +12,8 @@ public class EntrenamientoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private UsuarioEntity usuario;
+    @Column(name = "usuario", nullable = false)
+    private String usuario;
 
     @Column(name = "titulo", nullable = false)
     private String titulo;
@@ -28,7 +28,7 @@ public class EntrenamientoEntity {
     private double duracion;
 
     @Column(name = "fecha_inicio", nullable = false)
-    private LocalDateTime fechaInicio;
+    private LocalDate fechaInicio;
 
     @Column(name = "hora_inicio", nullable = false)
     private float horaInicio;
@@ -41,11 +41,11 @@ public class EntrenamientoEntity {
         this.id = id;
     }
 
-    public UsuarioEntity getUsuario() {
+    public String getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(UsuarioEntity usuario) {
+    public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
 
@@ -81,11 +81,11 @@ public class EntrenamientoEntity {
         this.duracion = duracion;
     }
 
-    public LocalDateTime getFechaInicio() {
+    public LocalDate getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(LocalDateTime fechaInicio) {
+    public void setFechaInicio(LocalDate fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 

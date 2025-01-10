@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 
 import javax.swing.JOptionPane;
@@ -170,7 +171,7 @@ public class UsuarioService implements Serializable {
             	entrenoBD.setDuracion(e.getDuracion());
             	entrenoBD.setDeporte(e.getDeporte());
             	entrenoBD.setId(e.getId());
-            	entrenoBD.setUsuario(usuarioBD);
+            	entrenoBD.setUsuario(usuarioBD.getUsername());
                 entrenamientosBD.add(entrenoBD);
             }
             
