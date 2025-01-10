@@ -105,4 +105,27 @@ public class EntrenamientoService {
     public void visualizarEntreno(EntrenamientoDTO entrenamientoDTO) {
         System.out.println("Visualizando entrenamiento: " + entrenamientoDTO.getTitulo());
     }
+    
+    public void crearOActualizarEntrenamiento(EntrenamientoDTO e) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        EntrenamientoDAO dao = new EntrenamientoDAO(em);
+
+        EntrenamientoEntity entrenoBD = new EntrenamientoEntity();
+        entrenoBD.setId(e.getId());
+        entrenoBD.setTitulo(e.getTitulo());
+        entrenoBD.setFechaInicio(e.getFecIni());
+        entrenoBD.setHoraInicio(e.getHoraIni());
+        entrenoBD.setDistancia(e.getDistancia());
+        entrenoBD.setDuracion(e.getDuracion());
+        entrenoBD.setDeporte(e.getDeporte());
+        entrenoBD.setUsuario(e.getUsuario());
+
+        if (entrenoBD.getId() == 0) {
+            dao.createEntrenamiento(entrenoBD);
+        } else {
+            dao.updateEntrenamiento(entrenoBD.getId(), entrenoBD);
+        }
+    }
+
 }

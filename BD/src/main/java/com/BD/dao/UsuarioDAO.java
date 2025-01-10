@@ -1,5 +1,6 @@
 package com.BD.dao;
 
+import com.BD.entity.RetoParticipantesEntity;
 import com.BD.entity.UsuarioEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -51,11 +52,9 @@ public class UsuarioDAO {
     // Actualizar un Usuario
     public void updateUsuario(long id, UsuarioEntity usuarioActualizado) {
         try {
-            // Buscar el usuario en la base de datos usando su ID
             UsuarioEntity usuarioExistente = entityManager.find(UsuarioEntity.class, id);
 
             if (usuarioExistente != null) {
-                // Actualizar los valores del usuario existente con los del usuario nuevo
                 usuarioExistente.setUsername(usuarioActualizado.getUsername());
                 usuarioExistente.setEmail(usuarioActualizado.getEmail());
                 usuarioExistente.setContrasena(usuarioActualizado.getContrasena());
@@ -67,18 +66,14 @@ public class UsuarioDAO {
                 usuarioExistente.setFrecCReposo(usuarioActualizado.getFrecCReposo());
                 usuarioExistente.setToken(usuarioActualizado.getToken());
                 usuarioExistente.setProveedor(usuarioActualizado.getProveedor());
-                usuarioExistente.setEntrenamientos(usuarioActualizado.getEntrenamientos());
                 usuarioExistente.setAmigos(usuarioActualizado.getAmigos());
-                usuarioExistente.setRetos(usuarioActualizado.getRetos());
 
-                // Persistir los cambios del usuario
                 entityManager.getTransaction().begin();
                 entityManager.merge(usuarioExistente);
                 entityManager.getTransaction().commit();
             } else {
                 System.out.println("Usuario no encontrado");
             }
-
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
@@ -86,6 +81,7 @@ public class UsuarioDAO {
             e.printStackTrace();
         }
     }
+
 
     // Eliminar un Usuario por ID
     public void deleteUsuario(Long id) {
@@ -102,6 +98,13 @@ public class UsuarioDAO {
             }
             e.printStackTrace();
         }
+    }
+    
+    public List<RetoParticipantesEntity> findRetosByUsuarioId(int usuarioId) {
+        return entityManager.createQuery(
+            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId",
+            RetoParticipantesEntity.class
+        ).setParameter("usuarioId", usuarioId).getResultList();
     }
 
 }

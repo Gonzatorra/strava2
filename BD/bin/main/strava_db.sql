@@ -35,7 +35,7 @@ CREATE TABLE retos (
 
 CREATE TABLE entrenamientos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario INT NOT NULL,
+    usuario VARCHAR(50) NOT NULL,
     titulo VARCHAR(255) NOT NULL,
     deporte VARCHAR(50) NOT NULL,
     distancia DOUBLE NOT NULL,
@@ -46,10 +46,12 @@ CREATE TABLE entrenamientos (
 );
 
 CREATE TABLE reto_participantes (
-    reto_id INT NOT NULL,
     usuario_id INT NOT NULL,
-    PRIMARY KEY (reto_id, usuario_id),
-    FOREIGN KEY (reto_id) REFERENCES retos(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    reto_id INT NOT NULL,
+    estado VARCHAR(255),
+    PRIMARY KEY (usuario_id, reto_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (reto_id) REFERENCES retos(id) ON DELETE CASCADE
 );
+
 select * from usuarios;

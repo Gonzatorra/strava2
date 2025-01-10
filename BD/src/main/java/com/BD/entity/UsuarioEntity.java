@@ -49,19 +49,14 @@ public class UsuarioEntity {
     //@OneToMany(mappedBy = "usuarioCreador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //private List<RetoEntity> retosCreados = new ArrayList<>();
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<EntrenamientoEntity> entrenamientos = new ArrayList<>();
+    //@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //private List<EntrenamientoEntity> entrenamientos = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "usuario_amigos", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "amigo_id")
     private List<Integer> amigos = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "usuario_retos", joinColumns = @JoinColumn(name = "usuario_id"))
-    @MapKeyJoinColumn(name = "reto_id")
-    @Column(name = "estado")
-    private Map<RetoEntity, String> retos = new HashMap<>();
 
     public int getId() {
         return id;
@@ -160,14 +155,6 @@ public class UsuarioEntity {
     }
 
 
-    public List<EntrenamientoEntity> getEntrenamientos() {
-        return entrenamientos;
-    }
-
-    public void setEntrenamientos(List<EntrenamientoEntity> entrenamientos) {
-        this.entrenamientos = entrenamientos;
-    }
-
     public List<Integer> getAmigos() {
         return amigos;
     }
@@ -176,11 +163,5 @@ public class UsuarioEntity {
         this.amigos = amigos;
     }
 
-    public HashMap<RetoEntity, String> getRetos() {
-        return (HashMap<RetoEntity, String>) retos;
-    }
-
-    public void setRetos(HashMap<RetoEntity, String> retos) {
-        this.retos = retos;
-    }
+    
 }

@@ -15,9 +15,12 @@ import java.time.ZoneId;
 
 import javax.swing.JOptionPane;
 
+import com.BD.dao.EntrenamientoDAO;
+import com.BD.dao.RetoDAO;
 import com.BD.dao.UsuarioDAO;
 import com.BD.entity.EntrenamientoEntity;
 import com.BD.entity.RetoEntity;
+import com.BD.entity.RetoParticipantesEntity;
 import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
@@ -41,10 +44,10 @@ public class UsuarioService implements Serializable {
     }
 
     public UsuarioDTO registrar(String username, String contrasena, String email, String nombre, String proveedor) {
-        //Prueba para BD
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+
         UsuarioEntity usuarioBD = new UsuarioEntity();
         usuarioBD.setUsername(username);
         usuarioBD.setEmail(email);
@@ -52,12 +55,14 @@ public class UsuarioService implements Serializable {
         usuarioBD.setNombre(nombre);
         usuarioBD.setProveedor(proveedor);
         usuarioBD.setAmigos(new ArrayList<>());
-        usuarioBD.setRetos(new HashMap<>());
+
         usuarioDAO.createUsuario(usuarioBD);
-        //
+
         int nuevoId = idCounter++;
-        Usuario usuario = new Usuario(nuevoId, username, email, contrasena, nombre, null, proveedor, new ArrayList<>(), new HashMap<>(), new ArrayList<>());
+        Usuario usuario = new Usuario(nuevoId, username, email, contrasena, nombre, null, proveedor,
+                new ArrayList<>(), new HashMap<>(), new ArrayList<>());
         usuarios.put(UsuarioAssembler.toDTO(usuario).getId(), UsuarioAssembler.toDTO(usuario));
+
         System.out.println("Usuario registrado: " + username);
         return UsuarioAssembler.toDTO(usuario);
     }
@@ -125,65 +130,28 @@ public class UsuarioService implements Serializable {
         UsuarioDTO usuario = usuarios.get(usuarioDTO.getId());
         if (usuario != null) {
         	
-        	//BD
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+
             UsuarioEntity usuarioBD = new UsuarioEntity();
+            usuarioBD.setId(usuarioDTO.getId());
             usuarioBD.setUsername(usuarioDTO.getUsername());
             usuarioBD.setEmail(usuarioDTO.getEmail());
             usuarioBD.setContrasena(usuarioDTO.getContrasena());
             usuarioBD.setNombre(usuarioDTO.getNombre());
             usuarioBD.setProveedor(usuarioDTO.getProveedor());
             usuarioBD.setAmigos(usuarioDTO.getAmigos());
-            
-            //RETO
-            HashMap<RetoEntity,String> retosBD = new HashMap<RetoEntity, String>();
-            for(Entry<RetoDTO, String> r: usuarioDTO.getRetos().entrySet()) {
-            	RetoDTO reto= r.getKey();
-            	String estado= r.getValue();
-            	RetoEntity retoBD = new RetoEntity();
-                retoBD.setNombre(reto.getNombre().toString());
-                retoBD.setFecIni(reto.getFecIni());
-                retoBD.setFecFin(reto.getFecFin());
-                retoBD.setObjetivoDistancia(reto.getObjetivoDistancia());
-                retoBD.setObjetivoTiempo(reto.getObjetivoTiempo());
-                retoBD.setUsuarioCreador(reto.getUsuarioCreador());
-                retoBD.setDeporte(reto.getDeporte());
-                retoBD.setParticipantes(reto.getParticipantes());
-                retosBD.put(retoBD, estado);
-                
-            }
-            
-            usuarioBD.setRetos(retosBD);
             usuarioBD.setToken(usuarioDTO.getToken());
             usuarioBD.setFrecCMax(usuarioDTO.getFecCMax());
             usuarioBD.setAltura(usuarioDTO.getAltura());
-            
-            //Entrenamientos
-            ArrayList<EntrenamientoEntity> entrenamientosBD = new ArrayList<EntrenamientoEntity>();
-            for(EntrenamientoDTO e: usuarioDTO.getEntrenamientos()) {
-            	EntrenamientoEntity entrenoBD = new EntrenamientoEntity();
-            	entrenoBD.setTitulo(e.getTitulo());
-            	entrenoBD.setFechaInicio(e.getFecIni());
-            	entrenoBD.setHoraInicio(e.getHoraIni());
-            	entrenoBD.setDistancia(e.getDistancia());
-            	entrenoBD.setDuracion(e.getDuracion());
-            	entrenoBD.setDeporte(e.getDeporte());
-            	entrenoBD.setId(e.getId());
-            	entrenoBD.setUsuario(usuarioBD.getUsername());
-                entrenamientosBD.add(entrenoBD);
-            }
-            
-            usuarioBD.setEntrenamientos(entrenamientosBD);
             usuarioBD.setfNacimiento(usuarioDTO.getfNacimiento());
             usuarioBD.setFrecCReposo(usuarioDTO.getFecCReposo());
-            usuarioBD.setId(usuarioDTO.getId());
             usuarioBD.setPeso(usuarioDTO.getPeso());
+
+
             usuarioDAO.updateUsuario(usuarioBD.getId(), usuarioBD);
-        	//
-        	
-        	
+
             usuario.setUsername(usuarioDTO.getUsername());
             usuario.setEmail(usuarioDTO.getEmail());
             usuario.setContrasena(usuarioDTO.getContrasena());
@@ -192,7 +160,6 @@ public class UsuarioService implements Serializable {
             usuario.setAltura(usuarioDTO.getAltura());
             usuario.setfNacimiento(usuarioDTO.getfNacimiento());
 
-            // Evitar duplicados en la lista de amigos
             ArrayList<Integer> amigosActualizados = new ArrayList<>();
             for (Integer amigo : usuarioDTO.getAmigos()) {
                 if (!amigosActualizados.contains(amigo)) {
@@ -202,13 +169,13 @@ public class UsuarioService implements Serializable {
             usuario.setAmigos(amigosActualizados);
 
             usuario.setEntrenamientos(usuarioDTO.getEntrenamientos());
-            usuario.setRetos(usuarioDTO.getRetos());
 
             usuarios.put(usuarioDTO.getId(), usuario);
-
             System.out.println("Usuario actualizado: " + usuario.getUsername());
         }
     }
+
+
 
     public UsuarioDTO obtenerUsuarioPorNombre(String username) {
         /*
@@ -317,6 +284,29 @@ public class UsuarioService implements Serializable {
     }
 
 
+    public void unirseAReto(int usuarioId, int retoId) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        RetoDAO retoDAO = new RetoDAO(entityManager);
+
+        retoDAO.addParticipantToReto(usuarioId, retoId, "aceptado");
+    }
+    
+    public List<RetoParticipantesEntity> obtenerRetosDeUsuario(int usuarioId) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+
+        return usuarioDAO.findRetosByUsuarioId(usuarioId);
+    }
+    
+    public List<EntrenamientoEntity> obtenerEntrenamientosDeUsuario(String username) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+
+        EntrenamientoDAO dao = new EntrenamientoDAO(em);
+        return dao.findByUsername(username);
+    }
 
 
 }

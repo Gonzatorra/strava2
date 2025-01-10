@@ -1,6 +1,8 @@
 package com.BD.dao;
 
 import com.BD.entity.RetoEntity;
+import com.BD.entity.RetoParticipantesEntity;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -56,16 +58,14 @@ public class RetoDAO {
                 retoExistente.setFecFin(retoActualizado.getFecFin());
                 retoExistente.setObjetivoDistancia(retoActualizado.getObjetivoDistancia());
                 retoExistente.setObjetivoTiempo(retoActualizado.getObjetivoTiempo());
-                retoExistente.setParticipantes(retoActualizado.getParticipantes());
                 retoExistente.setNombre(retoActualizado.getNombre());
                 retoExistente.setFecIni(retoActualizado.getFecIni());
 
-                // Persistir los cambios del usuario
                 entityManager.getTransaction().begin();
                 entityManager.merge(retoExistente);
                 entityManager.getTransaction().commit();
             } else {
-                System.out.println("Retoo no encontrado");
+                System.out.println("Reto no encontrado");
             }
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
@@ -74,6 +74,7 @@ public class RetoDAO {
             e.printStackTrace();
         }
     }
+
 
     @Transactional
     public void deleteReto(Long id) {
@@ -92,4 +93,53 @@ public class RetoDAO {
             e.printStackTrace();
         }
     }
+    
+    @Transactional
+    public void addParticipantToReto(int usuarioId, int retoId, String estado) {
+        RetoParticipantesEntity participante = new RetoParticipantesEntity();
+        participante.setUsuarioId(usuarioId);
+        participante.setRetoId(retoId);
+        participante.setEstado(estado);
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(participante);
+        entityManager.getTransaction().commit();
+    }
+
+    public List<RetoParticipantesEntity> findParticipantsByRetoId(int retoId) {
+        return entityManager.createQuery(
+            "SELECT r FROM RetoParticipantesEntity r WHERE r.retoId = :retoId",
+            RetoParticipantesEntity.class
+        ).setParameter("retoId", retoId).getResultList();
+    }
+
+    @Transactional
+    public void updateParticipantEstado(int usuarioId, int retoId, String estado) {
+        RetoParticipantesEntity participante = entityManager.createQuery(
+            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId AND r.retoId = :retoId",
+            RetoParticipantesEntity.class
+        ).setParameter("usuarioId", usuarioId)
+         .setParameter("retoId", retoId)
+         .getSingleResult();
+
+        entityManager.getTransaction().begin();
+        participante.setEstado(estado);
+        entityManager.merge(participante);
+        entityManager.getTransaction().commit();
+    }
+
+    @Transactional
+    public void removeParticipantFromReto(int usuarioId, int retoId) {
+        RetoParticipantesEntity participante = entityManager.createQuery(
+            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId AND r.retoId = :retoId",
+            RetoParticipantesEntity.class
+        ).setParameter("usuarioId", usuarioId)
+         .setParameter("retoId", retoId)
+         .getSingleResult();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(participante);
+        entityManager.getTransaction().commit();
+    }
+    
 }

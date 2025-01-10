@@ -34,10 +34,6 @@ public class RetoEntity {
     @Column(name = "objetivo_tiempo", nullable = false)
     private float objetivoTiempo;
 
-    @ElementCollection
-    @CollectionTable(name = "reto_participantes", joinColumns = @JoinColumn(name = "reto_id"))
-    @Column(name = "participante_id")
-    private List<Integer> participantes = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -104,12 +100,5 @@ public class RetoEntity {
         this.objetivoTiempo = objetivoTiempo;
     }
 
-    public List<Integer> getParticipantes() {
-        return participantes;
-    }
-
-    public void setParticipantes(List<Integer> participantes) {
-        this.participantes = participantes;
-    }
     
 }

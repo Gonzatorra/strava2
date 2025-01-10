@@ -32,7 +32,7 @@ public class Main {
             usuario.setToken("abc123");
             usuario.setProveedor("Strava");
             usuario.setAmigos(new ArrayList<>());
-            usuario.setRetos(new HashMap<>());
+            //usuario.setRetos(new HashMap<>());
             //usuarioDAO.createUsuario(usuario);
 
             UsuarioEntity usuario2 = new UsuarioEntity();
@@ -48,7 +48,7 @@ public class Main {
             usuario2.setToken("abc123");
             usuario2.setProveedor("Strava");
             usuario2.setAmigos(new ArrayList<>());
-            usuario2.setRetos(new HashMap<>());
+            //usuario2.setRetos(new HashMap<>());
             usuarioDAO.updateUsuario(1L, usuario2);
 
 
