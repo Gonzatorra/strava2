@@ -26,7 +26,7 @@ public class EntrenamientoDTO implements Serializable {
     // Constructor
     public EntrenamientoDTO(int id, String username, String titulo, String deporte, double distancia, LocalDate fecIni,
                             float horaIni, double duracion) {
-        this.id = id;  // Asigna y aumenta el ID automáticamente
+        this.id = 0;  // Asigna y aumenta el ID automáticamente
         this.username = username;
         this.titulo = titulo;
         this.deporte = deporte;

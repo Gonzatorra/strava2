@@ -27,32 +27,45 @@ public class EntrenamientoService {
     }
 
     public EntrenamientoDTO crearEntreno(UsuarioDTO usuario, String titulo, String deporte, double distancia, LocalDate fechaIni,
-                                         float horaInicio, double duracion) {
-    	
-    	
-        // Crear el nuevo entrenamiento
-        Integer idUEntreno=entrenoIdxUsuario.getOrDefault(usuario.getId(), 0); //si no tiene entrenamientos
-        if(idUEntreno==null) {
-            entrenoIdxUsuario.put(usuario.getId(), 0);
-        }
-        entrenoIdxUsuario.put(usuario.getId(), idUEntreno+1);
-        EntrenamientoDTO entreno = new EntrenamientoDTO(idUEntreno+1, usuario.getUsername(), titulo, deporte, (float) distancia, fechaIni, horaInicio, duracion);
-        //BD
-    	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO(entityManager);
-        EntrenamientoEntity entrenamientoBD = new EntrenamientoEntity();
-        entrenamientoBD.setDistancia(distancia);
-        entrenamientoBD.setDeporte(deporte);
-        entrenamientoBD.setDuracion(duracion);
-        entrenamientoBD.setFechaInicio(fechaIni);
-        entrenamientoBD.setHoraInicio(horaInicio);
-        entrenamientoBD.setId(entreno.getId());
-        entrenamientoBD.setUsuario(usuario.getUsername());
-        entrenamientoDAO.createEntrenamiento(entrenamientoBD);
-    	//
-        return entreno;
+            float horaInicio, double duracion) {
+
+		Integer idUEntreno = entrenoIdxUsuario.getOrDefault(usuario.getId(), 0); // si no tiene entrenamientos
+		if (idUEntreno == null) {
+		entrenoIdxUsuario.put(usuario.getId(), 0);
+		}
+		entrenoIdxUsuario.put(usuario.getId(), idUEntreno + 1);
+		
+		EntrenamientoDTO entreno = new EntrenamientoDTO(
+		idUEntreno + 1,
+		usuario.getUsername(),
+		titulo,
+		deporte,
+		(float) distancia,
+		fechaIni,
+		horaInicio,
+		duracion
+		);
+		
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntrenamientoDAO entrenamientoDAO = new EntrenamientoDAO(entityManager);
+		
+		EntrenamientoEntity entrenamientoBD = new EntrenamientoEntity();
+		entrenamientoBD.setDistancia(distancia);
+		entrenamientoBD.setDeporte(deporte);
+		entrenamientoBD.setDuracion(duracion);
+		entrenamientoBD.setFechaInicio(fechaIni);
+		entrenamientoBD.setHoraInicio(horaInicio);
+		entrenamientoBD.setUsuario(usuario.getUsername());
+		entrenamientoBD.setTitulo(titulo);
+		
+		entrenamientoDAO.createEntrenamiento(entrenamientoBD);
+		
+		entreno.setId(entrenamientoBD.getId());
+		
+		return entreno;
     }
+
 
 
     public void actualizarEntreno(EntrenamientoDTO entrenamiento, UsuarioDTO usu, String titulo, String deporte, double distancia, double duracion) {

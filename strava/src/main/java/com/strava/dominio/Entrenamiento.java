@@ -20,7 +20,7 @@ public class Entrenamiento implements Serializable{
     //constructores
     public Entrenamiento(int id, String username, String titulo, String deporte, double distancia,
                          LocalDate fecIni, float horaIni, double duracion) {
-        this.id = id;
+        this.id = 0;
         this.username = username;
         this.titulo = titulo;
         this.deporte = deporte;
