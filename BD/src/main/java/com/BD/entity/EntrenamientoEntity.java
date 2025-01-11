@@ -2,7 +2,9 @@ package com.BD.entity;
 
 import jakarta.persistence.*;
 
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "entrenamientos")
@@ -31,7 +33,7 @@ public class EntrenamientoEntity {
     private LocalDate fechaInicio;
 
     @Column(name = "hora_inicio", nullable = false)
-    private float horaInicio;
+    private LocalTime horaInicio;
 
     public int getId() {
         return id;
@@ -89,11 +91,11 @@ public class EntrenamientoEntity {
         this.fechaInicio = fechaInicio;
     }
 
-    public float getHoraInicio() {
+    public LocalTime getHoraInicio() {
         return horaInicio;
     }
 
-    public void setHoraInicio(float horaInicio) {
+    public void setHoraInicio(LocalTime horaInicio) {
         this.horaInicio = horaInicio;
     }
 }

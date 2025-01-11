@@ -1,7 +1,9 @@
 package com.strava.servicios;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -55,7 +57,16 @@ public class EntrenamientoService {
 		entrenamientoBD.setDeporte(deporte);
 		entrenamientoBD.setDuracion(duracion);
 		entrenamientoBD.setFechaInicio(fechaIni);
-		entrenamientoBD.setHoraInicio(horaInicio);
+
+		// Desglosar horas y minutos
+        int horas = (int) horaInicio;
+        int minutos = (int) ((horaInicio - horas) * 60);
+
+        // Crear un objeto LocalTime
+        LocalTime time = LocalTime.of(horas, minutos);
+
+		
+		entrenamientoBD.setHoraInicio(time);
 		entrenamientoBD.setUsuario(usuario.getUsername());
 		entrenamientoBD.setTitulo(titulo);
 		
@@ -85,7 +96,18 @@ public class EntrenamientoService {
                 entrenamientoBD.setDeporte(deporte);
                 entrenamientoBD.setDuracion(duracion);
                 entrenamientoBD.setFechaInicio(entrenamiento.getFecIni());
-                entrenamientoBD.setHoraInicio(entrenamiento.getHoraIni());
+                
+
+
+        		// Desglosar horas y minutos
+                int horas = (int) entrenamiento.getHoraIni();
+                int minutos = (int) ((entrenamiento.getHoraIni() - horas) * 60);
+
+                // Crear un objeto LocalTime
+                LocalTime time = LocalTime.of(horas, minutos);
+
+                entrenamientoBD.setTitulo(titulo);
+                entrenamientoBD.setHoraInicio(time);
                 entrenamientoBD.setId(entrenamiento.getId());
                 entrenamientoBD.setUsuario(usu.getUsername());
                 entrenamientoDAO.updateEntrenamiento(entrenamientoBD.getId(), entrenamientoBD);
@@ -128,7 +150,17 @@ public class EntrenamientoService {
         entrenoBD.setId(e.getId());
         entrenoBD.setTitulo(e.getTitulo());
         entrenoBD.setFechaInicio(e.getFecIni());
-        entrenoBD.setHoraInicio(e.getHoraIni());
+        
+		// Desglosar horas y minutos
+        int horas = (int) e.getHoraIni();
+        int minutos = (int) ((e.getHoraIni() - horas) * 60);
+
+        // Crear un objeto LocalTime
+        LocalTime time = LocalTime.of(horas, minutos);
+
+        
+        entrenoBD.setHoraInicio(time);
+        
         entrenoBD.setDistancia(e.getDistancia());
         entrenoBD.setDuracion(e.getDuracion());
         entrenoBD.setDeporte(e.getDeporte());

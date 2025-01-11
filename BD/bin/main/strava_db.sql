@@ -41,7 +41,7 @@ CREATE TABLE entrenamientos (
     distancia DOUBLE NOT NULL,
     duracion DOUBLE NOT NULL,
     fecha_inicio DATE NOT NULL,
-    hora_inicio FLOAT NOT NULL,
+    hora_inicio TIME NOT NULL,
     FOREIGN KEY (usuario) REFERENCES usuarios(username) ON DELETE CASCADE
 );
 
@@ -58,4 +58,3 @@ CREATE TABLE reto_participantes (
 ALTER TABLE reto_participantes
   ADD UNIQUE (usuario_id, reto_id);
 
-select * from usuarios;

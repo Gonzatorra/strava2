@@ -671,6 +671,9 @@ public class MenuGUI extends JFrame {
                         entrenamientoToUpdate.setDistancia((float) distance); // Cast to float if required
                         entrenamientoToUpdate.setDuracion((float) duration);
 
+                        usuario.getEntrenamientos().remove(entrenamientoToUpdate);
+                        usuario.getEntrenamientos().add(entrenamientoToUpdate);
+                        
                         // Update the user to persist the updated entrenamiento
                         facade.actualizarUsuario(usuario);
 
