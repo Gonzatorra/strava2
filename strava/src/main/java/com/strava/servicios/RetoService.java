@@ -101,11 +101,13 @@ public class RetoService {
 		retoDAO.createReto(retoBD);
 		
 		for (UsuarioDTO participante : participantes) {
-			retoDAO.addParticipantToReto(participante.getId(), retoBD.getId(), "pendiente");
+			retoDAO.addParticipantToReto(participante.getId(), retoBD.getId(), "En Progreso");
 		}
+		Reto r= new Reto(retoBD.getId(), deporte, usuarioCreador.getUsername(), nombre, fecIni, fecFin,
+				objetivoDistancia, objetivoTiempo, ids);
+		retos.put(r.getId(), RetoAssembler.toDTO(r));
 		
-		return RetoAssembler.toDTO(new Reto(retoBD.getId(), deporte, usuarioCreador.getUsername(), nombre, fecIni, fecFin,
-		objetivoDistancia, objetivoTiempo, ids));
+		return RetoAssembler.toDTO(r);
 	}
 
 
@@ -125,7 +127,7 @@ public class RetoService {
     public void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fecIni, LocalDateTime fecFin,
             float objetivoDistancia, float objetivoTiempo,
             String usuarioCreador, String deporte, ArrayList<Integer> participantes) {
-		Reto retoExistente = RetoAssembler.toDomain(retos.get(reto.getId()));
+			Reto retoExistente = RetoAssembler.toDomain(retos.get(reto.getId()));
 		if (retoExistente != null && retoExistente.getUsuarioCreador().equals(usuarioCreador)) {
 		
 			EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");

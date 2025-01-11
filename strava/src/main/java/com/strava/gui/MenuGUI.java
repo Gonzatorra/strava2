@@ -65,7 +65,7 @@ public class MenuGUI extends JFrame {
             if ("Strava".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password);
                 if (usuarioWrapper[0] != null) {
-                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
+                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!"); usuarioWrapper[0].getRetos es vacio
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
@@ -155,7 +155,7 @@ public class MenuGUI extends JFrame {
             if (selectedUser != null) {
                 try {
                 	// Busca el usuario utilizando Streams
-                    UsuarioDTO usuario = facade.getUsuarios().values()
+                    UsuarioDTO usuario = facade.getUsuarios().values()    usuario.getRetos es vacio
                         .stream()
                         .filter(u -> selectedUser.equals(u.getUsername()))
                         .findFirst()
@@ -878,35 +878,24 @@ public class MenuGUI extends JFrame {
 
                 // Limpiar todas las filas del modelo
                 acceptedModel.setRowCount(0);
-                UsuarioDTO usuario2 = null;
+                
                 try {
-                    usuario2 = facade.getUsuarios().get(usuario.getId());
-                } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                try {
-                    HashMap<Integer, RetoDTO> retosActualizados = facade.visualizarReto();
+                    usuario = facade.getUsuarios().get(usuario.getId());
+                    System.out.println(usuario.getRetos()); es vacio
+                    System.out.println(facade.visualizarReto().toString()); NO ES VACIO
+                    
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 // Filtrar retos basados en el criterio seleccionado
-                for (RetoDTO r : usuario2.getRetos().keySet()) {
-                	
-                	if (r == null) {
-                        continue;
-                    }
+                for (RetoDTO r : usuario.getRetos().keySet()) {
+                	                    
+                    String estado = usuario.getRetos().get(r);
 
-                    if (r.getUsuarioCreador() == null) {
-                        continue;
-                    }
-                    
-                    String estado = usuario2.getRetos().get(r);
+                    if ("Todos".equalsIgnoreCase(criteria) || criteria.equalsIgnoreCase(estado)) {
 
-                    if ("Todos".equals(criteria) || criteria.equals(estado)) {
-
-                        List<EntrenamientoDTO> entrenamientos = usuario2.getEntrenamientos().stream()
+                        List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
                                 .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte()))
                                 .collect(Collectors.toList());
                         double totalDistance = entrenamientos.stream()
@@ -1142,7 +1131,8 @@ public class MenuGUI extends JFrame {
                                 reto1.getObjetivoTiempo()
                         });
 
-                        usuario.getRetos().put(reto1, "inicial");
+                        usuario.getRetos().put(reto1, "En Progreso");
+                        
                         facade.aceptarReto(usuario, reto1);
                         facade.actualizarUsuario(usuario);
 
