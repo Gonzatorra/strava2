@@ -115,7 +115,6 @@ public class GoogleAuthClient {
     public List<Usuario> getAllUsers() {
         return usuarioRepository.findAll();
     }
-
     public boolean validateUser(String username, String token) {
         try {
             URL url = new URL(GOOGLE_SERVER_URL + "/validate");
