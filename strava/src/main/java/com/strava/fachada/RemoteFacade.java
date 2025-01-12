@@ -103,37 +103,10 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
         return usuarioService.registrar(username, password, email, nombre, proveedor);
     }
-
+    
+    /*//Aquí empiezo a comentar todo login y login con proveedor
     @Override
     public UsuarioDTO login(String username, String contrasena) throws RemoteException {
-    	/*
-        for (UsuarioDTO u: usuarioService.getUsuarios().values()) {
-            if (u.getUsername().equals(username) && u.getProveedor().equals("Strava")) {
-                System.out.println(u.getUsername()+u.getProveedor());
-                if(tokensActivos.get(username)!=null) {
-                    return u;
-
-                }
-                break;
-            }
-        }
-        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
-        if(usu.getProveedor().equals("Strava")) {
-            UsuarioDTO u= usuarioService.login(username, contrasena);
-            String token= servicioAutentificacion.autenticar(username, contrasena, "Strava", u.getProveedor());
-            if (token!=null) {
-	            u.setToken(token);
-	            usuarioService.actualizarUsuario(u);
-	            UsuarioDTO usu2= UsuarioService.getUsuarios().get(u.getId());
-	            tokensActivos.put(usu2.getUsername(), usu2.getToken());
-	            return usu;
-            }
-            else {
-            	return null;
-            }
-        }
-        return null;
-		*/
     	
     	System.out.println("Usuario que quiere iniciar sesión: " + username);
         
@@ -171,142 +144,161 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     @Override
     public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws IOException {
         String token = null;
-        //UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
-
-        /*if (usuario != null) {
-	        String proveedor = usuario.getProveedor();
-	
-	        //Verificar si la plataforma del usuario coincide con la proporcionada
-	        if (plataforma.equalsIgnoreCase(proveedor)) {
-	            //Verificacion para Google
-	            if ("Google".equalsIgnoreCase(plataforma)) {
-	                if(usuario.getToken()!=null) {
-		                if (tokensActivos.containsKey(token)) {
-		                    System.out.println("Login realizado correctamente en Google.");
-		                    return usuario;
-		                } 
-	            	}
-	            	else {
-	                    System.err.println("Token no encontrado");
-	                    token = googleAuthClient.loginUser(username, password);
-	                    usuario.setToken(token); //Establecer el token en el usuario
-	                    usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
-		                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
-		                return usuarioActualizado; //Retornar el usuario actualizado
-	                    
-	                }
-	
-	            }
-	            //Verificacion para Meta
-	            else if ("Meta".equalsIgnoreCase(plataforma)) {
-	                AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
-	                if(usuario.getToken()!=null) {
-		                if (tokensActivos.containsKey(token)) {
-		                    System.out.println("Login realizado correctamente en Meta.");
-		                    return usuario;
-		                }
-	                 }
-	                 else {
-	                    System.err.println("Token no encontrado");
-	                    try {
-							token = metaAuthClient.login(username, password);
-							usuario.setToken(token); //Establecer el token en el usuario
-			                usuarioService.actualizarUsuario(usuario); //Actualizar el usuario en el servicio
-			                UsuarioDTO usuarioActualizado = usuarioService.getUsuarios().get(usuario.getId()); //Obtener el usuario actualizado
-			                return usuarioActualizado; //Retornar el usuario actualizado
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							System.err.println("Error al asignar token desde "+ plataforma);
-							e.printStackTrace();
-						}
-	                    
-	                 }
-	                
-	            }
-	
-	         
-	            
-	        } else {
-	            //Si la plataforma no coincide con el proveedor del usuario, indicar login fallido
-	            System.out.println("Login fallido con plataforma: " + plataforma + " para usuario con proveedor: " + proveedor);
-	            return null;
-	        }
-        }*/
-        //else {
-        	//mirar si existe ese usuario en proveedor
-        	//si existe, registrar en strava, asignar token
-        	if (plataforma.equalsIgnoreCase("Google")) {
-        	    // Use JPA to see if that user is in the DB
-        		for(UsuarioDTO u: this.getUsuarios().values()) {
-        			if(u.getUsername().equals(username)) {
-        				token = googleAuthClient.loginUser(username, password);
-        				
-            	        tokensActivos.put(u.getUsername(), token);
-            	        u.setToken(token);
-            	        actualizarUsuario(u);
-            	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(u.getUsername());       	        
-            	        return usu;
-        			}
-        			
-        		}
-        		token=null;
-        		List <Usuario> usuariosG = googleAuthClient.allUsers();
-        		boolean encontrado= false;
-        		int i=0;
-        		while (!encontrado & i< usuariosG.size()) {
-        			if(usuariosG.get(i).getUsername().equalsIgnoreCase(username)) {
-        				encontrado=true;
-        			}
-        			i++;
-        		}
-        		if(encontrado) {
-        			token = googleAuthClient.loginUser(username, password);
-        			
-        	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", "", "Google");
-        	        tokensActivos.put(usuarioG.getUsername(), token);
-        	        usuarioG.setToken(token);
-        	        actualizarUsuario(usuarioG);
+    	if (plataforma.equalsIgnoreCase("Google")) {
+    	    // Use JPA to see if that user is in the DB
+    		for(UsuarioDTO u: this.getUsuarios().values()) {
+    			if(u.getUsername().equals(username)) {
+    				token = googleAuthClient.loginUser(username, password);
+    				
+        	        tokensActivos.put(u.getUsername(), token);
+        	        u.setToken(token);
+        	        actualizarUsuario(u);
+        	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(u.getUsername());       	        
+        	        return usu;
+    			}
+    			
+    		}
+    		token=null;
+    		List <Usuario> usuariosG = googleAuthClient.allUsers();
+    		boolean encontrado= false;
+    		int i=0;
+    		while (!encontrado & i< usuariosG.size()) {
+    			if(usuariosG.get(i).getUsername().equalsIgnoreCase(username)) {
+    				encontrado=true;
+    			}
+    			i++;
+    		}
+    		if(encontrado) {
+    			token = googleAuthClient.loginUser(username, password);
+    			
+    	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", "", "Google");
+    	        tokensActivos.put(usuarioG.getUsername(), token);
+    	        usuarioG.setToken(token);
+    	        actualizarUsuario(usuarioG);
+    	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username); 
+    	        usuarioService.getUsuarios().put(usu.getId(), usu);
+    	        return usu;
+    	    }
+    	} 
+        else if (plataforma.equalsIgnoreCase("Meta")){
+        	//////////////////////////////////////////////////////////////////////////////////////////////
+        	for(UsuarioDTO u: this.getUsuarios().values()) {
+    			if(u.getUsername().equals(username)) {
+    				token = metaAuthClient.login(username, password);
+	        		tokensActivos.put(u.getUsername(), token);
+	        		u.setToken(token);
+        	        actualizarUsuario(u);
+        	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);       	        
+        	        return usu;
+    			}
+    			
+    		}
+        	
+        	Map<String, String> userStore = metaAuthClient.getUserStore();
+        	if(userStore.containsKey(username)) {
+        		try {
+					token = metaAuthClient.login(username, password);
+					
+					UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", "", "Meta");
+	        		tokensActivos.put(usuarioM.getUsername(), token);
+	        		usuarioM.setToken(token);
+        	        actualizarUsuario(usuarioM);
         	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username); 
         	        usuarioService.getUsuarios().put(usu.getId(), usu);
+        	        
+        	              	        
         	        return usu;
-        	    }
-        	} 
-	        else if (plataforma.equalsIgnoreCase("Meta")){
-	        	//////////////////////////////////////////////////////////////////////////////////////////////
-	        	for(UsuarioDTO u: this.getUsuarios().values()) {
-        			if(u.getUsername().equals(username)) {
-        				token = metaAuthClient.login(username, password);
-		        		tokensActivos.put(u.getUsername(), token);
-		        		u.setToken(token);
-            	        actualizarUsuario(u);
-            	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);       	        
-            	        return usu;
-        			}
-        			
-        		}
-	        	
-	        	Map<String, String> userStore = metaAuthClient.getUserStore();
-	        	if(userStore.containsKey(username)) {
-	        		try {
-						token = metaAuthClient.login(username, password);
-						
-						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", "", "Meta");
-		        		tokensActivos.put(usuarioM.getUsername(), token);
-		        		usuarioM.setToken(token);
-            	        actualizarUsuario(usuarioM);
-            	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username); 
-	        	        usuarioService.getUsuarios().put(usu.getId(), usu);
-	        	        
-	        	              	        
-            	        return usu;
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	        	}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
 	    }
         
     	return null;
+    }
+    *///Aquí empiezo a comentar todo login y login con proveedor
+    //nuevo login unido
+    public UsuarioDTO login(String username, String contrasena, String plataforma) throws IOException, RemoteException {
+        System.out.println("Usuario que quiere iniciar sesión: " + username);
+
+        if (tokensActivos.containsKey(username)) {
+            System.out.println("Usuario ya loggeado.");
+            return null;
+        }
+
+        UsuarioDTO user = usuarioService.obtenerUsuarioPorNombre(username);
+
+        if (plataforma.equalsIgnoreCase("Strava")) {
+            if (user == null) {
+                System.err.println("No encontrado: " + username);
+                return null;
+            }
+            if (!user.getContrasena().equals(contrasena)) {
+                System.err.println("Credenciales inválidas: " + username);
+                return null;
+            }
+            String token = servicioAutentificacion.autenticar(username, contrasena, "Strava", user.getProveedor());
+            if (token == null) {
+                System.err.println("Autenticación fallida: " + username);
+                return null;
+            }
+
+            user.setToken(token);
+            usuarioService.actualizarUsuario(user);
+            tokensActivos.put(username, token);
+            UsuarioService.getUsuarios().put(user.getId(), user);
+            System.out.println("Login exitoso para: " + username);
+            return user;
+        }
+
+        String token = null;
+        if (plataforma.equalsIgnoreCase("Google")) {
+            for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
+                if (u.getUsername().equals(username)) {
+                    token = googleAuthClient.loginUser(username, contrasena);
+                    tokensActivos.put(u.getUsername(), token);
+                    u.setToken(token);
+                    actualizarUsuario(u);
+                    return usuarioService.obtenerUsuarioPorNombre(username);
+                }
+            }
+
+            List<Usuario> usuariosG = googleAuthClient.allUsers();
+            for (Usuario usuarioG : usuariosG) {
+                if (usuarioG.getUsername().equalsIgnoreCase(username)) {
+                    token = googleAuthClient.loginUser(username, contrasena);
+                    UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", "", "Google");
+                    newUser.setToken(token);
+                    tokensActivos.put(newUser.getUsername(), token);
+                    actualizarUsuario(newUser);
+                    return newUser;
+                }
+            }
+        } else if (plataforma.equalsIgnoreCase("Meta")) {
+            for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
+                if (u.getUsername().equals(username)) {
+                    token = metaAuthClient.login(username, contrasena);
+                    tokensActivos.put(u.getUsername(), token);
+                    u.setToken(token);
+                    actualizarUsuario(u);
+                    return usuarioService.obtenerUsuarioPorNombre(username);
+                }
+            }
+
+            Map<String, String> userStore = metaAuthClient.getUserStore();
+            if (userStore.containsKey(username)) {
+                token = metaAuthClient.login(username, contrasena);
+                UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", "", "Meta");
+                newUser.setToken(token);
+                tokensActivos.put(newUser.getUsername(), token);
+                actualizarUsuario(newUser);
+                return newUser;
+            }
+        }
+
+        System.err.println("Autenticación fallida: " + username + " con plataforma " + plataforma);
+        return null;
     }
 
 

@@ -66,7 +66,8 @@ public class UsuarioService implements Serializable {
         System.out.println("Usuario registrado: " + username);
         return UsuarioAssembler.toDTO(usuario);
     }
-
+    
+    ////////////////////////////////////////////Esto no se usa, o?
     public UsuarioDTO login(String username, String contrasena) {
     	/*
         for (UsuarioDTO usuario : usuarios.values()) {

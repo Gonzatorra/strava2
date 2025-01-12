@@ -25,7 +25,7 @@ public class GestionAutentificacion {
             UsuarioDTO[] usuarioWrapper = new UsuarioDTO[1];
 
             if ("Google".equals(provider)) {
-                usuarioWrapper[0] = facade.loginConProveedor(username, password, "Google");
+                usuarioWrapper[0] = facade.login(username, password, "Google");
             }
 
             if (usuarioWrapper[0] != null) {

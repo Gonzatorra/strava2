@@ -32,7 +32,8 @@ public class AuthServerMeta {
 
     public synchronized String login(String username, String password) {
         if (userStore.containsKey(username) && userStore.get(username).equals(password)) {
-            String token = UUID.randomUUID().toString();
+            //String token = UUID.randomUUID().toString();
+            String token = "meta_" + System.currentTimeMillis();
             tokenStore.put(token, username);
             return token;
         }

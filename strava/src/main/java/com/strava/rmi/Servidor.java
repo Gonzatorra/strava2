@@ -28,6 +28,7 @@ public class Servidor {
         iniciarRMI();
         try {
 			registrarUsuariosMeta();
+			registrarUsuariosYRetos();
             //loginMeta();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

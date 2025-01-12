@@ -32,7 +32,8 @@ public class UsuarioService {
         }
 
         //Generar un nuevo token para cada inicio de sesion
-        usuario.setToken(UUID.randomUUID().toString());
+        //usuario.setToken(UUID.randomUUID().toString());
+        usuario.setToken("google_" + System.currentTimeMillis());
         return usuarioRepository.save(usuario);
     }
 

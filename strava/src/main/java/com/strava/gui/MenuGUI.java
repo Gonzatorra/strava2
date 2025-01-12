@@ -63,7 +63,7 @@ public class MenuGUI extends JFrame {
             UsuarioDTO[] usuarioWrapper = new UsuarioDTO[1];
 
             if ("Strava".equalsIgnoreCase(provider)) {
-                usuarioWrapper[0] = facade.login(username, password);
+                usuarioWrapper[0] = facade.login(username, password, "Strava");
                 if (usuarioWrapper[0] != null) {
                     JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!"); //usuarioWrapper[0].getRetos es vacio
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
@@ -78,7 +78,7 @@ public class MenuGUI extends JFrame {
                 	}
                 }
             } else if ("Google".equalsIgnoreCase(provider)) {
-                usuarioWrapper[0] = facade.loginConProveedor(username, password, "Google");
+                usuarioWrapper[0] = facade.login(username, password, "Google");
                 if (usuarioWrapper[0] != null) {
                     JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
@@ -87,7 +87,7 @@ public class MenuGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "Error en autenticacion. No existe ese username en Google");
                 }
             } else if ("Meta".equalsIgnoreCase(provider)) {
-                usuarioWrapper[0] = facade.loginConProveedor(username, password, "Meta");
+                usuarioWrapper[0] = facade.login(username, password, "Meta");
                 if (usuarioWrapper[0] != null) {
                     JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
