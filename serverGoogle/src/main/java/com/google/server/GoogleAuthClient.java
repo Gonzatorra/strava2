@@ -1,5 +1,6 @@
 package com.google.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
@@ -80,7 +81,7 @@ public class GoogleAuthClient {
             // Parámetros de la solicitud
             String params = "username=" + username + "&password=" + password;
 
-            // Enviar los parámetros al servidor
+            // Enviar los parametros al servidor
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(params.getBytes());
                 os.flush();
@@ -90,19 +91,21 @@ public class GoogleAuthClient {
             if (responseCode == 200) {
                 // Si el login es exitoso, leer el cuerpo de la respuesta (por ejemplo, el token)
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    StringBuilder response = new StringBuilder();
                     String inputLine;
-                    StringBuffer response = new StringBuffer();
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
                     }
-                    // Asumimos que la respuesta es el token
-                    String token = response.toString();
+                    //Parsear la respuesta JSON para obtener solo el token
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode rootNode = mapper.readTree(response.toString());
+                    String token = rootNode.get("token").asText(); // Extraer el valor del token
                     System.out.println("Login exitoso. Token recibido: " + token);
-                    return token;  // Retornar el token recibido
+                    return token; // Retornar solo el token
                 }
             } else {
                 System.out.println("Login fallido. Código de respuesta: " + responseCode);
-                return null;  // Retornar null si el login no es exitoso
+                return null;  //Retornar null si el login no es exitoso
             }
         } catch (Exception e) {
             e.printStackTrace();

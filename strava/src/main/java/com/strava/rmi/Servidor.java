@@ -28,11 +28,12 @@ public class Servidor {
         iniciarRMI();
         try {
 			registrarUsuariosMeta();
+            //loginMeta();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        registrarUsuariosYRetos();
+        //registrarUsuariosYRetos();
 
         System.out.println("Servidor iniciado");
     }
@@ -57,6 +58,13 @@ public class Servidor {
         metaAuthClient.registerUser("david333", "claveDavid", "david333@meta.com");
         metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
     }
+
+    /*private void loginMeta() throws IOException {
+        String token = metaAuthClient.login("maria123", "claveMaria");
+        System.out.println("Token meta maria123: "+token);
+    }*/
+
+
 
 
     private void registrarUsuariosYRetos() throws RemoteException {

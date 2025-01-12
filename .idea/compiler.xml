@@ -8,6 +8,8 @@
       <module name="strava" target="17" />
       <module name="strava.main" target="17" />
       <module name="strava.test" target="17" />
+      <module name="StravaNuevo.main" target="17" />
+      <module name="StravaNuevo.test" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

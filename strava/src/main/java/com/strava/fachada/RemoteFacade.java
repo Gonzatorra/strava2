@@ -262,7 +262,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         		if(encontrado) {
         			token = googleAuthClient.loginUser(username, password);
         			
-        	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", token, "Google");
+        	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", "", "Google");
         	        tokensActivos.put(usuarioG.getUsername(), token);
         	        usuarioG.setToken(token);
         	        actualizarUsuario(usuarioG);
@@ -290,7 +290,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	        		try {
 						token = metaAuthClient.login(username, password);
 						
-						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", token, "Meta");
+						UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", "", "Meta");
 		        		tokensActivos.put(usuarioM.getUsername(), token);
 		        		usuarioM.setToken(token);
             	        actualizarUsuario(usuarioM);

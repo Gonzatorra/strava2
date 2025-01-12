@@ -65,7 +65,7 @@ public class MenuGUI extends JFrame {
             if ("Strava".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password);
                 if (usuarioWrapper[0] != null) {
-                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!"); usuarioWrapper[0].getRetos es vacio
+                    JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!"); //usuarioWrapper[0].getRetos es vacio
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
@@ -155,7 +155,7 @@ public class MenuGUI extends JFrame {
             if (selectedUser != null) {
                 try {
                 	// Busca el usuario utilizando Streams
-                    UsuarioDTO usuario = facade.getUsuarios().values()    usuario.getRetos es vacio
+                    UsuarioDTO usuario = facade.getUsuarios().values()    //usuario.getRetos es vacio
                         .stream()
                         .filter(u -> selectedUser.equals(u.getUsername()))
                         .findFirst()
@@ -881,8 +881,8 @@ public class MenuGUI extends JFrame {
                 
                 try {
                     usuario = facade.getUsuarios().get(usuario.getId());
-                    System.out.println(usuario.getRetos()); es vacio
-                    System.out.println(facade.visualizarReto().toString()); NO ES VACIO
+                    System.out.println(usuario.getRetos()); //es vacio
+                    System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
                     
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
