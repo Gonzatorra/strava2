@@ -97,6 +97,7 @@ public class RetoService {
 		retoBD.setObjetivoDistancia(objetivoDistancia);
 		retoBD.setObjetivoTiempo(objetivoTiempo);
 		retoBD.setUsuarioCreador(usuarioCreador.getUsername());
+		retoBD.setId(nuevoId);
 		
 		retoDAO.createReto(retoBD);
 		

@@ -10,7 +10,6 @@ import java.util.List;
 public class RetoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "deporte", nullable = false)
