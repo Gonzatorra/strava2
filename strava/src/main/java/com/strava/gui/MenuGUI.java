@@ -84,7 +84,7 @@ public class MenuGUI extends JFrame {
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error en autenticacion. No existe ese username en Google");
+                    JOptionPane.showMessageDialog(this, "No se pudo autenticar satisfactoriamente. Inténtalo otra vez.");
                 }
             } else if ("Meta".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password, "Meta");
@@ -93,7 +93,7 @@ public class MenuGUI extends JFrame {
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error en autenticacion. No existe ese username en Meta");
+                    JOptionPane.showMessageDialog(this, "No se pudo autenticar satisfactoriamente. Inténtalo otra vez.");
                 }
             }
         } catch (RemoteException ex) {
@@ -880,7 +880,7 @@ public class MenuGUI extends JFrame {
                 acceptedModel.setRowCount(0);
                 
                 try {
-                    usuario = facade.getUsuarios().get(usuario.getId());
+                    
                     System.out.println(usuario.getRetos()); //es vacio
                     System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
                     

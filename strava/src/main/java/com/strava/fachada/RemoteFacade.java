@@ -257,10 +257,14 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username)) {
                     token = googleAuthClient.loginUser(username, contrasena);
+                    //token = servicioAutentificacion.autenticar(username, contrasena, "Google", u.getProveedor());
                     tokensActivos.put(u.getUsername(), token);
                     u.setToken(token);
                     actualizarUsuario(u);
-                    return usuarioService.obtenerUsuarioPorNombre(username);
+                    if(token!=null) {
+                    	return usuarioService.obtenerUsuarioPorNombre(username);
+                    }
+                    return null;
                 }
             }
 
@@ -268,32 +272,43 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (Usuario usuarioG : usuariosG) {
                 if (usuarioG.getUsername().equalsIgnoreCase(username)) {
                     token = googleAuthClient.loginUser(username, contrasena);
-                    UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", "", "Google");
+                    //token = servicioAutentificacion.autenticar(username, contrasena, "Google", usuarioG.getProveedor());
+                    UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
                     newUser.setToken(token);
                     tokensActivos.put(newUser.getUsername(), token);
                     actualizarUsuario(newUser);
-                    return newUser;
+                    if(token!=null) {
+                    	return newUser;
+                    }
+                    return null;
                 }
             }
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username)) {
                     token = metaAuthClient.login(username, contrasena);
-                    tokensActivos.put(u.getUsername(), token);
+                    //token = servicioAutentificacion.autenticar(username, contrasena, "Meta", u.getProveedor());
+                    
                     u.setToken(token);
-                    actualizarUsuario(u);
-                    return usuarioService.obtenerUsuarioPorNombre(username);
+                    usuarioService.actualizarUsuario(u);
+                    UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
+                    tokensActivos.put(usu.getUsername(), token);
+                    return usu;
                 }
             }
 
             Map<String, String> userStore = metaAuthClient.getUserStore();
             if (userStore.containsKey(username)) {
                 token = metaAuthClient.login(username, contrasena);
-                UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", "", "Meta");
+            	//UsuarioDTO u=usuarioService.obtenerUsuarioPorNombre(username);
+                //token = servicioAutentificacion.autenticar(username, contrasena, "Meta", u.getProveedor());
+                UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
                 newUser.setToken(token);
-                tokensActivos.put(newUser.getUsername(), token);
-                actualizarUsuario(newUser);
-                return newUser;
+                usuarioService.actualizarUsuario(newUser);
+                UsuarioDTO u= usuarioService.obtenerUsuarioPorNombre(username);
+                tokensActivos.put(u.getUsername(), token);
+                
+                return u;
             }
         }
 
