@@ -1599,6 +1599,7 @@ public class MenuGUI extends JFrame {
 
 
                             retoSeleccionado.getParticipantes().add(usuario.getId());
+                            
 
 
                             ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
@@ -1631,6 +1632,7 @@ public class MenuGUI extends JFrame {
                             usuario.getRetos().put(retoSeleccionado, "En Progreso");
                             try {
                                 facade.actualizarUsuario(usuario);
+                                facade.aceptarReto(usuario, retoSeleccionado);
                             } catch (RemoteException e1) {
                                 // TODO Auto-generated catch block
                                 e1.printStackTrace();

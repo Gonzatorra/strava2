@@ -93,7 +93,7 @@ public class RetoDAO {
             e.printStackTrace();
         }
     }
-    
+
     @Transactional
     public void addParticipantToReto(int usuarioId, int retoId, String estado) {
         RetoParticipantesEntity participante = new RetoParticipantesEntity();

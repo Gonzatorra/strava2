@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class RetoParticipantesEntity {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "usuario_id", nullable = false)
@@ -18,7 +18,7 @@ public class RetoParticipantesEntity {
 
     @Column(name = "estado", nullable = false)
     private String estado;
-
+    /*
     public int getId() {
         return id;
     }
@@ -26,7 +26,7 @@ public class RetoParticipantesEntity {
     public void setId(int id) {
         this.id = id;
     }
-
+	*/
     public int getUsuarioId() {
         return usuarioId;
     }

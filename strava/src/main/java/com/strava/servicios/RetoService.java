@@ -125,9 +125,21 @@ public class RetoService {
         RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
         
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-	    EntityManager entityManager = entityManagerFactory.createEntityManager();
-	    RetoParticipantesDAO retopartiDAO = new RetoParticipantesDAO(entityManager);
-        retopartiDAO.addParticipant(usuario.getId(), reto.getId(), "En Progreso");
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		RetoDAO retoDAO = new RetoDAO(entityManager);
+	    //RetoParticipantesDAO retopartiDAO = new RetoParticipantesDAO(entityManager);
+	    
+	    //RetoParticipantesEntity RetoPartDB = new RetoParticipantesEntity();
+	    //RetoPartDB.setRetoId(reto.getId());
+	    //RetoPartDB.setUsuarioId(usuario.getId());
+	    //RetoPartDB.setEstado("En Progreso");
+	    
+	    //retopartiDAO.addParticipant(usuario.getId(), reto.getId(), "En Progreso");
+        
+
+        
+
+		retoDAO.addParticipantToReto(usuario.getId(), reto.getId(), "En Progreso");
         
     }
 
@@ -195,10 +207,17 @@ public class RetoService {
     
     public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) {
         System.out.println("Cambiando estado del usuario: " + usuario.getUsername() + " en el reto: " + reto.getNombre() + " a: " + estado);
+        
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 	    EntityManager entityManager = entityManagerFactory.createEntityManager();
 	    RetoParticipantesDAO retopartiDAO = new RetoParticipantesDAO(entityManager);
         retopartiDAO.updateEstado(usuario.getId(), reto.getId(), estado);
+	    
+	    RetoParticipantesEntity RetoPartDB = new RetoParticipantesEntity();
+	    RetoPartDB.setRetoId(reto.getId());
+	    RetoPartDB.setUsuarioId(usuario.getId());
+	    RetoPartDB.setEstado(estado);
+	    
         
         
     }
