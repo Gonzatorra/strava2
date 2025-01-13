@@ -485,8 +485,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     }
 
     @Override
-    public void calcularProgreso(UsuarioDTO usuario) throws RemoteException {
-        retoService.calcularProgreso(usuario);
+    public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) throws RemoteException {
+        retoService.cambiarEstado(usuario, reto, estado);
 
     }
 

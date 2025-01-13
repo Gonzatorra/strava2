@@ -42,6 +42,6 @@ public interface IRemoteFacade extends Remote {
     void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fechaIni, LocalDateTime fechaFin, float distancia, float tiempo, String usuarioCreador, String deporte, ArrayList<Integer> participantes) throws RemoteException;
     void eliminarReto(UsuarioDTO usuario, RetoDTO reto) throws RemoteException;
     List<Integer> obtenerClasificacion(RetoDTO reto) throws RemoteException;
-    void calcularProgreso(UsuarioDTO usuario) throws RemoteException;
+    void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) throws RemoteException;
 
 }

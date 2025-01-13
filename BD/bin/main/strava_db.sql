@@ -15,7 +15,7 @@ CREATE TABLE usuarios (
     peso FLOAT,
     altura FLOAT,
     fecha_nacimiento DATE,
-    frecuencia_cardiaca_max FLOAT,
+    frecuencia_cardiaca_maxima FLOAT,
     frecuencia_cardiaca_reposo FLOAT,
     token VARCHAR(255),
     proveedor VARCHAR(50)

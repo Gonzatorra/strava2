@@ -55,7 +55,6 @@ public class UsuarioService implements Serializable {
         usuarioBD.setNombre(nombre);
         usuarioBD.setProveedor(proveedor);
         usuarioBD.setAmigos(new ArrayList<>());
-
         usuarioDAO.createUsuario(usuarioBD);
 
         int nuevoId = idCounter++;
@@ -150,7 +149,6 @@ public class UsuarioService implements Serializable {
             usuarioBD.setFrecCReposo(usuarioDTO.getFecCReposo());
             usuarioBD.setPeso(usuarioDTO.getPeso());
 
-
             usuarioDAO.updateUsuario(usuarioBD.getId(), usuarioBD);
 
             usuario.setUsername(usuarioDTO.getUsername());
@@ -160,16 +158,12 @@ public class UsuarioService implements Serializable {
             usuario.setPeso(usuarioDTO.getPeso());
             usuario.setAltura(usuarioDTO.getAltura());
             usuario.setfNacimiento(usuarioDTO.getfNacimiento());
-
-            ArrayList<Integer> amigosActualizados = new ArrayList<>();
-            for (Integer amigo : usuarioDTO.getAmigos()) {
-                if (!amigosActualizados.contains(amigo)) {
-                    amigosActualizados.add(amigo);
-                }
-            }
-            usuario.setAmigos(amigosActualizados);
-
+            usuario.setFecCMax(usuarioDTO.getFecCMax());
+            usuario.setFecCReposo(usuarioDTO.getFecCReposo());
+            usuario.setRetos(usuarioDTO.getRetos());
             usuario.setEntrenamientos(usuarioDTO.getEntrenamientos());
+            usuario.setAmigos(usuarioDTO.getAmigos());
+            
 
             usuarios.put(usuarioDTO.getId(), usuario);
             System.out.println("Usuario actualizado: " + usuario.getUsername());

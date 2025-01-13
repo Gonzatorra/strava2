@@ -8,8 +8,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import com.BD.dao.RetoDAO;
+import com.BD.dao.RetoParticipantesDAO;
 import com.BD.dao.UsuarioDAO;
 import com.BD.entity.RetoEntity;
+import com.BD.entity.RetoParticipantesEntity;
 import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
@@ -79,6 +81,7 @@ public class RetoService {
 
         int nuevoId = idCounter++;
         Usuario usu= UsuarioAssembler.toDomain(usuarioCreador);
+       
         particips.add(usu);
         ArrayList<Integer> ids= new ArrayList<Integer>();
         for (Usuario u: particips) {
@@ -108,6 +111,8 @@ public class RetoService {
 				objetivoDistancia, objetivoTiempo, ids);
 		retos.put(r.getId(), RetoAssembler.toDTO(r));
 		
+		
+		
 		return RetoAssembler.toDTO(r);
 	}
 
@@ -118,6 +123,11 @@ public class RetoService {
     	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
     			reto.getUsuarioCreador(), reto.getDeporte(), ids);
         RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
+        
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+	    EntityManager entityManager = entityManagerFactory.createEntityManager();
+	    RetoParticipantesDAO retopartiDAO = new RetoParticipantesDAO(entityManager);
+        retopartiDAO.addParticipant(usuario.getId(), reto.getId(), "En Progreso");
         
     }
 
@@ -182,8 +192,15 @@ public class RetoService {
         return RetoAssembler.toDomain(reto).obtenerClasificacion();
     }
 
-    public void calcularProgreso(UsuarioDTO usuario) {
-        System.out.println("Calculando progreso del usuario: " + usuario.getUsername());
+    
+    public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) {
+        System.out.println("Cambiando estado del usuario: " + usuario.getUsername() + " en el reto: " + reto.getNombre() + " a: " + estado);
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+	    EntityManager entityManager = entityManagerFactory.createEntityManager();
+	    RetoParticipantesDAO retopartiDAO = new RetoParticipantesDAO(entityManager);
+        retopartiDAO.updateEstado(usuario.getId(), reto.getId(), estado);
+        
+        
     }
     
     public void agregarParticipanteAReto(int usuarioId, int retoId, String estado) {

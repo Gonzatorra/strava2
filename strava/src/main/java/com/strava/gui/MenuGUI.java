@@ -472,13 +472,15 @@ public class MenuGUI extends JFrame {
 
 
             modButton.addActionListener(e -> {
-                JPanel panel = new JPanel(new GridLayout(7, 2));
+                JPanel panel = new JPanel(new GridLayout(9, 2));
                 JTextField usernameField = new JTextField(usuario.getUsername());
                 JTextField emailField = new JTextField(usuario.getEmail());
                 JPasswordField contraField = new JPasswordField(usuario.getContrasena());
                 JTextField nameField = new JTextField(usuario.getNombre());
                 JTextField weightField = new JTextField(String.valueOf(usuario.getPeso()));
                 JTextField heightField = new JTextField(String.valueOf(usuario.getAltura()));
+                JTextField fecMaxField = new JTextField(String.valueOf(usuario.getFecCMax()));
+                JTextField fecReposoField = new JTextField(String.valueOf(usuario.getFecCReposo()));
 
                 JLabel dobLabel = new JLabel("Fecha de Nacimiento:");
                 com.toedter.calendar.JDateChooser dateChooser = new com.toedter.calendar.JDateChooser();
@@ -495,10 +497,14 @@ public class MenuGUI extends JFrame {
                 panel.add(nameField);
                 panel.add(dobLabel);
                 panel.add(dateChooser);
-                panel.add(new JLabel("Weight (kg):"));
+                panel.add(new JLabel("Peso (kg):"));
                 panel.add(weightField);
-                panel.add(new JLabel("Height (cm):"));
+                panel.add(new JLabel("Altura (cm):"));
                 panel.add(heightField);
+                panel.add(new JLabel("Frecuencia C. Maxima (lat/min):"));
+                panel.add(fecMaxField);
+                panel.add(new JLabel("Frecuencia C. Reposo (lat/min):"));
+                panel.add(fecReposoField);
 
                 int option = JOptionPane.showConfirmDialog(
                         profilePanel,
@@ -515,6 +521,8 @@ public class MenuGUI extends JFrame {
                         usuario.setNombre(nameField.getText());
                         usuario.setPeso(Float.parseFloat(weightField.getText()));
                         usuario.setAltura(Float.parseFloat(heightField.getText()));
+                        usuario.setFecCMax(Float.parseFloat(fecMaxField.getText()));
+                        usuario.setFecCReposo(Float.parseFloat(fecReposoField.getText()));
 
                         char[] passwordChars = contraField.getPassword();
                         usuario.setContrasena(new String(passwordChars));
@@ -535,6 +543,8 @@ public class MenuGUI extends JFrame {
                         tableModel.setValueAt(usuario.getNombre(), 4, 1);
                         tableModel.setValueAt(usuario.getPeso(), 5, 1);
                         tableModel.setValueAt(usuario.getAltura(), 6, 1);
+                        tableModel.setValueAt(usuario.getFecCMax(), 7, 1);
+                        tableModel.setValueAt(usuario.getFecCReposo(), 8, 1);
 
                         JOptionPane.showMessageDialog(profilePanel, "Usuario actualizado con éxito.");
                     } catch (Exception ex) {
@@ -874,52 +884,96 @@ public class MenuGUI extends JFrame {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             Runnable updateTable = () -> {
-                String criteria = (String) searchCriteria2.getSelectedItem();
-
-                // Limpiar todas las filas del modelo
-                acceptedModel.setRowCount(0);
-                
-                try {
-                    
-                    System.out.println(usuario.getRetos()); //es vacio
-                    System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
-                    
-                } catch (RemoteException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                // Filtrar retos basados en el criterio seleccionado
-                for (RetoDTO r : usuario.getRetos().keySet()) {
-                	                    
-                    String estado = usuario.getRetos().get(r);
-
-                    if ("Todos".equalsIgnoreCase(criteria) || criteria.equalsIgnoreCase(estado)) {
-
-                        List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
-                                .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte()))
-                                .collect(Collectors.toList());
-                        double totalDistance = entrenamientos.stream()
-                                .mapToDouble(EntrenamientoDTO::getDistancia)
-                                .sum();
-                        int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
-
-                        try {
-                            acceptedModel.addRow(new Object[]{
-                                    r.getId(),
-                                    r.getNombre(),
-                                    r.getDeporte(),
-                                    r.getUsuarioCreador(),
-                                    r.getFecIni().format(formatter),
-                                    r.getFecFin().format(formatter),
-                                    r.getObjetivoDistancia(),
-                                    r.getObjetivoTiempo(),
-                                    progress
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            	int cambiado=2;
+            	while(cambiado>0) {
+	                String criteria = (String) searchCriteria2.getSelectedItem();
+	
+	                // Limpiar todas las filas del modelo
+	                acceptedModel.setRowCount(0);
+	                
+	                try {
+	                    
+	                    System.out.println(usuario.getRetos()); //es vacio
+	                    System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
+	                    
+	                } catch (RemoteException e) {
+	                    // TODO Auto-generated catch block
+	                    e.printStackTrace();
+	                }
+	                // Filtrar retos basados en el criterio seleccionado
+	                for (RetoDTO r : usuario.getRetos().keySet()) {
+	                	                    
+	                    String estado = usuario.getRetos().get(r);
+	
+	                    if ("Todos".equalsIgnoreCase(criteria) || criteria.equalsIgnoreCase(estado)) {
+	
+	                    	List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
+	                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) // Filtrar por deporte
+	                    		    .filter(e -> {
+	                    		        LocalDate retoFecIni = r.getFecIni().toLocalDate(); // Convertir LocalDateTime a LocalDate
+	                    		        LocalDate retoFecFin = r.getFecFin().toLocalDate();
+	                    		        return !e.getFecIni().isBefore(retoFecIni) && !e.getFecIni().isAfter(retoFecFin); // Comparar fechas
+	                    		    })
+	                    		    .collect(Collectors.toList());
+	
+	                    		double totalDistance = entrenamientos.stream()
+	                    		    .mapToDouble(EntrenamientoDTO::getDistancia)
+	                    		    .sum();
+	
+	                    		int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
+	                    		if (progress==100) {
+	                    			usuario.getRetos().put(r,"Superado");
+	                    			
+	                    			try {
+										facade.cambiarEstado(usuario, r, "Superado");
+									} catch (RemoteException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+	                    		}
+	                    		else if(r.getFecFin().toLocalDate().isBefore(LocalDate.now())) {
+	                    			
+	                    			usuario.getRetos().put(r,"No Superado");
+	                    			try {
+										facade.cambiarEstado(usuario, r, "No Superado");
+									} catch (RemoteException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+	                    		}
+	                    		else {
+	                    			usuario.getRetos().put(r,"En Progreso");
+	                    			try {
+										facade.cambiarEstado(usuario, r, "En Progreso");
+									} catch (RemoteException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+	                    		}
+	
+	
+	                        
+	                        try {
+	                            acceptedModel.addRow(new Object[]{
+	                                    r.getId(),
+	                                    r.getNombre(),
+	                                    r.getDeporte(),
+	                                    r.getUsuarioCreador(),
+	                                    r.getFecIni().format(formatter),
+	                                    r.getFecFin().format(formatter),
+	                                    r.getObjetivoDistancia(),
+	                                    r.getObjetivoTiempo(),
+	                                    progress
+	                            });
+	                        } catch (Exception e) {
+	                            e.printStackTrace();
+	                        }
+	                        
+	                        
+	                    }
+	                }
+	                cambiado--;
+            	}
             };
 
             // Listener para actualizar la tabla cuando se selecciona un nuevo filtro en el JComboBox
