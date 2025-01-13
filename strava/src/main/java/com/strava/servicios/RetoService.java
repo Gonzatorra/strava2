@@ -82,7 +82,6 @@ public class RetoService {
         int nuevoId = idCounter++;
         Usuario usu= UsuarioAssembler.toDomain(usuarioCreador);
        
-        particips.add(usu);
         ArrayList<Integer> ids= new ArrayList<Integer>();
         for (Usuario u: particips) {
             ids.add(u.getId());
@@ -179,7 +178,6 @@ public class RetoService {
 		}
     }
 
-
     public void eliminarReto(UsuarioDTO usuario, RetoDTO reto) {
         RetoAssembler.toDomain(reto).eliminarReto(UsuarioAssembler.toDomain(usuario));
         if(usuario.getUsername().equals(reto.getUsuarioCreador())) {
@@ -196,15 +194,18 @@ public class RetoService {
             RetoDTO r= retos.get(reto.getId());
             retos.put(r.getId(), r);
             */
-
+        	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            RetoDAO retoDAO = new RetoDAO(entityManager);
+            retoDAO.removeParticipantFromReto(usuario.getId(), reto.getId());
         }
     }
+    
     public List<Integer> obtenerClasificacion(RetoDTO reto) {
 
         return RetoAssembler.toDomain(reto).obtenerClasificacion();
     }
 
-    
     public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) {
         System.out.println("Cambiando estado del usuario: " + usuario.getUsername() + " en el reto: " + reto.getNombre() + " a: " + estado);
         

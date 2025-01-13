@@ -161,7 +161,7 @@ public class MenuGUI extends JFrame {
                         .findFirst()
                         .orElse(null);
                     
-                    //usuario = facade.getUsuarioService().obtenerUsuarioPorNombre(selectedUser);
+                    
                     if (usuario != null) {
                         SwingUtilities.invokeLater(() -> new MainAppGUI(usuario).setVisible(true));
                         SwingUtilities.getWindowAncestor(accessPanel).dispose();
@@ -1448,23 +1448,19 @@ public class MenuGUI extends JFrame {
                             System.out.println("El creador elimina el reto.");
                             ArrayList<Integer> participantes = r.getParticipantes();
                             for (Integer participante : participantes) {
-                                if (r.getParticipantes().contains(participante)) {
-                                    UsuarioDTO usu = facade.getUsuarios().get(participante);
-                                    usu.getRetos().remove(r);
-                                    facade.actualizarUsuario(usu);
-
-                                }
+                                UsuarioDTO usu = facade.getUsuarios().get(participante);
+                                facade.getUsuarioService().borrarDeGetRetos(usu,r);
+                                facade.actualizarUsuario(usu);
 
                             }
-                            
+                            usuario= facade.getUsuarios().get(usuario.getId());
                             facade.eliminarReto(usuario, r);
-                            usuario.getRetos().remove(r);
-                            retosD.remove(retoId);
                             facade.actualizarUsuario(usuario);
+                            usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
                             //eliminar al participante de la lista
-                            ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
+                            /*ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
                             HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                             for (UsuarioDTO participante : usuarios.values()) {
                                 if (participante.getId() == retoId) {
@@ -1486,7 +1482,13 @@ public class MenuGUI extends JFrame {
 
                             facade.eliminarReto(usuario, retosD.get(retoId));
                             facade.actualizarUsuario(usuario);
-
+*/
+                        	facade.getUsuarioService().borrarDeGetRetos(usuario,r);
+                            facade.actualizarUsuario(usuario);
+                            usuario= facade.getUsuarios().get(usuario.getId());
+                            facade.eliminarReto(usuario, r);
+                            facade.actualizarUsuario(usuario);
+                            usuario= facade.getUsuarios().get(usuario.getId());
                             System.out.println("El usuario se elimina del reto.");
                         }
 

@@ -66,7 +66,18 @@ public class UsuarioService implements Serializable {
         return UsuarioAssembler.toDTO(usuario);
     }
     
-    ////////////////////////////////////////////Esto no se usa, o?
+    public void borrarDeGetRetos(UsuarioDTO usu, RetoDTO reto) {
+    	HashMap<RetoDTO, String> retos= usu.getRetos();
+    	for(RetoDTO r: retos.keySet()) {
+    		if(r.getId()==reto.getId()) {
+    			retos.remove(r);
+    			break;
+    		}
+    	}
+    	usu.setRetos(retos);
+    	actualizarUsuario(usu);
+    }
+
     public UsuarioDTO login(String username, String contrasena) {
     	/*
         for (UsuarioDTO usuario : usuarios.values()) {
