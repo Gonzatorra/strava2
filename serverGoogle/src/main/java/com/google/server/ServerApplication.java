@@ -19,8 +19,6 @@ public class ServerApplication {
         googleAuthClient.registerUser("clara777", "claveClara", "clara777@gmail.com");
         googleAuthClient.registerUser("pablo888", "clavePablo", "pablo888@gmail.com");
 
-        //String token = googleAuthClient.loginUser("daniel333", "claveDaniel");
-        //System.out.println(token);
     }
 }
 

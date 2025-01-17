@@ -2,9 +2,7 @@ package com.google.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
-
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -41,7 +39,7 @@ public class GoogleAuthClient {
 
             int responseCode = conn.getResponseCode();
 
-            // Guardar el usuario en el repositorio local
+            //Guardar el usuario en el repositorio local
             if (responseCode == 201) {
                 Usuario usuario = new Usuario(username, password, email);
                 usuarioRepository.save(usuario);  // Guardamos el usuario en el repositorio
@@ -113,36 +111,6 @@ public class GoogleAuthClient {
         }
     }
 
-    //Metodo para obtener todos los usuarios registrados
-
-    public List<Usuario> getAllUsers() {
-        return usuarioRepository.findAll();
-    }
-    public boolean validateUser(String username, String token) {
-        try {
-            URL url = new URL(GOOGLE_SERVER_URL + "/validate");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            // Parámetros de la solicitud (username y token)
-            String params = "username=" + username + "&token=" + token;
-
-            // Enviar los parámetros al servidor
-            try (OutputStream os = conn.getOutputStream()) {
-                os.write(params.getBytes());
-                os.flush();
-            }
-
-            int responseCode = conn.getResponseCode();
-            return responseCode == 200; // Si la respuesta es 200, el token es válido
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public boolean logoutUser(String username) {
         try {
             URL url = new URL(GOOGLE_SERVER_URL + "/logout");
@@ -208,6 +176,5 @@ public class GoogleAuthClient {
             return null;  // Si ocurre algún error, se maneja aquí
         }
     }
-
 
 }
