@@ -15,7 +15,7 @@ public class RetoParticipantesDAO {
     public RetoParticipantesDAO(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-
+/*
     @Transactional
     public void addParticipant(int usuarioId, int retoId, String estado) {
         RetoParticipantesEntity participant = new RetoParticipantesEntity();
@@ -27,20 +27,7 @@ public class RetoParticipantesDAO {
         entityManager.persist(participant);
         entityManager.getTransaction().commit();
     }
-
-    public List<RetoParticipantesEntity> getParticipantsByRetoId(int retoId) {
-        return entityManager.createQuery(
-            "SELECT r FROM RetoParticipantesEntity r WHERE r.retoId = :retoId",
-            RetoParticipantesEntity.class
-        ).setParameter("retoId", retoId).getResultList();
-    }
-
-    public List<RetoParticipantesEntity> getRetosByUsuarioId(int usuarioId) {
-        return entityManager.createQuery(
-            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId",
-            RetoParticipantesEntity.class
-        ).setParameter("usuarioId", usuarioId).getResultList();
-    }
+*/
 
     @Transactional
     public void updateEstado(int usuarioId, int retoId, String newEstado) {
@@ -57,6 +44,7 @@ public class RetoParticipantesDAO {
         entityManager.getTransaction().commit();
     }
 
+    /*
     @Transactional
     public void removeParticipant(int usuarioId, int retoId) {
         RetoParticipantesEntity participant = entityManager.createQuery(
@@ -69,5 +57,5 @@ public class RetoParticipantesDAO {
         entityManager.getTransaction().begin();
         entityManager.remove(participant);
         entityManager.getTransaction().commit();
-    }
+    }*/
 }

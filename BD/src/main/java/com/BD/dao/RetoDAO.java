@@ -2,7 +2,6 @@ package com.BD.dao;
 
 import com.BD.entity.RetoEntity;
 import com.BD.entity.RetoParticipantesEntity;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -30,23 +29,6 @@ public class RetoDAO {
             }
             e.printStackTrace();
         }
-    }
-
-    public List<RetoEntity> findRetoByCreador(String creador) {
-        TypedQuery<RetoEntity> query = entityManager.createQuery(
-            "SELECT r FROM RetoEntity r WHERE r.creador = :creador",
-            RetoEntity.class
-        );
-        query.setParameter("creador", creador);
-        return query.getResultList();
-    }
-
-    public RetoEntity findRetoById(int id) {
-        return entityManager.find(RetoEntity.class, id);
-    }
-
-    public List<RetoEntity> findAllRetos() {
-        return entityManager.createQuery("SELECT r FROM RetoEntity r", RetoEntity.class).getResultList();
     }
 
     @Transactional
@@ -105,14 +87,7 @@ public class RetoDAO {
         entityManager.persist(participante);
         entityManager.getTransaction().commit();
     }
-
-    public List<RetoParticipantesEntity> findParticipantsByRetoId(int retoId) {
-        return entityManager.createQuery(
-            "SELECT r FROM RetoParticipantesEntity r WHERE r.retoId = :retoId",
-            RetoParticipantesEntity.class
-        ).setParameter("retoId", retoId).getResultList();
-    }
-
+/*
     @Transactional
     public void updateParticipantEstado(int usuarioId, int retoId, String estado) {
         RetoParticipantesEntity participante = entityManager.createQuery(
@@ -127,7 +102,7 @@ public class RetoDAO {
         entityManager.merge(participante);
         entityManager.getTransaction().commit();
     }
-
+*/
     @Transactional
     public void removeParticipantFromReto(int usuarioId, int retoId) {
         RetoParticipantesEntity participante = entityManager.createQuery(

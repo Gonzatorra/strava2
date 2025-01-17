@@ -31,23 +31,6 @@ public class UsuarioDAO {
         }
     }
 
-    // Buscar un Usuario por ID
-    public UsuarioEntity findUsuarioById(Long id) {
-        return entityManager.find(UsuarioEntity.class, id);
-    }
-
-    // Buscar un Usuario por Username
-    public UsuarioEntity findUsuarioByUsername(String username) {
-        TypedQuery<UsuarioEntity> query = entityManager.createQuery(
-                "SELECT u FROM UsuarioEntity u WHERE u.username = :username", UsuarioEntity.class);
-        query.setParameter("username", username);
-        return query.getSingleResult();
-    }
-
-    // Obtener todos los usuarios
-    public List<UsuarioEntity> findAllUsuarios() {
-        return entityManager.createQuery("SELECT u FROM UsuarioEntity u", UsuarioEntity.class).getResultList();
-    }
 
     // Actualizar un Usuario
     public void updateUsuario(long id, UsuarioEntity usuarioActualizado) {
@@ -82,6 +65,7 @@ public class UsuarioDAO {
         }
     }
 
+    /*
 
     // Eliminar un Usuario por ID
     public void deleteUsuario(Long id) {
@@ -99,7 +83,7 @@ public class UsuarioDAO {
             e.printStackTrace();
         }
     }
-    
+    */
     public List<RetoParticipantesEntity> findRetosByUsuarioId(int usuarioId) {
         return entityManager.createQuery(
             "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId",

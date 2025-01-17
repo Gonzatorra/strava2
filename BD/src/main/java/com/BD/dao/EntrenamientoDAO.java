@@ -29,17 +29,7 @@ public class EntrenamientoDAO {
             e.printStackTrace();
         }
     }
-
-    public EntrenamientoEntity findEntrenamientoById(long id) {
-        return entityManager.find(EntrenamientoEntity.class, id);
-    }
-
-    public List<EntrenamientoEntity> findAllEntrenamientos() {
-        return entityManager
-          .createQuery("SELECT e FROM EntrenamientoEntity e", EntrenamientoEntity.class)
-          .getResultList();
-    }
-
+   
     @Transactional
     public void updateEntrenamiento(long id, EntrenamientoEntity entrenamientoActualizado) {
         try {
