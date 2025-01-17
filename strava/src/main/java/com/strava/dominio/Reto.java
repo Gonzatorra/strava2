@@ -3,10 +3,8 @@ package com.strava.dominio;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
-import com.strava.DTO.*;
-
+@SuppressWarnings("serial")
 public class Reto implements Serializable{
     //atributos
     private int id;

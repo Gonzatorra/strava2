@@ -5,7 +5,7 @@ public class GestionEstadoSingleton {
     private boolean usuarioAutenticado;
 
     private GestionEstadoSingleton() {
-        this.usuarioAutenticado = false;
+        this.setUsuarioAutenticado(false);
     }
 
     public static GestionEstadoSingleton getInstancia() {
@@ -14,4 +14,12 @@ public class GestionEstadoSingleton {
         }
         return instancia;
     }
+
+	public boolean isUsuarioAutenticado() {
+		return usuarioAutenticado;
+	}
+
+	public void setUsuarioAutenticado(boolean usuarioAutenticado) {
+		this.usuarioAutenticado = usuarioAutenticado;
+	}
 }

@@ -1,10 +1,7 @@
 package com.strava.gui;
 
 import javax.swing.*;
-import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
-import com.strava.config.*;
-import com.strava.dominio.Reto;
 import com.strava.fachada.*;
 import java.awt.*;
 import java.rmi.Naming;
@@ -22,10 +19,10 @@ import javax.swing.table.JTableHeader;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.table.TableCellRenderer;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
 
+@SuppressWarnings("serial")
 public class MenuGUI extends JFrame {
 
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
@@ -1108,11 +1105,13 @@ public class MenuGUI extends JFrame {
                         Date endTime = (Date) endTimeSpinner.getValue();
 
                         //Combinar fecha y hora en LocalDateTime
-                        LocalDateTime fecIni = LocalDateTime.ofInstant(
+                        @SuppressWarnings("deprecation")
+						LocalDateTime fecIni = LocalDateTime.ofInstant(
                                 startDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
 
-                        LocalDateTime fecFin = LocalDateTime.ofInstant(
+                        @SuppressWarnings("deprecation")
+						LocalDateTime fecFin = LocalDateTime.ofInstant(
                                 endDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
 
@@ -1120,7 +1119,7 @@ public class MenuGUI extends JFrame {
                         if (fecIni.isAfter(fecFin)) {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
-
+                        /*
                         Reto reto = new Reto(
 	                        0, //ID se generara
 	                        sportField.getText(),
@@ -1132,7 +1131,7 @@ public class MenuGUI extends JFrame {
 	                        Float.parseFloat(timeField.getText()),
 	                        new ArrayList<>()
 	                    );
-
+						*/
                         //Llamar al metodo del facade para guardar el reto
                         RetoDTO reto1 = facade.crearReto(
                                 titleField.getText(),
@@ -1312,11 +1311,13 @@ public class MenuGUI extends JFrame {
                         Date endTime = (Date) endTimeSpinner.getValue();
 
                         //Combinar fecha y hora en LocalDateTime
-                        LocalDateTime fecIni = LocalDateTime.ofInstant(
+                        @SuppressWarnings("deprecation")
+						LocalDateTime fecIni = LocalDateTime.ofInstant(
                                 startDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
 
-                        LocalDateTime fecFin = LocalDateTime.ofInstant(
+                        @SuppressWarnings("deprecation")
+						LocalDateTime fecFin = LocalDateTime.ofInstant(
                                 endDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
 

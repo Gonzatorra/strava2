@@ -40,7 +40,8 @@ public class AuthClientMeta {
         return parseJsonToMap(jsonResponse);
     }
 
-    private Map<String, String> parseJsonToMap(String json) {
+    @SuppressWarnings("unchecked")
+	private Map<String, String> parseJsonToMap(String json) {
         Gson gson = new Gson();
         //Convierte el JSON en un Map<String, String>
         return gson.fromJson(json, Map.class);

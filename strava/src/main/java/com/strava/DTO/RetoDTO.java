@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public class RetoDTO implements Serializable{
     //atributos
     private int id;

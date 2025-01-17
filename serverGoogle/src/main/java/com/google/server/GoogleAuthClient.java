@@ -25,7 +25,8 @@ public class GoogleAuthClient {
 
     public boolean registerUser(String username, String password, String email) {
         try {
-            URL url = new URL(GOOGLE_SERVER_URL + "/register");
+            @SuppressWarnings("deprecation")
+			URL url = new URL(GOOGLE_SERVER_URL + "/register");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -69,7 +70,8 @@ public class GoogleAuthClient {
     public String loginUser(String username, String password) {
         try {
             //Login en Google
-            URL url = new URL(GOOGLE_SERVER_URL + "/login");
+            @SuppressWarnings("deprecation")
+			URL url = new URL(GOOGLE_SERVER_URL + "/login");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -111,7 +113,8 @@ public class GoogleAuthClient {
 
     public boolean logoutUser(String username) {
         try {
-            URL url = new URL(GOOGLE_SERVER_URL + "/logout");
+            @SuppressWarnings("deprecation")
+			URL url = new URL(GOOGLE_SERVER_URL + "/logout");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
@@ -143,7 +146,8 @@ public class GoogleAuthClient {
 
     public List<Usuario> allUsers() {
         try {
-            URL url = new URL(GOOGLE_SERVER_URL + "/all-users");
+            @SuppressWarnings("deprecation")
+			URL url = new URL(GOOGLE_SERVER_URL + "/all-users");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setDoOutput(false);  //No es necesario enviar parámetros, así que no se necesita output stream

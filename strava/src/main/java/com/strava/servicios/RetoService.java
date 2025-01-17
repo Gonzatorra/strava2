@@ -9,10 +9,8 @@ import javax.swing.JOptionPane;
 
 import com.BD.dao.RetoDAO;
 import com.BD.dao.RetoParticipantesDAO;
-import com.BD.dao.UsuarioDAO;
 import com.BD.entity.RetoEntity;
 import com.BD.entity.RetoParticipantesEntity;
-import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
 import com.strava.dominio.*;
@@ -20,8 +18,6 @@ import com.strava.dominio.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
-import com.strava.assembler.*;
 
 public class RetoService {
     private static HashMap<Integer,RetoDTO> retos;
@@ -41,7 +37,7 @@ public class RetoService {
         }
 
         int nuevoId = idCounter++;
-        Usuario usu= UsuarioAssembler.toDomain(usuarioCreador);
+        //Usuario usu= UsuarioAssembler.toDomain(usuarioCreador);
        
         ArrayList<Integer> ids= new ArrayList<Integer>();
         for (Usuario u: particips) {

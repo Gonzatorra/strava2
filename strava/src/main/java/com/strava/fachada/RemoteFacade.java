@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.context.ApplicationContext;
 
+@SuppressWarnings("serial")
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
@@ -62,21 +63,21 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     @Override
     public HashMap<Integer, UsuarioDTO> getUsuarios() throws RemoteException {
         // TODO Auto-generated method stub
-        return this.usuarioService.getUsuarios();
+        return UsuarioService.getUsuarios();
     }
 
 
 
     @Override
     public UsuarioDTO registrarUsuario(String username, String password, String email, String nombre, String proveedor) throws RemoteException {
-        UsuarioDTO usuario = usuarioService.getUsuarios().values().stream()
+        UsuarioDTO usuario = UsuarioService.getUsuarios().values().stream()
                 .filter(u -> u.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
 
         if (usuario != null) {
             System.out.println("Usuario ya existe: " + username);
-            return usuario;
+            return null;
         }
 
         return usuarioService.registrar(username, password, email, nombre, proveedor);

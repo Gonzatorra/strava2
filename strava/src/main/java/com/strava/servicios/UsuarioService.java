@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+@SuppressWarnings("serial")
 public class UsuarioService implements Serializable {
 
     public static HashMap<Integer, UsuarioDTO> usuarios = new HashMap<>();
