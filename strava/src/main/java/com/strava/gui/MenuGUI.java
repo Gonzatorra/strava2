@@ -1704,7 +1704,7 @@ public class MenuGUI extends JFrame {
                 }
 
                 try {
-                    userModel.setRowCount(0); // Limpiar la tabla antes de buscar
+                    userModel.setRowCount(0); //Limpiar la tabla antes de buscar
                     HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                     ArrayList<Integer> amigosID = facade.getAmigos(usuario);
                     ArrayList<UsuarioDTO> amigos = new ArrayList<UsuarioDTO>();
