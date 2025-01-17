@@ -3,9 +3,7 @@ package com.BD.dao;
 import com.BD.entity.EntrenamientoEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 public class EntrenamientoDAO {
 
