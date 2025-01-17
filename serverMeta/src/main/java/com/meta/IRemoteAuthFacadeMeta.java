@@ -6,7 +6,4 @@ public interface IRemoteAuthFacadeMeta extends Remote {
 
     String login(String username, String password) throws RemoteException;
 
-    boolean validateToken(String token) throws RemoteException;
-
-    String getUserInfo(String token) throws RemoteException;
 }

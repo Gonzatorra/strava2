@@ -45,7 +45,7 @@ public class AuthControllerGoogle {
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password) {
         try {
-            Usuario usuario = usuarioService.register(username, email, password);
+            usuarioService.register(username, email, password);
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());  //En caso de que el usuario ya exista
@@ -59,7 +59,7 @@ public class AuthControllerGoogle {
         Optional<Usuario> usuario = usuarioService.findByUsername(username);
 
         if (usuario.isPresent()) {
-            // Validar si el token es correcto
+            //Validar si el token es correcto
             if (usuario.get().getToken().equals(token)) {
                 return ResponseEntity.ok("Token validado exitosamente");
             } else {
@@ -72,11 +72,11 @@ public class AuthControllerGoogle {
 
     @GetMapping("/all-users")
     public ResponseEntity<List<Usuario>> getAllUsers() {
-        List<Usuario> usuarios = usuarioRepository.findAll(); // Usa el repositorio para obtener los usuarios
+        List<Usuario> usuarios = usuarioRepository.findAll(); //Obtiene los usuarios
         if (usuarios.isEmpty()) {
-            return ResponseEntity.noContent().build(); // Responde con código 204 si no hay usuarios
+            return ResponseEntity.noContent().build(); //Responde con codigo 204 si no hay usuarios
         }
-        return ResponseEntity.ok(usuarios); // Retorna la lista de usuarios con código 200
+        return ResponseEntity.ok(usuarios); //Devuelve la lista de usuarios con codigo 200
     }
 
 

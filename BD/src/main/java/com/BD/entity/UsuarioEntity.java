@@ -46,12 +46,6 @@ public class UsuarioEntity {
     @Column(name = "proveedor")
     private String proveedor;
 
-    //@OneToMany(mappedBy = "usuarioCreador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //private List<RetoEntity> retosCreados = new ArrayList<>();
-
-    //@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //private List<EntrenamientoEntity> entrenamientos = new ArrayList<>();
-
     @ElementCollection
     @CollectionTable(name = "usuario_amigos", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "amigo_id")

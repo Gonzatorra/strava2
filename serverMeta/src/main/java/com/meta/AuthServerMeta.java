@@ -1,25 +1,21 @@
 package com.meta;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 public class AuthServerMeta {
-    private static final int PORT = 1101; // Puerto del servidor
+    private static final int PORT = 1101; //Puerto del servidor
     private final Map<String, String> userStore = new HashMap<>();
     private final Map<String, String> tokenStore = new HashMap<>();
     private final Map<String, String> userInfoStore = new HashMap<>();
 
     public AuthServerMeta() {
-        // Usuarios de prueba
-        userStore.put("user1", "password1");
-        userInfoStore.put("user1", "User One, user1@example.com");
-
-        userStore.put("user2", "password2");
-        userInfoStore.put("user2", "User Two, user2@example.com");
     }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("AuthServer is running on port " + PORT);
+            System.out.println("AuthServer se ejecuta en el puerto " + PORT);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -65,9 +61,9 @@ public class AuthServerMeta {
     public synchronized String logout(String token) {
         if (tokenStore.containsKey(token)) {
             tokenStore.remove(token);
-            return ("Logout successful for token: " + token);
+            return ("Logout hecho para el token: " + token);
         } else {
-            return("Invalid token for logout: " + token);
+            return("Token no valido para el logout: " + token);
         }
 
     }
@@ -89,7 +85,7 @@ public class AuthServerMeta {
             jsonBuilder.append("\"").append(entry.getKey()).append("\":\"").append(entry.getValue()).append("\",");
         }
         if (jsonBuilder.length() > 1) {
-            jsonBuilder.setLength(jsonBuilder.length() - 1); // Elimina la última coma
+            jsonBuilder.setLength(jsonBuilder.length() - 1); //Elimina la ultima coma
         }
         jsonBuilder.append("}");
         return jsonBuilder.toString();

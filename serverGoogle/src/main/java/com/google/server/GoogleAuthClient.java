@@ -16,7 +16,7 @@ import java.util.*;
 public class GoogleAuthClient {
 
     private static final String GOOGLE_SERVER_URL = "http://localhost:8080/google";
-    private final UsuarioRepository usuarioRepository;  // Inyección del repositorio
+    private final UsuarioRepository usuarioRepository;  //Inyeccion del repositorio
 
     public GoogleAuthClient(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -25,7 +25,6 @@ public class GoogleAuthClient {
 
     public boolean registerUser(String username, String password, String email) {
         try {
-            // Registro en Google
             URL url = new URL(GOOGLE_SERVER_URL + "/register");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -42,7 +41,7 @@ public class GoogleAuthClient {
             //Guardar el usuario en el repositorio local
             if (responseCode == 201) {
                 Usuario usuario = new Usuario(username, password, email);
-                usuarioRepository.save(usuario);  // Guardamos el usuario en el repositorio
+                usuarioRepository.save(usuario);  //Guardamos el usuario en el repositorio
                 System.out.println("Usuario " + username + " guardado en repositorio correctamente en Google");
                 return true;
             }else{
@@ -54,7 +53,7 @@ public class GoogleAuthClient {
                     while ((line = reader.readLine()) != null) {
                         responseBuilder.append(line);
                     }
-                    System.out.println("Error: " + responseCode + " - " + responseBuilder.toString());
+                    System.out.println("Error: " + responseCode + " - " + responseBuilder);
                 } else {
                     System.out.println("Error: Código de respuesta " + responseCode);
                 }
@@ -69,17 +68,16 @@ public class GoogleAuthClient {
 
     public String loginUser(String username, String password) {
         try {
-            // Login en Google
+            //Login en Google
             URL url = new URL(GOOGLE_SERVER_URL + "/login");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-            // Parámetros de la solicitud
             String params = "username=" + username + "&password=" + password;
 
-            // Enviar los parametros al servidor
+            //Enviar los parametros al servidor
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(params.getBytes());
                 os.flush();
@@ -87,7 +85,7 @@ public class GoogleAuthClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                // Si el login es exitoso, leer el cuerpo de la respuesta (por ejemplo, el token)
+                //Si el login es correcto, leer el cuerpo de la respuesta
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                     StringBuilder response = new StringBuilder();
                     String inputLine;
@@ -97,17 +95,17 @@ public class GoogleAuthClient {
                     //Parsear la respuesta JSON para obtener solo el token
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode rootNode = mapper.readTree(response.toString());
-                    String token = rootNode.get("token").asText(); // Extraer el valor del token
+                    String token = rootNode.get("token").asText(); //Extraer el valor del token
                     System.out.println("Login exitoso. Token recibido: " + token);
-                    return token; // Retornar solo el token
+                    return token; //Devolver solo el token
                 }
             } else {
                 System.out.println("Login fallido. Código de respuesta: " + responseCode);
-                return null;  //Retornar null si el login no es exitoso
+                return null;  //Devolver null si el login no es exitoso
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;  // Retornar null en caso de error
+            return null;  //Devolver null en caso de error
         }
     }
 
@@ -119,10 +117,10 @@ public class GoogleAuthClient {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-            // Parámetros de la solicitud
+            //Parametros de la solicitud
             String params = "username=" + username;
 
-            // Enviar los parámetros al servidor
+            //Enviar los parametros al servidor
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(params.getBytes());
                 os.flush();
@@ -130,7 +128,7 @@ public class GoogleAuthClient {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                // Si la respuesta es 200, logout fue exitoso
+                //Si la respuesta es 200, logout fue exitoso
                 System.out.println("Logout exitoso.");
                 return true;
             } else {
@@ -147,33 +145,33 @@ public class GoogleAuthClient {
         try {
             URL url = new URL(GOOGLE_SERVER_URL + "/all-users");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");  // Cambiar a GET
-            conn.setDoOutput(false);  // No es necesario enviar parámetros, así que no se necesita output stream
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(false);  //No es necesario enviar parámetros, así que no se necesita output stream
 
             int responseCode = conn.getResponseCode();
 
             if (responseCode == 200) {
-                // Si la respuesta es 200, leer los usuarios de la respuesta
+                //Si la respuesta es 200, leer los usuarios de la respuesta
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                     String inputLine;
                     StringBuilder response = new StringBuilder();
                     while ((inputLine = in.readLine()) != null) {
                         response.append(inputLine);
                     }
-                    // Usamos Jackson para deserializar la respuesta JSON
+                    //Usamos Jackson para deserializar la respuesta JSON
                     ObjectMapper objectMapper = new ObjectMapper();
-                    // Suponemos que la respuesta es un array JSON de usuarios
+
                     List<Usuario> usuarios = objectMapper.readValue(response.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Usuario.class));
-                    System.out.println("Usuarios recibidos: " + response.toString());
-                    return usuarios; // Los usuarios se recibieron correctamente
+                    System.out.println("Usuarios recibidos: " + response);
+                    return usuarios; //Los usuarios se recibieron correctamente
                 }
             } else {
                 System.out.println("Error al obtener usuarios. Código de respuesta: " + responseCode);
-                return null;  // Si la respuesta no es 200, se reporta error
+                return null;  //Si la respuesta no es 200, se da un error
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;  // Si ocurre algún error, se maneja aquí
+            return null;  //Si ocurre algun error, se maneja aquí
         }
     }
 

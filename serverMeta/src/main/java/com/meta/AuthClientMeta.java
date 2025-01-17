@@ -1,9 +1,8 @@
 package com.meta;
-import com.google.gson.Gson;
 
+import com.google.gson.Gson;
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AuthClientMeta {
@@ -24,8 +23,6 @@ public class AuthClientMeta {
             System.out.println(request);
             String token=in.readLine();
             return token;
-            	//throw new NullPointerException();
-            
         }
     }
 
@@ -37,36 +34,17 @@ public class AuthClientMeta {
         return sendRequest("LOGIN;" + username + ";" + password);
     }
 
-    public boolean validateToken(String token) throws IOException {
-        return Boolean.parseBoolean(sendRequest("VALIDATE;" + token));
-    }
-
-    public String getUserInfo(String token) throws IOException {
-        return sendRequest("GETINFO;" + token);
-    }
 
     public Map<String, String> getUserStore() throws IOException {
         String jsonResponse = sendRequest("GETUSERSTORE");
         return parseJsonToMap(jsonResponse);
     }
 
-    public Map<String, String> getUserInfoStore() throws IOException {
-        String jsonResponse = sendRequest("GETUSERINFOSTORE");
-        return parseJsonToMap(jsonResponse);
-    }
-
-    public Map<String, String> getTokenStore() throws IOException {
-        String jsonResponse = sendRequest("GETTOKENSTORE");
-        return parseJsonToMap(jsonResponse);
-
-    }
-
     private Map<String, String> parseJsonToMap(String json) {
         Gson gson = new Gson();
-        // Convierte el JSON en un Map<String, String>
+        //Convierte el JSON en un Map<String, String>
         return gson.fromJson(json, Map.class);
     }
-
 
     public void logout(String username) throws IOException {
         sendRequest("LOGOUT;" + username);

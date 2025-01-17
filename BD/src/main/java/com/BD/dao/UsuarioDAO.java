@@ -16,7 +16,7 @@ public class UsuarioDAO {
         this.entityManager = entityManager;
     }
 
-    // Método para crear un Usuario
+    //Metodo para crear un Usuario
     public void createUsuario(UsuarioEntity usuario) {
         try {
             entityManager.getTransaction().begin();
@@ -65,25 +65,6 @@ public class UsuarioDAO {
         }
     }
 
-    /*
-
-    // Eliminar un Usuario por ID
-    public void deleteUsuario(Long id) {
-        try {
-            entityManager.getTransaction().begin();
-            UsuarioEntity usuario = entityManager.find(UsuarioEntity.class, id);
-            if (usuario != null) {
-                entityManager.remove(usuario);
-            }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }
-    }
-    */
     public List<RetoParticipantesEntity> findRetosByUsuarioId(int usuarioId) {
         return entityManager.createQuery(
             "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId",

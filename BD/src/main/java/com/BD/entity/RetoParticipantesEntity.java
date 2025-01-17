@@ -18,15 +18,7 @@ public class RetoParticipantesEntity {
 
     @Column(name = "estado", nullable = false)
     private String estado;
-    /*
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-	*/
     public int getUsuarioId() {
         return usuarioId;
     }

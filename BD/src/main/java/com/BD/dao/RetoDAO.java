@@ -87,22 +87,7 @@ public class RetoDAO {
         entityManager.persist(participante);
         entityManager.getTransaction().commit();
     }
-/*
-    @Transactional
-    public void updateParticipantEstado(int usuarioId, int retoId, String estado) {
-        RetoParticipantesEntity participante = entityManager.createQuery(
-            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId AND r.retoId = :retoId",
-            RetoParticipantesEntity.class
-        ).setParameter("usuarioId", usuarioId)
-         .setParameter("retoId", retoId)
-         .getSingleResult();
 
-        entityManager.getTransaction().begin();
-        participante.setEstado(estado);
-        entityManager.merge(participante);
-        entityManager.getTransaction().commit();
-    }
-*/
     @Transactional
     public void removeParticipantFromReto(int usuarioId, int retoId) {
         RetoParticipantesEntity participante = entityManager.createQuery(

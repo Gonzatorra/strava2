@@ -16,7 +16,7 @@ public class ClientHandlerMeta extends Thread{
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-            String request = in.readLine(); // Leer solicitud del cliente
+            String request = in.readLine(); //Leer solicitud del cliente
             String[] parts = request.split(";");
             String action = parts[0];
             String response = "";
@@ -28,34 +28,22 @@ public class ClientHandlerMeta extends Thread{
                 case "REGISTER":
                     response = server.registerUser(parts[1], parts[2], parts[3]);
                     break;
-                case "VALIDATE":
-                    response = String.valueOf(server.validateToken(parts[1]));
-                    break;
-                case "GETINFO":
-                    response = server.getUserInfo(parts[1]);
-                    break;
                 case "LOGOUT":
                     response = server.logout(parts[1]);
                     break;
                 case "GETUSERSTORE":
                     response = server.getUserStoreAsJson();
                     break;
-                case "GETUSERINFOSTORE":
-                    response = server.getUserInfoStoreAsJson();
-                    break;
-                case "GETTOKENSTORE":
-                    response = server.getTokenStoreAsJson();
-                    break;
                 default:
                     response = "Invalid action";
             }
 
-            out.println(response); // Enviar respuesta al cliente
+            out.println(response); //Enviar respuesta al cliente
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                clientSocket.close(); // Cerrar conexión
+                clientSocket.close(); //Cerrar conexion
             } catch (IOException e) {
                 e.printStackTrace();
             }

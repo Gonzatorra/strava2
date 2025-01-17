@@ -22,7 +22,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    // Getters y Setters
+    //Getters-setters
     public String getEmail() {
         return email;
     }

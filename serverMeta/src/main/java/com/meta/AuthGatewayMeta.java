@@ -29,11 +29,4 @@ public class AuthGatewayMeta {
         return sendRequest("LOGIN;" + username + ";" + password);
     }
 
-    public boolean validateToken(String token) throws IOException {
-        return Boolean.parseBoolean(sendRequest("VALIDATE;" + token));
-    }
-
-    public String getUserInfo(String token) throws IOException {
-        return sendRequest("GETINFO;" + token);
-    }
 }

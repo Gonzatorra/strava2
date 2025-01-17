@@ -74,7 +74,7 @@ public class EntrenamientoDAO {
         }
     }
 
-
+    //Buscar por username
     public List<EntrenamientoEntity> findByUsername(String username) {
         String jpql = "SELECT e FROM EntrenamientoEntity e WHERE e.usuario = :username";
         TypedQuery<EntrenamientoEntity> query = entityManager.createQuery(jpql, EntrenamientoEntity.class);
