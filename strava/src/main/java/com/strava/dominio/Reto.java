@@ -124,11 +124,6 @@ public class Reto implements Serializable{
         return this;
     }
 
-    public void eliminarReto(Usuario usuario) {
-        System.out.println("El usuario elimina el reto y se saca de la lista en caso de que sea"
-                + "participante. Si es creador, se elimina todo el reto");
-
-    }
 
     public void aceptarReto(Usuario usuario) {
         System.out.println("El usuario acepta el reto y se añade a la lista");
@@ -136,8 +131,4 @@ public class Reto implements Serializable{
     }
 
 
-    public ArrayList<Integer> obtenerClasificacion() {
-        System.out.println("Se devuelve la clasificación de todos los usuarios del reto");
-        return this.getParticipantes();
-    }
 }
