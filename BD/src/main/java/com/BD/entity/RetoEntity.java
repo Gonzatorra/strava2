@@ -2,8 +2,6 @@ package com.BD.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "retos")
@@ -50,11 +48,6 @@ public class RetoEntity {
         this.deporte = deporte;
     }
 
-
-    public String getUsuarioCreador() {
-		return usuarioCreador;
-	}
-
 	public void setUsuarioCreador(String usuarioCreador) {
 		this.usuarioCreador = usuarioCreador;
 	}
@@ -98,6 +91,4 @@ public class RetoEntity {
     public void setObjetivoTiempo(float objetivoTiempo) {
         this.objetivoTiempo = objetivoTiempo;
     }
-
-    
 }

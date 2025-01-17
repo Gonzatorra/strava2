@@ -1,11 +1,8 @@
 package com.strava.gui;
 
 import javax.swing.*;
-
-import com.google.server.GoogleAuthClient;
 import com.meta.AuthClientMeta;
 import com.strava.DTO.*;
-import com.strava.assembler.UsuarioAssembler;
 import com.strava.config.*;
 import com.strava.dominio.Reto;
 import com.strava.fachada.*;
@@ -25,8 +22,6 @@ import javax.swing.table.JTableHeader;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.table.TableCellRenderer;
-
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
@@ -35,16 +30,10 @@ public class MenuGUI extends JFrame {
 
     private static final Color ORANGE_ACCENT = new Color(255, 87, 34);
     private IRemoteFacade facade;
-    //private final GoogleAuthClient googleAuthClient;
-    private AuthClientMeta metaAuthClient;
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public MenuGUI(IRemoteFacade facade) throws RemoteException {
         this.facade = facade;
-        //this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         System.out.println("UsuarioRepository instancia en MenuGUI: ");
-
         setTitle("Acceso a Strava - Login / Registro");
         setSize(500, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -113,15 +102,15 @@ public class MenuGUI extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Título grande en el centro
+        //Titulo grande en el centro
         JLabel titleLabel = new JLabel("ACCESO A STRAVA", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2; // Abarca dos columnas
+        gbc.gridwidth = 2; //Abarca dos columnas
         accessPanel.add(titleLabel, gbc);
 
-        // ComboBox para seleccionar el usuario activo
+        //ComboBox para seleccionar el usuario activo
         JLabel userLabel = new JLabel("Seleccione un usuario:");
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -134,7 +123,7 @@ public class MenuGUI extends JFrame {
         gbc.gridy = 1;
         accessPanel.add(userComboBox, gbc);
 
-        // Botón para acceder
+        //Boton para acceder
         JButton accessButton = new JButton("ACCEDER");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -149,12 +138,12 @@ public class MenuGUI extends JFrame {
         	userComboBox.setEnabled(true);
             accessButton.setEnabled(true);
         }
-        // Acción del botón
+        //Accion del boton
         accessButton.addActionListener(e -> {
             String selectedUser = (String) userComboBox.getSelectedItem();
             if (selectedUser != null) {
                 try {
-                	// Busca el usuario utilizando Streams
+                	//Busca el usuario utilizando Streams
                     UsuarioDTO usuario = facade.getUsuarios().values()    //usuario.getRetos es vacio
                         .stream()
                         .filter(u -> selectedUser.equals(u.getUsername()))
@@ -327,7 +316,6 @@ public class MenuGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = (AnnotationConfigApplicationContext) ApplicationContextProvider.getContext();
         try {
             IRemoteFacade facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
 
@@ -335,7 +323,6 @@ public class MenuGUI extends JFrame {
 				try {
 					new MenuGUI(facade).setVisible(true);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			});
@@ -458,7 +445,6 @@ public class MenuGUI extends JFrame {
                             facade.logout(usuario.getUsername());
                         }
 
-                        //usuario.setToken(null); // Clear the token locally  ya se hace
                         JOptionPane.showMessageDialog(profilePanel, "Sesión cerrada correctamente.");
                         dispose();
                         new MenuGUI(facade).setVisible(true);
@@ -580,13 +566,13 @@ public class MenuGUI extends JFrame {
                     return false;
                 }
             };
-            // Limpia todo el contenido anterior
+            //Limpia todo el contenido anterior
             tableModel.setRowCount(0);
 
 
             //cargar entrenamientos
             ArrayList<EntrenamientoDTO> entrenos = usuario.getEntrenamientos();
-            tableModel.setRowCount(0);  // Borra todo en el tableModel
+            tableModel.setRowCount(0);  //Borra todo en el tableModel
             for (EntrenamientoDTO e : entrenos) {
                 tableModel.addRow(new Object[]{
                         e.getFecIni(),
@@ -598,16 +584,13 @@ public class MenuGUI extends JFrame {
                 });
             }
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-
             JTable trainTable = new JTable(tableModel);
             trainTable.setFocusable(false);
             JTableHeader header = trainTable.getTableHeader();
             header.setBackground(ORANGE_ACCENT);
             header.setForeground(Color.WHITE);
             trainPanel.add(new JScrollPane(trainTable), BorderLayout.CENTER);
-            trainPanel.revalidate();  // Asegura que se actualice el panel
+            trainPanel.revalidate();  //Asegura que se actualice el panel
             trainPanel.repaint();
 
 
@@ -627,14 +610,14 @@ public class MenuGUI extends JFrame {
             trainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 
-            modButton.addActionListener(event -> { // Renamed parameter to 'event' to avoid conflicts
+            modButton.addActionListener(event -> {
                 int selectedRow = trainTable.getSelectedRow();
                 if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(this, "Seleccione un entrenamiento para modificar.");
                     return;
                 }
 
-                // Obtiene la fecha original desde la tabla
+                //Obtiene la fecha original desde la tabla
                 LocalDate fechaOriginal = (LocalDate) tableModel.getValueAt(selectedRow, 0);
 
                 JPanel panel = new JPanel(new GridLayout(5, 2));
@@ -660,41 +643,40 @@ public class MenuGUI extends JFrame {
                     try {
                         String title = titleField.getText();
                         String sport = sportField.getText();
-                        double distance = Double.parseDouble(distanceField.getText()); // Parse distance as double
-                        double duration = Double.parseDouble(durationField.getText()); // Parse duration as double
+                        double distance = Double.parseDouble(distanceField.getText()); //Parse distance as double
+                        double duration = Double.parseDouble(durationField.getText()); //Parse duration as double
 
-                        // Get the entrenamiento ID from the table
+                        //Obtener entrenamiento ID de la tabla
                         int entrenamientoId = (int) tableModel.getValueAt(selectedRow, 1);
 
-                        // Find the entrenamiento object from the user's entrenamiento list
+                        //Obtener el entrenamiento de la lista de entrenamientos del usuario
                         EntrenamientoDTO entrenamientoToUpdate = usuario.getEntrenamientos().stream()
                                 .filter(e -> e.getId() == entrenamientoId)
                                 .findFirst()
                                 .orElseThrow(() -> new IllegalArgumentException("Entrenamiento no encontrado"));
 
-                        // Update the entrenamiento via facade
+                        //actualizar el entrenamiento a traves de la fachada
                         facade.actualizarEntreno(entrenamientoToUpdate, usuario, title, sport, duration, distance);
 
-                        // Update the entrenamiento in the user's list
+                        //actualizar el entrenamiento de la lista del usuario
                         entrenamientoToUpdate.setTitulo(title);
                         entrenamientoToUpdate.setDeporte(sport);
-                        entrenamientoToUpdate.setDistancia((float) distance); // Cast to float if required
+                        entrenamientoToUpdate.setDistancia((float) distance);
                         entrenamientoToUpdate.setDuracion((float) duration);
 
                         usuario.getEntrenamientos().remove(entrenamientoToUpdate);
                         usuario.getEntrenamientos().add(entrenamientoToUpdate);
                         
-                        // Update the user to persist the updated entrenamiento
                         facade.actualizarUsuario(usuario);
 
-                        // Update the table
+                        //actualizar la tabla
                         tableModel.setValueAt(fechaOriginal, selectedRow, 0);
                         tableModel.setValueAt(title, selectedRow, 2);
                         tableModel.setValueAt(duration, selectedRow, 3);
                         tableModel.setValueAt(distance, selectedRow, 4);
                         tableModel.setValueAt(sport, selectedRow, 5);
 
-                        trainPanel.revalidate();  // Ensure panel is updated
+                        trainPanel.revalidate();
                         trainPanel.repaint();
 
                         JOptionPane.showMessageDialog(this, "Entrenamiento actualizado con éxito");
@@ -730,10 +712,7 @@ public class MenuGUI extends JFrame {
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
-                        // Retrieve the entrenamiento ID from the table
                         int id = (Integer) tableModel.getValueAt(selectedRow, 1);
-
-                        // Find the corresponding EntrenamientoDTO in the user's list
                         int entrenamientoIndex = -1;
                         EntrenamientoDTO entrenamientoToRemove = null;
 
@@ -751,16 +730,9 @@ public class MenuGUI extends JFrame {
                             return;
                         }
 
-                        // Call facade to delete the entrenamiento, passing the index and the EntrenamientoDTO
                         facade.eliminarEntreno(entrenamientoIndex, entrenamientoToRemove);
-
-                        // Remove the entrenamiento from the user's list
                         usuario.getEntrenamientos().remove(entrenamientoIndex);
-
-                        // Update the user in the backend
                         facade.actualizarUsuario(usuario);
-
-                        // Remove the row from the table
                         tableModel.removeRow(selectedRow);
 
                         JOptionPane.showMessageDialog(this, "Entrenamiento eliminado con éxito.");
@@ -823,16 +795,16 @@ public class MenuGUI extends JFrame {
                         usuario.getEntrenamientos().add(entreno);
                         facade.actualizarUsuario(usuario);
 
-                        // Añade el progreso y otros valores a la tabla
+                        //Añade el progreso y otros valores a la tabla
                         tableModel.addRow(new Object[]{
                                 fecha,
                                 entreno.getId(),
-                                title,         // Título
-                                duration,      // Duración (minutos)
-                                distance,       // Distancia (km)
-                                sport         // Deporte
+                                title,         //Titulo
+                                duration,      //Duracion (minutos)
+                                distance,       //Distancia (km)
+                                sport         //Deporte
                         });
-                        trainPanel.revalidate();  // Asegura que se actualice el panel
+                        trainPanel.revalidate();  //Asegura que se actualice el panel
                         trainPanel.repaint();
 
                         JOptionPane.showMessageDialog(this, "Entrenamiento añadido con éxito.");
@@ -853,10 +825,10 @@ public class MenuGUI extends JFrame {
             JPanel mainPanel = new JPanel(new BorderLayout());
 
 
-            // Nombres de las columnas con la nueva columna "ID"
+            //Nombres de las columnas con la nueva columna "ID"
             String[] columnNames = {"ID", "Nombre", "Deporte", "Creador", "Fecha Inicio", "Fecha Fin", "Objetivo Distancia", "Objetivo Tiempo", "Progreso"};
 
-            // **Pestaña de retos aceptados**
+            //Pestaña de retos aceptados
             JPanel acceptedPanel = new JPanel(new BorderLayout());
             DefaultTableModel acceptedModel = new DefaultTableModel(columnNames, 0) {
                 @Override
@@ -871,16 +843,15 @@ public class MenuGUI extends JFrame {
             };
 
 
-            // Crear JComboBox con las opciones de filtrado
+            //Crear JComboBox con las opciones de filtrado
             JComboBox<String> searchCriteria2 = new JComboBox<>(new String[]{"Todos", "Superado", "En Progreso", "No Superado"});
 
-            // Agregar el JComboBox al panel superior
+            //Agregar el JComboBox al panel superior
             JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             filterPanel.add(searchCriteria2);
             acceptedPanel.add(filterPanel, BorderLayout.NORTH);
 
-            // Llenar el modelo inicial basado en el criterio seleccionado
-            //HashMap<RetoDTO, String> retosAceptados = usuario.getRetos(); // Asumiendo que usuario.getRetos() devuelve un HashMap<Reto, String>
+            //Llenar el modelo inicial basado en el criterio seleccionado
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             Runnable updateTable = () -> {
@@ -888,7 +859,7 @@ public class MenuGUI extends JFrame {
             	while(cambiado>0) {
 	                String criteria = (String) searchCriteria2.getSelectedItem();
 	
-	                // Limpiar todas las filas del modelo
+	                //Limpiar todas las filas del modelo
 	                acceptedModel.setRowCount(0);
 	                
 	                try {
@@ -900,7 +871,7 @@ public class MenuGUI extends JFrame {
 	                    // TODO Auto-generated catch block
 	                    e.printStackTrace();
 	                }
-	                // Filtrar retos basados en el criterio seleccionado
+	                //Filtrar retos basados en el criterio seleccionado
 	                for (RetoDTO r : usuario.getRetos().keySet()) {
 	                	                    
 	                    String estado = usuario.getRetos().get(r);
@@ -908,11 +879,11 @@ public class MenuGUI extends JFrame {
 	                    if ("Todos".equalsIgnoreCase(criteria) || criteria.equalsIgnoreCase(estado)) {
 	
 	                    	List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
-	                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) // Filtrar por deporte
+	                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) //Filtrar por deporte
 	                    		    .filter(e -> {
-	                    		        LocalDate retoFecIni = r.getFecIni().toLocalDate(); // Convertir LocalDateTime a LocalDate
+	                    		        LocalDate retoFecIni = r.getFecIni().toLocalDate(); //Convertir LocalDateTime a LocalDate
 	                    		        LocalDate retoFecFin = r.getFecFin().toLocalDate();
-	                    		        return !e.getFecIni().isBefore(retoFecIni) && !e.getFecIni().isAfter(retoFecFin); // Comparar fechas
+	                    		        return !e.getFecIni().isBefore(retoFecIni) && !e.getFecIni().isAfter(retoFecFin); //Comparar fechas
 	                    		    })
 	                    		    .collect(Collectors.toList());
 	
@@ -976,14 +947,14 @@ public class MenuGUI extends JFrame {
             	}
             };
 
-            // Listener para actualizar la tabla cuando se selecciona un nuevo filtro en el JComboBox
+            //Listener para actualizar la tabla cuando se selecciona un nuevo filtro en el JComboBox
             searchCriteria2.addActionListener(e -> updateTable.run());
 
-            // Cargar inicialmente la tabla con el criterio por defecto
+            //Cargar inicialmente la tabla con el criterio por defecto
             updateTable.run();
 
 
-            // Agregar tabla al panel principal
+            //Agregar tabla al panel principal
             JTable acceptedTable = new JTable(acceptedModel);
             acceptedTable.setFocusable(false);
             JTableHeader acceptedHeader = acceptedTable.getTableHeader();
@@ -1007,7 +978,7 @@ public class MenuGUI extends JFrame {
             acceptedPanel.add(new JScrollPane(acceptedTable), BorderLayout.CENTER);
 
 
-            // Botones de acción para modificar y eliminar retos
+            //Botones de accion para modificar y eliminar retos
             JPanel buttonPanel = new JPanel();
             JButton addButton = new JButton("Añadir Reto");
             JButton modButton = new JButton("Modificar Reto");
@@ -1027,7 +998,7 @@ public class MenuGUI extends JFrame {
             updateButton.setForeground(Color.WHITE);
             buttonPanel.add(updateButton);
 
-            // Lógica para añadir un reto
+            //Logica para añadir un reto
             addButton.addActionListener(e -> {
                 JPanel panel = new JPanel(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -1036,11 +1007,11 @@ public class MenuGUI extends JFrame {
                 gbc.anchor = GridBagConstraints.WEST;
 
 
-                // Campos del formulario
+                //Campos del formulario
                 JTextField titleField = new JTextField();
                 JTextField sportField = new JTextField();
                 JTextField creatorField = new JTextField(usuario.getNombre());
-                creatorField.setEditable(false); // Solo lectura para el creador
+                creatorField.setEditable(false); //Solo lectura para el creador
                 com.toedter.calendar.JDateChooser startDateField = new com.toedter.calendar.JDateChooser();
                 JSpinner startTimeSpinner = new JSpinner(new SpinnerDateModel());
                 JSpinner.DateEditor startTimeEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm:ss");
@@ -1052,7 +1023,7 @@ public class MenuGUI extends JFrame {
                 JTextField distanceField = new JTextField();
                 JTextField timeField = new JTextField();
 
-                // Agregar elementos al panel
+                //Agregar elementos al panel
                 int row = 0;
 
                 gbc.gridx = 0;
@@ -1128,15 +1099,15 @@ public class MenuGUI extends JFrame {
 
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        // Fechas
+                        //Fechas
                         Date startDate = startDateField.getDate();
                         Date endDate = finishDateField.getDate();
 
-                        // Horas
+                        //Horas
                         Date startTime = (Date) startTimeSpinner.getValue();
                         Date endTime = (Date) endTimeSpinner.getValue();
 
-                        // Combinar fecha y hora en LocalDateTime
+                        //Combinar fecha y hora en LocalDateTime
                         LocalDateTime fecIni = LocalDateTime.ofInstant(
                                 startDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
@@ -1145,13 +1116,13 @@ public class MenuGUI extends JFrame {
                                 endDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
 
-                        // Validar que la fecha de inicio sea anterior a la fecha de fin
+                        //Validar que la fecha de inicio sea anterior a la fecha de fin
                         if (fecIni.isAfter(fecFin)) {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
 
                         Reto reto = new Reto(
-	                        0, // ID se generará
+	                        0, //ID se generara
 	                        sportField.getText(),
 	                        usuario.getUsername(),
 	                        titleField.getText(),
@@ -1162,7 +1133,7 @@ public class MenuGUI extends JFrame {
 	                        new ArrayList<>()
 	                    );
 
-                        // Llamar al método del facade para guardar el reto
+                        //Llamar al metodo del facade para guardar el reto
                         RetoDTO reto1 = facade.crearReto(
                                 titleField.getText(),
                                 fecIni,
@@ -1173,7 +1144,7 @@ public class MenuGUI extends JFrame {
                                 usuario,
                                 new ArrayList<>()
                         );
-                        // Añadir el reto al modelo de la tabla
+                        //Añadir el reto al modelo de la tabla
                         acceptedModel.addRow(new Object[]{
                                 reto1.getId(),
                                 reto1.getNombre(),
@@ -1202,7 +1173,7 @@ public class MenuGUI extends JFrame {
                 }
             });
 
-            // Lógica para modificar un reto
+            //Logica para modificar un reto
             modButton.addActionListener(e -> {
                 int selectedRow = acceptedTable.getSelectedRow();
                 if (selectedRow == -1) {
@@ -1212,11 +1183,11 @@ public class MenuGUI extends JFrame {
 
                 JPanel panel = new JPanel(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
-                gbc.insets = new Insets(5, 5, 5, 5); // Margen entre elementos
+                gbc.insets = new Insets(5, 5, 5, 5); //Margen entre elementos
                 gbc.fill = GridBagConstraints.HORIZONTAL;
                 gbc.anchor = GridBagConstraints.WEST;
 
-                // Extraer datos actuales
+                //Extraer datos actuales
                 String currentTitle = (String) acceptedModel.getValueAt(selectedRow, 1);
                 String currentSport = (String) acceptedModel.getValueAt(selectedRow, 2);
                 String currentStartDateTime = (String) acceptedModel.getValueAt(selectedRow, 4);
@@ -1225,37 +1196,37 @@ public class MenuGUI extends JFrame {
                 float currentTime = 0;
 
                 try {
-                    // Convertir el valor a String y luego a float
+                    //Convertir el valor a String y luego a float
                     currentDistance = Float.parseFloat(acceptedModel.getValueAt(selectedRow, 6).toString());
                     currentTime = Float.parseFloat(acceptedModel.getValueAt(selectedRow, 7).toString());
                 } catch (NumberFormatException a) {
-                    // Manejar el caso cuando la conversión falla
+                    //Manejar el caso cuando la conversion falla
                     System.out.println("Error al convertir el valor a float: " + a.getMessage());
                 }
 
-                // Campos del formulario
+                //Campos del formulario
                 JTextField titleField = new JTextField(currentTitle);
                 JTextField sportField = new JTextField(currentSport);
                 JTextField creatorField = new JTextField(usuario.getNombre());
-                creatorField.setEditable(false); // Solo lectura para el creador
+                creatorField.setEditable(false); //Solo lectura para el creador
 
                 com.toedter.calendar.JDateChooser startDateField = new com.toedter.calendar.JDateChooser();
                 com.toedter.calendar.JDateChooser finishDateField = new com.toedter.calendar.JDateChooser();
 
-                // Parsear las fechas actuales
+                //Parsear las fechas actuales
                 LocalDateTime currentStart = LocalDateTime.parse(currentStartDateTime, formatter);
                 LocalDateTime currentEnd = LocalDateTime.parse(currentEndDateTime, formatter);
 
                 startDateField.setDate(java.sql.Date.valueOf(currentStart.toLocalDate()));
                 finishDateField.setDate(java.sql.Date.valueOf(currentEnd.toLocalDate()));
 
-                // Hora de inicio
+                //Hora de inicio
                 JSpinner startTimeSpinner = new JSpinner(new SpinnerDateModel());
                 JSpinner.DateEditor startTimeEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm:ss");
                 startTimeSpinner.setEditor(startTimeEditor);
                 startTimeSpinner.setValue(java.sql.Time.valueOf(currentStart.toLocalTime()));
 
-                // Hora de fin
+                //Hora de fin
                 JSpinner endTimeSpinner = new JSpinner(new SpinnerDateModel());
                 JSpinner.DateEditor endTimeEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm:ss");
                 endTimeSpinner.setEditor(endTimeEditor);
@@ -1264,7 +1235,7 @@ public class MenuGUI extends JFrame {
                 JTextField distanceField = new JTextField(String.valueOf(currentDistance));
                 JTextField timeField = new JTextField(String.valueOf(currentTime));
 
-                // Agregar elementos al panel
+                //Agregar elementos al panel
                 int row = 0;
                 gbc.gridx = 0;
                 gbc.gridy = row;
@@ -1332,15 +1303,15 @@ public class MenuGUI extends JFrame {
 
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        // Fechas
+                        //Fechas
                         Date startDate = startDateField.getDate();
                         Date endDate = finishDateField.getDate();
 
-                        // Horas
+                        //Horas
                         Date startTime = (Date) startTimeSpinner.getValue();
                         Date endTime = (Date) endTimeSpinner.getValue();
 
-                        // Combinar fecha y hora en LocalDateTime
+                        //Combinar fecha y hora en LocalDateTime
                         LocalDateTime fecIni = LocalDateTime.ofInstant(
                                 startDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
@@ -1349,36 +1320,23 @@ public class MenuGUI extends JFrame {
                                 endDate.toInstant(), ZoneId.systemDefault()
                         ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
 
-                        // Validar que la fecha de inicio sea anterior a la fecha de fin
+                        //Validar que la fecha de inicio sea anterior a la fecha de fin
                         if (fecIni.isAfter(fecFin)) {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
 
-                        // Obtener el reto actual por ID (clave)
+                        //Obtener el reto actual por ID (clave)
                         RetoDTO retoActual = usuario.getRetos().keySet()
                                 .stream()
                                 .findFirst()
                                 .orElse(null);
 
                         if (retoActual != null) {
-                            // Eliminar el reto anterior del Map
+                            //Eliminar el reto anterior del Map
                             usuario.getRetos().remove(retoActual);
                         }
 
-                        // Crear el reto actualizado
-                    Reto retoActualizado = new Reto(
-                        selectedRow, // ID del reto
-                        sportField.getText(),
-                        usuario.getUsername(),
-                        titleField.getText(),
-                        fecIni,
-                        fecFin,
-                        Float.parseFloat(distanceField.getText()),
-                        Float.parseFloat(timeField.getText()),
-                        new ArrayList<>()
-                    );
-
-                        // Actualizar la información en el backend
+                        //Actualizar la información en el backend
                         facade.actualizarReto(
                                 retoActual,
                                 titleField.getText(),
@@ -1393,10 +1351,10 @@ public class MenuGUI extends JFrame {
 
                         RetoDTO retoActualizado1 = facade.visualizarReto().get(retoActual.getId());
 
-                        // Agregar el nuevo reto al Map
+                        //Agregar el nuevo reto al Map
                         usuario.getRetos().put(retoActualizado1, "prueba");
 
-                        // Actualizar la tabla
+                        //Actualizar la tabla
                         acceptedModel.setValueAt(titleField.getText(), selectedRow, 1);
                         acceptedModel.setValueAt(sportField.getText(), selectedRow, 2);
                         acceptedModel.setValueAt(formatter.format(fecIni), selectedRow, 4);
@@ -1404,7 +1362,7 @@ public class MenuGUI extends JFrame {
                         acceptedModel.setValueAt(distanceField.getText(), selectedRow, 6);
                         acceptedModel.setValueAt(timeField.getText(), selectedRow, 7);
 
-                        // Actualizar el usuario en el backend
+                        //Actualizar el usuario en el backend
                         facade.actualizarUsuario(usuario);
                         JOptionPane.showMessageDialog(this, "Reto actualizado con éxito.");
 
@@ -1416,7 +1374,7 @@ public class MenuGUI extends JFrame {
             });
 
 
-            // Lógica para eliminar un reto
+            //Logica para eliminar un reto
             delButton.addActionListener(e -> {
                 int selectedRow = acceptedTable.getSelectedRow();
                 if (selectedRow == -1) {
@@ -1459,30 +1417,6 @@ public class MenuGUI extends JFrame {
                             usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
-                            //eliminar al participante de la lista
-                            /*ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
-                            HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
-                            for (UsuarioDTO participante : usuarios.values()) {
-                                if (participante.getId() == retoId) {
-                                    participante.getRetos().remove(retosD.get(retoId));
-                                    facade.actualizarUsuario(participante);
-                                }
-
-                            }
-                            ArrayList<Integer> IDs = new ArrayList<Integer>();
-                            for (UsuarioDTO u : participantesDTO) {
-                                IDs.add(u.getId());
-                            }
-                            facade.actualizarReto(retosD.get(retoId), retosD.get(retoId).getNombre(),
-                                    retosD.get(retoId).getFecIni(),
-                                    retosD.get(retoId).getFecFin(), retosD.get(retoId).getObjetivoDistancia(),
-                                    retosD.get(retoId).getObjetivoTiempo(),
-                                    retosD.get(retoId).getUsuarioCreador(),
-                                    retosD.get(retoId).getDeporte(), IDs);
-
-                            facade.eliminarReto(usuario, retosD.get(retoId));
-                            facade.actualizarUsuario(usuario);
-*/
                         	facade.getUsuarioService().borrarDeGetRetos(usuario,r);
                             facade.actualizarUsuario(usuario);
                             usuario= facade.getUsuarios().get(usuario.getId());
@@ -1506,15 +1440,15 @@ public class MenuGUI extends JFrame {
                 updateTable.run();
             });
 
-            // **Pestaña de añadir reto**
+            //Pestaña de añadir reto
 
 
             JPanel addPanel = new JPanel(new BorderLayout());
 
-            // Definir las columnas para la tabla
+            //Definir las columnas para la tabla
             String[] columnNames1 = {"ID", "Nombre", "Deporte", "Creador", "Fecha Inicio", "Fecha Fin", "Objetivo Distancia", "Objetivo Tiempo"};
 
-            // Crear el modelo de la tabla para mostrar los retos disponibles para aceptar
+            //Crear el modelo de la tabla para mostrar los retos disponibles para aceptar
             DefaultTableModel acceptModel = new DefaultTableModel(columnNames1, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -1522,14 +1456,14 @@ public class MenuGUI extends JFrame {
                 }
             };
 
-            // Crear la tabla para mostrar los retos disponibles
+            //Crear la tabla para mostrar los retos disponibles
             JTable acceptTable = new JTable(acceptModel);
             JTableHeader acceptHeader = acceptTable.getTableHeader();
             acceptHeader.setBackground(ORANGE_ACCENT);
             acceptHeader.setForeground(Color.WHITE);
             addPanel.add(new JScrollPane(acceptTable), BorderLayout.CENTER);
 
-            // Panel de búsqueda
+            //Panel de busqueda
             JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JLabel searchLabel = new JLabel("Buscar por:");
             JComboBox<String> searchCriteria = new JComboBox<>(new String[]{"Nombre", "Deporte"});
@@ -1542,7 +1476,7 @@ public class MenuGUI extends JFrame {
 
             addPanel.add(searchPanel, BorderLayout.NORTH);
 
-            // Funcionalidad de búsqueda en los retos disponibles
+            //Funcionalidad de busqueda en los retos disponibles
             searchButton.addActionListener(e -> {
                 String criteria = (String) searchCriteria.getSelectedItem();
                 String searchTerm = searchField.getText().toLowerCase();
@@ -1574,13 +1508,13 @@ public class MenuGUI extends JFrame {
                 }
             });
 
-            // Botón para aceptar el reto seleccionado
+            //Boton para aceptar el reto seleccionado
             JButton acceptSelectedButton = new JButton("Aceptar Reto");
             acceptSelectedButton.setBackground(ORANGE_ACCENT);
             acceptSelectedButton.setForeground(Color.WHITE);
             searchPanel.add(acceptSelectedButton);
 
-            // Acción para aceptar el reto seleccionado
+            //Accion para aceptar el reto seleccionado
             acceptSelectedButton.addActionListener(e -> {
                 int selectedRow = acceptTable.getSelectedRow();
                 if (selectedRow != -1) {
@@ -1588,7 +1522,7 @@ public class MenuGUI extends JFrame {
                     HashMap<Integer, RetoDTO> retosDisponibles = null;
 
                     try {
-                        retosDisponibles = facade.visualizarReto();  // Recuperar retos desde el servidor
+                        retosDisponibles = facade.visualizarReto();  //Recuperar retos desde el servidor
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
                     }
@@ -1596,7 +1530,7 @@ public class MenuGUI extends JFrame {
                     if (retosDisponibles != null && retosDisponibles.containsKey(idReto)) {
                         RetoDTO retoSeleccionado = retosDisponibles.get(idReto);
 
-                        // Verificar si el usuario ya ha aceptado el reto
+                        //Verificar si el usuario ya ha aceptado el reto
                         if (!retoSeleccionado.getParticipantes().stream().anyMatch(participanteID -> participanteID.equals(usuario.getId()))) {
 
 
@@ -1609,7 +1543,6 @@ public class MenuGUI extends JFrame {
                             try {
                                 usuarios = facade.getUsuarios();
                             } catch (RemoteException e1) {
-                                // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             }
                             for (UsuarioDTO u : usuarios.values()) {
@@ -1636,10 +1569,9 @@ public class MenuGUI extends JFrame {
                                 facade.actualizarUsuario(usuario);
                                 facade.aceptarReto(usuario, retoSeleccionado);
                             } catch (RemoteException e1) {
-                                // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             }
-                            // Agregar el reto a la lista de retos aceptados
+                            //Agregar el reto a la lista de retos aceptados
                             acceptedModel.addRow(new Object[]{
                                     retoSeleccionado.getId(),
                                     retoSeleccionado.getNombre(),
@@ -1670,25 +1602,25 @@ public class MenuGUI extends JFrame {
 
         private JPanel createTabPanel(String content) {
 
-            // Crear el panel principal y los subpaneles
+            //Crear el panel principal y los subpaneles
             JTabbedPane tabbedPanel2 = new JTabbedPane();
             JPanel mainPanel2 = new JPanel(new BorderLayout());
             JPanel misAmigos = new JPanel(new BorderLayout());
             JPanel addAmigos = new JPanel(new BorderLayout());
 
-            // **Mis Amigos Tab Implementation**
-            // Definir columnas para la tabla de amigos
+            //Mis Amigos
+            //Definir columnas para la tabla de amigos
             String[] amigoColumnNames = {"ID", "Username", "Email"};
 
-            // Crear el modelo de la tabla para mostrar los amigos actuales
+            //Crear el modelo de la tabla para mostrar los amigos actuales
             DefaultTableModel amigoModel = new DefaultTableModel(amigoColumnNames, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return false; // Evitar que las celdas sean editables
+                    return false; //Evitar que las celdas sean editables
                 }
             };
 
-            // Crear la tabla para mostrar los amigos actuales
+            //Crear la tabla para mostrar los amigos actuales
             JTable amigoTable = new JTable(amigoModel);
             JTableHeader amigoHeader = amigoTable.getTableHeader();
             amigoHeader.setBackground(ORANGE_ACCENT);
@@ -1696,7 +1628,7 @@ public class MenuGUI extends JFrame {
 
             misAmigos.add(new JScrollPane(amigoTable), BorderLayout.CENTER);
 
-            // Cargar amigos actuales al inicializar la tabla
+            //Cargar amigos actuales al inicializar la tabla
             try {
                 amigoModel.setRowCount(0); // Limpiar cualquier dato previo
                 ArrayList<Integer> amigos = facade.getAmigos(usuario);
@@ -1711,11 +1643,10 @@ public class MenuGUI extends JFrame {
             }
 
 
-            // **Añadir Amigos Tab Implementation**
-            // Definir las columnas para la tabla
+            //Definir las columnas para la tabla
             String[] columnNames = {"ID", "Username", "Email"};
 
-            // Crear el modelo de la tabla para mostrar los usuarios disponibles para añadir como amigos
+            //Crear el modelo de la tabla para mostrar los usuarios disponibles para añadir como amigos
             DefaultTableModel userModel = new DefaultTableModel(columnNames, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -1723,14 +1654,14 @@ public class MenuGUI extends JFrame {
                 }
             };
 
-            // Crear la tabla para mostrar los usuarios disponibles
+            //Crear la tabla para mostrar los usuarios disponibles
             JTable userTable = new JTable(userModel);
             JTableHeader userHeader = userTable.getTableHeader();
             userHeader.setBackground(ORANGE_ACCENT);
             userHeader.setForeground(Color.WHITE);
             addAmigos.add(new JScrollPane(userTable), BorderLayout.CENTER);
 
-            // Panel de búsqueda
+            //Panel de búsqueda
             JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JLabel searchLabel = new JLabel("Buscar por:");
             JComboBox<String> searchCriteria = new JComboBox<>(new String[]{"ID", "Username", "Email"});
@@ -1743,9 +1674,9 @@ public class MenuGUI extends JFrame {
 
             addAmigos.add(searchPanel, BorderLayout.NORTH);
 
-            // Cargar todos los usuarios que no son amigos al inicializar la tabla
+            //Cargar todos los usuarios que no son amigos al inicializar la tabla
             try {
-                userModel.setRowCount(0); // Limpiar la tabla por si hay datos previos
+                userModel.setRowCount(0); //Limpiar la tabla por si hay datos previos
                 HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                 ArrayList<Integer> amigosID = facade.getAmigos(usuario);
                 ArrayList<UsuarioDTO> amigos = new ArrayList<UsuarioDTO>();
@@ -1762,7 +1693,7 @@ public class MenuGUI extends JFrame {
                 JOptionPane.showMessageDialog(addAmigos, "Error al cargar los usuarios iniciales.", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
-            // Funcionalidad de búsqueda en la tabla
+            //Funcionalidad de busqueda en la tabla
             searchButton.addActionListener(e -> {
                 String criteria = (String) searchCriteria.getSelectedItem();
                 String searchTerm = searchField.getText().trim().toLowerCase();
@@ -1782,7 +1713,7 @@ public class MenuGUI extends JFrame {
                     }
 
                     for (UsuarioDTO user : usuarios.values()) {
-                        if (amigos.contains(user)) continue; // Excluir amigos
+                        if (amigos.contains(user)) continue; //Excluir amigos
 
                         boolean matches = switch (criteria) {
                             case "ID" -> String.valueOf(user.getId()).contains(searchTerm);
@@ -1801,13 +1732,13 @@ public class MenuGUI extends JFrame {
                 }
             });
 
-            // Botón para añadir amigo seleccionado
+            //Boton para añadir amigo seleccionado
             JButton addFriendButton = new JButton("Añadir amigo");
             addFriendButton.setBackground(ORANGE_ACCENT);
             addFriendButton.setForeground(Color.WHITE);
             addAmigos.add(addFriendButton, BorderLayout.SOUTH);
 
-            // Acción para añadir amigo seleccionado
+            //Accion para añadir amigo seleccionado
             addFriendButton.addActionListener(e -> {
                 int selectedRow = userTable.getSelectedRow();
                 if (selectedRow != -1) {
@@ -1817,7 +1748,7 @@ public class MenuGUI extends JFrame {
                         UsuarioDTO currentUser = usuario;
                         UsuarioDTO selectedUser = facade.getUsuarios().get(userId);
 
-                        // Verificar si el usuario ya es amigo
+                        //Verificar si el usuario ya es amigo
                         ArrayList<Integer> amigosID = facade.getAmigos(currentUser);
                         ArrayList<UsuarioDTO> amigos = new ArrayList<UsuarioDTO>();
                         HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
@@ -1829,26 +1760,24 @@ public class MenuGUI extends JFrame {
                             return;
                         }
 
-                        // Añadir el amigo
+                        //Añadir el amigo
                         currentUser.getAmigos().add(selectedUser.getId());
                         facade.actualizarUsuario(currentUser);
 
 
                         JOptionPane.showMessageDialog(addAmigos, "Amigo añadido con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-                        // Eliminar el usuario añadido de la tabla
+                        //Eliminar el usuario añadido de la tabla
                         userModel.removeRow(selectedRow);
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(addAmigos, "Error al intentar añadir al amigo. Por favor, intente de nuevo.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    // **Mis Amigos Tab Implementation**
 
-
-                    // Cargar amigos actuales al inicializar la tabla
+                    //Cargar amigos actuales al inicializar la tabla
                     try {
-                        amigoModel.setRowCount(0); // Limpiar cualquier dato previo
+                        amigoModel.setRowCount(0); //Limpiar cualquier dato previo
                         ArrayList<Integer> amigosID = facade.getAmigos(usuario);
                         ArrayList<UsuarioDTO> amigos = new ArrayList<UsuarioDTO>();
                         HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
@@ -1871,7 +1800,7 @@ public class MenuGUI extends JFrame {
                 }
             });
 
-            // Agregar las pestañas al panel
+            //Agregar las pestañas al panel
             tabbedPanel2.addTab("Mis Amigos", misAmigos);
             tabbedPanel2.addTab("Añadir Amigo", addAmigos);
 

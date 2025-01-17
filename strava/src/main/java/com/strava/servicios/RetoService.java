@@ -148,11 +148,6 @@ public class RetoService {
             retoDAO.removeParticipantFromReto(usuario.getId(), reto.getId());
         }
     }
-    
-    public List<Integer> obtenerClasificacion(RetoDTO reto) {
-
-        return RetoAssembler.toDomain(reto).obtenerClasificacion();
-    }
 
     public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) {
         System.out.println("Cambiando estado del usuario: " + usuario.getUsername() + " en el reto: " + reto.getNombre() + " a: " + estado);
@@ -170,12 +165,5 @@ public class RetoService {
         
         
     }
-    
-    public void agregarParticipanteAReto(int usuarioId, int retoId, String estado) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        RetoDAO retoDAO = new RetoDAO(entityManager);
 
-        retoDAO.addParticipantToReto(usuarioId, retoId, estado);
-    }
 }

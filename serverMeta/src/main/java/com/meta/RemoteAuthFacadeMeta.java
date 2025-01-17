@@ -43,7 +43,7 @@ public class RemoteAuthFacadeMeta implements IRemoteAuthFacadeMeta {
                 return "El usuario ya existe";
             }
 
-            // Usar AuthFactory para registrar el usuario
+            //Usar AuthFactory para registrar el usuario
             AuthFactoryMeta.registerUser(username, password, email, userStore, userInfoStore);
 
             return "Usuario registrado correctamente";

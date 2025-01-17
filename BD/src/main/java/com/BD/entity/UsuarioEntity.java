@@ -1,7 +1,6 @@
 package com.BD.entity;
 
 import jakarta.persistence.*;
-
 import java.util.*;
 
 @Entity

@@ -1,8 +1,6 @@
 package com.BD.entity;
 
 import jakarta.persistence.*;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 

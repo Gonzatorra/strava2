@@ -4,9 +4,7 @@ import com.BD.entity.RetoEntity;
 import com.BD.entity.RetoParticipantesEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 public class RetoDAO {
 

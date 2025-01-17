@@ -1,26 +1,10 @@
 package com.strava.servicios;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
-
-import javax.swing.JOptionPane;
-
-import com.BD.dao.EntrenamientoDAO;
-import com.BD.dao.RetoDAO;
 import com.BD.dao.UsuarioDAO;
-import com.BD.entity.EntrenamientoEntity;
-import com.BD.entity.RetoEntity;
-import com.BD.entity.RetoParticipantesEntity;
 import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
 import com.strava.assembler.*;
@@ -78,21 +62,6 @@ public class UsuarioService implements Serializable {
     	actualizarUsuario(usu);
     }
 
-    public UsuarioDTO login(String username, String contrasena) {
-
-    	for (UsuarioDTO usuario : usuarios.values()) {
-            if (usuario.getUsername().equals(username) && usuario.getContrasena().equals(contrasena)) {
-                String token = UUID.randomUUID().toString();
-                usuario.setToken(token);
-                actualizarUsuario(usuario);
-                System.out.println("Login exitoso para: " + username);
-                return usuario;
-            }
-        }
-        System.out.println("Login fallido para: " + username);
-        return null;
-    }
-
     public void logout(String token) {
     	UsuarioDTO usuario = usuarios.values().stream()
     	        .filter(u -> token.equals(u.getToken()))
@@ -107,13 +76,6 @@ public class UsuarioService implements Serializable {
     	    }
     }
 
-
-    public void eliminarUsuario(UsuarioDTO usuario) {
-        if (usuario != null) {
-            usuarios.remove(usuario.getId());
-            System.out.println("Usuario eliminado");
-        }
-    }
 
     //Usuario Service
     public void actualizarUsuario(UsuarioDTO usuarioDTO) {

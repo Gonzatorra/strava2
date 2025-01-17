@@ -4,10 +4,7 @@ import com.google.server.GoogleAuthClient;
 import com.google.server.Usuario;
 import com.strava.DTO.*;
 import com.meta.*;
-import com.strava.config.AppConfig;
 import com.strava.servicios.*;
-import com.google.server.UsuarioRepository;
-import com.meta.RemoteAuthFacadeMeta;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -17,15 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
-    public RemoteAuthFacadeMeta remoteAuthFacadeMeta;//objetos de proyecto meta
     private EntrenamientoService entrenamientoService;
     private RetoService retoService;
     private ServicioAutentificacion servicioAutentificacion;
@@ -41,14 +32,9 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     }
 
 
-	public static void setTokensActivos(HashMap<String, String> tokensActivos) {
-		RemoteFacade.tokensActivos = tokensActivos;
-	}
-
 	public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
-        //this.remoteAuthFacadeMeta=???? //da null en linea 217 aprox
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
@@ -81,14 +67,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
 
 
-
-    public void setUsuarioService(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
-
-
-
-
     @Override
     public UsuarioDTO registrarUsuario(String username, String password, String email, String nombre, String proveedor) throws RemoteException {
         UsuarioDTO usuario = usuarioService.getUsuarios().values().stream()
@@ -103,122 +81,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
         return usuarioService.registrar(username, password, email, nombre, proveedor);
     }
-    
-    /*//Aquí empiezo a comentar todo login y login con proveedor
-    @Override
-    public UsuarioDTO login(String username, String contrasena) throws RemoteException {
-    	
-    	System.out.println("Usuario que quiere iniciar sesión: " + username);
-        
-        if (tokensActivos.containsKey(username)) {
-            System.out.println("Usuario ya loggead.");
-            return null;//usuarioService.obtenerUsuarioPorNombre(username);
-        }
 
-        UsuarioDTO user = usuarioService.obtenerUsuarioPorNombre(username);
-        if (user == null) {
-            System.err.println("No encontrado: " + username);
-            return null;
-        }
-
-        if (!user.getContrasena().equals(contrasena)) {
-            System.err.println("Credenciales invalidas: " + username);
-            return null;
-        }
-
-        String token = servicioAutentificacion.autenticar(username, contrasena, "Strava", user.getProveedor());
-        if (token == null) {
-            System.err.println("Autenticación fallida: " + username);
-            return null;
-        }
-
-        user.setToken(token);
-        usuarioService.actualizarUsuario(user);
-        tokensActivos.put(username, token);
-        UsuarioService.getUsuarios().put(user.getId(), user); // Ensure user data is consistent
-        System.out.println("Login exitoso para: " + username);
-        return user;
-
-    }
-
-    @Override
-    public UsuarioDTO loginConProveedor(String username, String password, String plataforma) throws IOException {
-        String token = null;
-    	if (plataforma.equalsIgnoreCase("Google")) {
-    	    // Use JPA to see if that user is in the DB
-    		for(UsuarioDTO u: this.getUsuarios().values()) {
-    			if(u.getUsername().equals(username)) {
-    				token = googleAuthClient.loginUser(username, password);
-    				
-        	        tokensActivos.put(u.getUsername(), token);
-        	        u.setToken(token);
-        	        actualizarUsuario(u);
-        	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(u.getUsername());       	        
-        	        return usu;
-    			}
-    			
-    		}
-    		token=null;
-    		List <Usuario> usuariosG = googleAuthClient.allUsers();
-    		boolean encontrado= false;
-    		int i=0;
-    		while (!encontrado & i< usuariosG.size()) {
-    			if(usuariosG.get(i).getUsername().equalsIgnoreCase(username)) {
-    				encontrado=true;
-    			}
-    			i++;
-    		}
-    		if(encontrado) {
-    			token = googleAuthClient.loginUser(username, password);
-    			
-    	        UsuarioDTO usuarioG= usuarioService.registrar(username, password, username + "@google.com", "", "Google");
-    	        tokensActivos.put(usuarioG.getUsername(), token);
-    	        usuarioG.setToken(token);
-    	        actualizarUsuario(usuarioG);
-    	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username); 
-    	        usuarioService.getUsuarios().put(usu.getId(), usu);
-    	        return usu;
-    	    }
-    	} 
-        else if (plataforma.equalsIgnoreCase("Meta")){
-        	//////////////////////////////////////////////////////////////////////////////////////////////
-        	for(UsuarioDTO u: this.getUsuarios().values()) {
-    			if(u.getUsername().equals(username)) {
-    				token = metaAuthClient.login(username, password);
-	        		tokensActivos.put(u.getUsername(), token);
-	        		u.setToken(token);
-        	        actualizarUsuario(u);
-        	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);       	        
-        	        return usu;
-    			}
-    			
-    		}
-        	
-        	Map<String, String> userStore = metaAuthClient.getUserStore();
-        	if(userStore.containsKey(username)) {
-        		try {
-					token = metaAuthClient.login(username, password);
-					
-					UsuarioDTO usuarioM= usuarioService.registrar(username, password, username+"@meta.com", "", "Meta");
-	        		tokensActivos.put(usuarioM.getUsername(), token);
-	        		usuarioM.setToken(token);
-        	        actualizarUsuario(usuarioM);
-        	        UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username); 
-        	        usuarioService.getUsuarios().put(usu.getId(), usu);
-        	        
-        	              	        
-        	        return usu;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        	}
-	    }
-        
-    	return null;
-    }
-    *///Aquí empiezo a comentar todo login y login con proveedor
-    //nuevo login unido
+    //Metodo login
     public UsuarioDTO login(String username, String contrasena, String plataforma) throws IOException, RemoteException {
         System.out.println("Usuario que quiere iniciar sesión: " + username);
 
@@ -257,7 +121,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username)) {
                     token = googleAuthClient.loginUser(username, contrasena);
-                    //token = servicioAutentificacion.autenticar(username, contrasena, "Google", u.getProveedor());
                     tokensActivos.put(u.getUsername(), token);
                     u.setToken(token);
                     actualizarUsuario(u);
@@ -272,7 +135,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (Usuario usuarioG : usuariosG) {
                 if (usuarioG.getUsername().equalsIgnoreCase(username)) {
                     token = googleAuthClient.loginUser(username, contrasena);
-                    //token = servicioAutentificacion.autenticar(username, contrasena, "Google", usuarioG.getProveedor());
                     UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
                     newUser.setToken(token);
                     tokensActivos.put(newUser.getUsername(), token);
@@ -287,8 +149,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username)) {
                     token = metaAuthClient.login(username, contrasena);
-                    //token = servicioAutentificacion.autenticar(username, contrasena, "Meta", u.getProveedor());
-                    
+
                     u.setToken(token);
                     usuarioService.actualizarUsuario(u);
                     UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
@@ -300,8 +161,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             Map<String, String> userStore = metaAuthClient.getUserStore();
             if (userStore.containsKey(username)) {
                 token = metaAuthClient.login(username, contrasena);
-            	//UsuarioDTO u=usuarioService.obtenerUsuarioPorNombre(username);
-                //token = servicioAutentificacion.autenticar(username, contrasena, "Meta", u.getProveedor());
                 UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
                 newUser.setToken(token);
                 usuarioService.actualizarUsuario(newUser);
@@ -317,91 +176,9 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     }
 
 
-    /*
-    private UsuarioDTO autenticacionGoogle(String username, String password) {
-        try {
-            String result = externoService.verifyGoogle(username, password);
-            if (result != null) {
-                UsuarioDTO usuario = new UsuarioDTO();
-                usuario.setUsername(username);
-                usuario.setContrasena(password);
-                usuario.setProveedor("Google");
-                usuario.setEntrenamientos(new ArrayList<>());
-                usuario.setRetos(new HashMap<>());
-                usuario.setAmigos(new ArrayList<>());
-                usuarioService.registrarUsuario(usuario);
-                return usuario;
-            } else {
-                System.out.println("Autenticación fallida para el usuario: " + username);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    private UsuarioDTO autenticacionMeta(String username, String password) {
-        try {
-            String result = externoService.verifyMeta(username, password);
-            if (result != null) {
-                UsuarioDTO usuario = new UsuarioDTO();
-                usuario.setUsername(username);
-                usuario.setContrasena(password);
-                usuario.setProveedor("Meta");
-                usuario.setEntrenamientos(new ArrayList<>());
-                usuario.setRetos(new HashMap<>());
-                usuario.setAmigos(new ArrayList<>());
-                usuarioService.registrarUsuario(usuario);
-                return usuario;
-            } else {
-                System.out.println("Autenticación fallida para el usuario: " + username);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
-    /*
-    @Override
-    public void logout(String token) throws RemoteException {
-
-        usuarioService.logout(token);
-    }
-	*/
 
     @Override
     public void logout(String username) throws RemoteException {
-    	/*
-        UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
-        if (usuario != null) {
-            String token= usuario.getToken();
-            String proveedor = usuario.getProveedor();
-            if ("Google".equals(proveedor)) {
-            	tokensActivos.remove(usuario.getUsername());
-                //googleAuthClient.logoutUser(username);
-            } else if ("Meta".equals(proveedor)) {
-                try {
-                    AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
-                    metaAuthClient.sendRequest("LOGOUT;" + username);
-                    tokensActivos.remove(usuario.getUsername());
-                    System.out.println("Logout realizado correctamente en Meta.");
-                } catch (IOException e) {
-                    System.err.println("Error durante el logout en Meta: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-            else {
-                usuarioService.logout(token);
-                tokensActivos.remove(username);
-            }
-
-            System.out.println("Logout completo para el usuario: " + username);
-        } else {
-            System.out.println("Usuario no encontrado para logout: " + username);
-        }
-        */
     	UsuarioDTO usuario = usuarioService.obtenerUsuarioPorNombre(username);
         if (usuario != null) {
             String token = usuario.getToken();
@@ -430,20 +207,10 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
                 actualizarUsuario(usuario);
             }
 
-            
-
             System.out.println("Logout completo para el usuario: " + username);
         } else {
             System.out.println("Usuario no encontrado para logout: " + username);
         }
-    }
-
-
-    @Override
-    public void eliminarUsuario(int userId) throws RemoteException {
-        UsuarioDTO usu = usuarioService.getUsuarios().get(userId);
-
-        usuarioService.eliminarUsuario(usu);
     }
 
     @Override
@@ -480,11 +247,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     }
 
     @Override
-    public List<Integer> obtenerClasificacion(RetoDTO reto) throws RemoteException {
-        return retoService.obtenerClasificacion(reto);
-    }
-
-    @Override
     public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) throws RemoteException {
         retoService.cambiarEstado(usuario, reto, estado);
 
@@ -514,12 +276,4 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         entrenamientoService.eliminarEntreno(index, entrenamiento);
 
     }
-
-    @Override
-    public void visualizarEntreno(EntrenamientoDTO entrenamiento) throws RemoteException {
-        entrenamientoService.visualizarEntreno(entrenamiento);
-
-    }
-
-
 }

@@ -1,4 +1,5 @@
 package com.strava.DTO;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -6,7 +7,7 @@ import java.time.LocalDate;
 public class EntrenamientoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // Atributos
+    //Atributos
     private int id;
     private String username;
     private String titulo;

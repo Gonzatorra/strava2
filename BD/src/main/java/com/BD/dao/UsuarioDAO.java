@@ -32,7 +32,7 @@ public class UsuarioDAO {
     }
 
 
-    // Actualizar un Usuario
+    //Actualizar un Usuario
     public void updateUsuario(long id, UsuarioEntity usuarioActualizado) {
         try {
             UsuarioEntity usuarioExistente = entityManager.find(UsuarioEntity.class, id);
@@ -65,11 +65,5 @@ public class UsuarioDAO {
         }
     }
 
-    public List<RetoParticipantesEntity> findRetosByUsuarioId(int usuarioId) {
-        return entityManager.createQuery(
-            "SELECT r FROM RetoParticipantesEntity r WHERE r.usuarioId = :usuarioId",
-            RetoParticipantesEntity.class
-        ).setParameter("usuarioId", usuarioId).getResultList();
-    }
 
 }
