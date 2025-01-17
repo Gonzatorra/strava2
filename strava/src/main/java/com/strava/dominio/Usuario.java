@@ -1,11 +1,8 @@
 package com.strava.dominio;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,7 +43,6 @@ public class Usuario implements Serializable{
     //constructores
     public Usuario() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     //sin valores opcionales
@@ -203,18 +199,5 @@ public class Usuario implements Serializable{
     public void setProveedor(String proveedor) {
         this.proveedor = proveedor;
     }
-
-
-    //metodos
-    public void agregarEntrenamiento(Entrenamiento entrenamiento) {
-        this.entrenamientos.add(entrenamiento);
-    }
-
-    public void agregarReto(Reto reto, String estado) {
-        this.retos.put(reto, estado);
-    }
-
-
-
 
 }

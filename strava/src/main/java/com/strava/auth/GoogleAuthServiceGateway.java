@@ -7,10 +7,6 @@ public class GoogleAuthServiceGateway implements IAuthServiceGateway {
         return token != null && token.startsWith("google_") && !username.equals("")  && !password.equals("");
     }
 
-    @Override
-    public String getProveedor() {
-        return "Google";
-    }
 
     @Override
     public String generarToken() {

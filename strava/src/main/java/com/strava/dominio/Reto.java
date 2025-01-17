@@ -110,19 +110,6 @@ public class Reto implements Serializable{
         this.participantes = participantes;
     }
 
-    //metodos
-    public void crearReto(String nombre, LocalDateTime fecIni, LocalDateTime fecFin, float objetivoDistancia, float objetivoTiempo,
-                          String deporte, String usuarioCreador, ArrayList<Integer> participantes) {
-        this.nombre = nombre;
-        this.fecIni = fecIni;
-        this.fecFin = fecFin;
-        this.objetivoDistancia = objetivoDistancia;
-        this.objetivoTiempo = objetivoTiempo;
-        this.deporte = deporte;
-        this.usuarioCreador = usuarioCreador;
-        this.participantes = participantes;
-    }
-
 
     public Reto actualizarReto( String nombre, LocalDateTime fecIni, LocalDateTime fecFin, float objetivoDistancia,
                                 float objetivoTiempo, String usuarioCreador, String deporte, ArrayList<Integer> participantes) {
@@ -143,18 +130,6 @@ public class Reto implements Serializable{
         System.out.println("El usuario elimina el reto y se saca de la lista en caso de que sea"
                 + "participante. Si es creador, se elimina todo el reto");
 
-        /*if (usuario.equals(this.getUsuarioCreador())) {
-            //eliminar reto completo
-            System.out.println("El creador elimina el reto.");
-            for(Usuario participante: this.getParticipantes()) {
-            	participante.getRetos().remove(this.id);
-            }
-
-        } else {
-            //eliminar al participante de la lista
-            this.getParticipantes().remove(usuario);
-            System.out.println("El usuario se elimina del reto.");
-        }*/
     }
 
     public void aceptarReto(Usuario usuario) {
@@ -162,9 +137,6 @@ public class Reto implements Serializable{
         this.getParticipantes().add(usuario.getId());
     }
 
-    public void calcularProgreso(Usuario usuario) {
-        System.out.println("Se calcula el progreso del usuario");
-    }
 
     public ArrayList<Integer> obtenerClasificacion() {
         System.out.println("Se devuelve la clasificación de todos los usuarios del reto");

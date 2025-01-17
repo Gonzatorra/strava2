@@ -3,11 +3,8 @@ package com.strava.dominio;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import com.strava.DTO.*;
-
 public class Entrenamiento implements Serializable{
     //atributos
-
     private int id;
     private String username;
     private String titulo;
@@ -97,18 +94,4 @@ public class Entrenamiento implements Serializable{
         this.duracion = duracion;
     }
 
-    //metodos
-    public void actualizarEntreno(Entrenamiento entreno, double distancia, double fechaIni,
-                                  float horaInicio, double duracion) {
-        System.out.println("Se actualiza el entrenamiento");
-        entreno.setDistancia((float) distancia);
-        entreno.setFecIni(LocalDate.ofEpochDay((long) fechaIni));
-        entreno.setHoraIni(horaInicio);
-        entreno.setDuracion(duracion);
-    }
-
-    public void eliminarEntreno(Entrenamiento entreno) {
-        System.out.println("Se elimina el entrenamiento");
-        //si estuviera en una lista o colección, eliminaría el objeto aquí.
-    }
 }

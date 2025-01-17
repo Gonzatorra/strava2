@@ -1,7 +1,5 @@
 package com.strava.assembler;
 
-import java.util.ArrayList;
-
 import com.strava.DTO.*;
 import com.strava.dominio.*;
 

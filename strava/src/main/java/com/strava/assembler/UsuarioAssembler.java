@@ -3,7 +3,6 @@ package com.strava.assembler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.strava.DTO.*;
 import com.strava.dominio.*;
 

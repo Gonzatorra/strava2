@@ -7,10 +7,6 @@ public class StravaAuthServiceGateway implements IAuthServiceGateway {
         return token != null && token.startsWith("strava_") && !username.equals("")  && !password.equals("");
     }
 
-    @Override
-    public String getProveedor() {
-        return "Strava";
-    }
 
     @Override
     public String generarToken() {

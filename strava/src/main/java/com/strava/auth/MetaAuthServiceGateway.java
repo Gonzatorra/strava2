@@ -8,11 +8,6 @@ public class MetaAuthServiceGateway implements IAuthServiceGateway {
     }
 
     @Override
-    public String getProveedor() {
-        return "Meta";
-    }
-
-    @Override
     public String generarToken() {
         return "meta_" + System.currentTimeMillis();
     }

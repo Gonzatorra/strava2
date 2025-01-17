@@ -3,7 +3,6 @@ package com.strava.assembler;
 import com.strava.DTO.*;
 import com.strava.dominio.*;
 
-
 public class EntrenamientoAssembler {
     public static EntrenamientoDTO toDTO(Entrenamiento entrenamiento) {
         EntrenamientoDTO dto = new EntrenamientoDTO();
