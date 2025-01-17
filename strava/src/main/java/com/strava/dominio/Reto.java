@@ -130,5 +130,4 @@ public class Reto implements Serializable{
         this.getParticipantes().add(usuario.getId());
     }
 
-
 }
