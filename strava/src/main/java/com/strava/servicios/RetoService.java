@@ -78,7 +78,7 @@ public class RetoService {
     	ids.add(usuario.getId());
     	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
     			reto.getUsuarioCreador(), reto.getDeporte(), ids);
-        RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
+        //RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
         
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -128,7 +128,7 @@ public class RetoService {
     }
 
     public void eliminarReto(UsuarioDTO usuario, RetoDTO reto) {
-        RetoAssembler.toDomain(reto).eliminarReto(UsuarioAssembler.toDomain(usuario));
+        //RetoAssembler.toDomain(reto).eliminarReto(UsuarioAssembler.toDomain(usuario));
         if(usuario.getUsername().equals(reto.getUsuarioCreador())) {
         	 EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
              EntityManager entityManager = entityManagerFactory.createEntityManager();
