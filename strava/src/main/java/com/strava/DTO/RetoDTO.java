@@ -1,11 +1,9 @@
 package com.strava.DTO;
 
 
-import com.strava.dominio.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RetoDTO implements Serializable{
     //atributos
@@ -22,7 +20,7 @@ public class RetoDTO implements Serializable{
     //constructor
     public RetoDTO() {
         super();
-        // TODO Auto-generated constructor stub
+        //TODO Auto-generated constructor stub
     }
 
     //getters

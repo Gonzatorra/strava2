@@ -79,17 +79,7 @@ public class UsuarioService implements Serializable {
     }
 
     public UsuarioDTO login(String username, String contrasena) {
-    	/*
-        for (UsuarioDTO usuario : usuarios.values()) {
-            if (usuario.getUsername().equals(username) && usuario.getContrasena().equals(contrasena)) {
-                System.out.println("Login exitoso para: " + username);
 
-                return usuario;
-            }
-        }
-        System.out.println("Login fallido para: " + username);
-        return null;
-        */
     	for (UsuarioDTO usuario : usuarios.values()) {
             if (usuario.getUsername().equals(username) && usuario.getContrasena().equals(contrasena)) {
                 String token = UUID.randomUUID().toString();
@@ -103,18 +93,7 @@ public class UsuarioService implements Serializable {
         return null;
     }
 
-    public void logout(String token) { //He añadido esto para que haga el logout
-    	/*
-        for (UsuarioDTO usu : usuarios.values()) {
-            if (usu.getToken() != null && usu.getToken().equals(token)) { 
-                usu.setToken(null);
-                actualizarUsuario(usu);
-                System.out.println("Usuario desconectado");
-                return;
-            }
-        }
-        System.out.println("Token no encontrado");
-        */
+    public void logout(String token) {
     	UsuarioDTO usuario = usuarios.values().stream()
     	        .filter(u -> token.equals(u.getToken()))
     	        .findFirst()
@@ -184,42 +163,21 @@ public class UsuarioService implements Serializable {
 
 
     public UsuarioDTO obtenerUsuarioPorNombre(String username) {
-        /*
-    	return usuarios.values().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
-        */
-    	System.out.println("Attempting to fetch user by username: " + username);
+    	System.out.println("Intentando obtener a: " + username);
         for (UsuarioDTO user : usuarios.values()) {
             if (user.getUsername().equals(username)) {
-                System.out.println("User found: " + username);
+                System.out.println("Usuario encontrado: " + username);
                 return user;
             }
         }
-        System.err.println("User not found in memory: " + username);
+        System.err.println("Usuario no enocntrado en memoria: " + username);
         return null;
-    }
-
-
-    public void registrarUsuario(UsuarioDTO usuario) {
-        if (usuarios.values().stream().anyMatch(u -> u.getUsername().equals(usuario.getUsername()))) {
-            throw new IllegalArgumentException("Usuario ya existe: " + usuario.getUsername());
-        }
-
-        int newId = usuarios.size() + 1;
-        usuario.setId(newId);
-        usuarios.put(newId, usuario);
     }
 
 
 
     public static HashMap<Integer, UsuarioDTO> getUsuarios() {
         return usuarios;
-    }
-
-    public static void setUsuarios(HashMap<Integer, UsuarioDTO> usuarios) {
-        UsuarioService.usuarios = usuarios;
     }
 
     public List<Integer> getAmigos(UsuarioDTO usuario){
@@ -237,82 +195,5 @@ public class UsuarioService implements Serializable {
         }
         return instancia;
     }
-
-
-
-    public Map<Integer, Float> calcularProgreso(UsuarioDTO usuarioDTO) throws RemoteException {
-        Map<Integer, Float> progresoPorReto = new HashMap<>();
-
-        // Obtener retos y entrenamientos del usuario
-        HashMap<RetoDTO, String> retos = usuarioDTO.getRetos();  // Map<Reto, Estado>
-        List<EntrenamientoDTO> entrenamientos = usuarioDTO.getEntrenamientos();
-
-        // Iterar sobre los retos
-        for (RetoDTO reto : retos.keySet()) {
-            double totalDistancia = 0;
-            double totalDuracion = 0;
-
-            // Filtrar entrenamientos relevantes basados en las fechas y el deporte del reto
-            for (EntrenamientoDTO entrenamiento : entrenamientos) {
-                if (entrenamiento.getDeporte().equalsIgnoreCase(reto.getDeporte())
-                        && !entrenamiento.getFecIni().isBefore(reto.getFecIni().toLocalDate())
-                        && !entrenamiento.getFecIni().isAfter(reto.getFecFin().toLocalDate())) {
-
-                    totalDistancia += entrenamiento.getDistancia();
-                    totalDuracion += entrenamiento.getDuracion();
-                }
-            }
-
-            // Calcular el progreso basado en el objetivo de distancia y tiempo
-            float progresoDistancia = (reto.getObjetivoDistancia() > 0)
-                    ? (float) (totalDistancia / reto.getObjetivoDistancia()) * 100
-                    : 0;
-
-            float progresoTiempo = (reto.getObjetivoTiempo() > 0)
-                    ? (float) (totalDuracion / reto.getObjetivoTiempo()) * 100
-                    : 0;
-
-            // Combina progreso de distancia y tiempo, eligiendo el valor más realista
-            float progreso = Math.min(100, Math.max(progresoDistancia, progresoTiempo));
-
-            // Almacenar progreso en el mapa
-            progresoPorReto.put(reto.getId(), progreso);
-        }
-
-        return progresoPorReto;
-    }
-    
-    public UsuarioDTO findByToken(String token) {
-        return usuarios.values().stream()
-            .filter(u -> token.equals(u.getToken()))
-            .findFirst()
-            .orElse(null);
-    }
-
-
-    public void unirseAReto(int usuarioId, int retoId) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        RetoDAO retoDAO = new RetoDAO(entityManager);
-
-        retoDAO.addParticipantToReto(usuarioId, retoId, "aceptado");
-    }
-    
-    public List<RetoParticipantesEntity> obtenerRetosDeUsuario(int usuarioId) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
-
-        return usuarioDAO.findRetosByUsuarioId(usuarioId);
-    }
-    
-    public List<EntrenamientoEntity> obtenerEntrenamientosDeUsuario(String username) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MyPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-
-        EntrenamientoDAO dao = new EntrenamientoDAO(em);
-        return dao.findByUsername(username);
-    }
-
 
 }

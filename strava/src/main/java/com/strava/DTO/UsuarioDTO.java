@@ -1,9 +1,8 @@
 package com.strava.DTO;
+
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.*;
 
-import com.strava.dominio.*;
 
 public class UsuarioDTO implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -47,15 +46,9 @@ public class UsuarioDTO implements Serializable{
         return amigos;
     }
 
-
-
-
     public void setAmigos(ArrayList<Integer> amigosDT) {
         this.amigos = amigosDT;
     }
-
-
-
 
     //getters - setters
     public int getId() {
@@ -169,6 +162,5 @@ public class UsuarioDTO implements Serializable{
     public void setProveedor(String proveedor) {
         this.proveedor = proveedor;
     }
-
 
 }

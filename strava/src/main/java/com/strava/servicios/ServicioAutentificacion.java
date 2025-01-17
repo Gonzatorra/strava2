@@ -1,7 +1,5 @@
 package com.strava.servicios;
 
-import java.util.HashMap;
-
 import com.strava.auth.*;
 
 public class ServicioAutentificacion {

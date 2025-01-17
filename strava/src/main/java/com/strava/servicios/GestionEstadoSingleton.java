@@ -14,12 +14,4 @@ public class GestionEstadoSingleton {
         }
         return instancia;
     }
-
-    public boolean isUsuarioAutenticado() {
-        return usuarioAutenticado;
-    }
-
-    public void setUsuarioAutenticado(boolean autenticado) {
-        this.usuarioAutenticado = autenticado;
-    }
 }

@@ -1,24 +1,14 @@
 package com.strava.servicios;
 
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-
 import com.BD.dao.EntrenamientoDAO;
-import com.BD.dao.UsuarioDAO;
 import com.BD.entity.EntrenamientoEntity;
-import com.BD.entity.UsuarioEntity;
 import com.strava.DTO.*;
-import com.strava.dominio.*;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
-import com.strava.assembler.*;
 
 public class EntrenamientoService {
     private static HashMap<Integer,Integer> entrenoIdxUsuario;
@@ -31,7 +21,7 @@ public class EntrenamientoService {
     public EntrenamientoDTO crearEntreno(UsuarioDTO usuario, String titulo, String deporte, double distancia, LocalDate fechaIni,
             float horaInicio, double duracion) {
 
-		Integer idUEntreno = entrenoIdxUsuario.getOrDefault(usuario.getId(), 0); // si no tiene entrenamientos
+		Integer idUEntreno = entrenoIdxUsuario.getOrDefault(usuario.getId(), 0); //si no tiene entrenamientos
 		if (idUEntreno == null) {
 		entrenoIdxUsuario.put(usuario.getId(), 0);
 		}
@@ -58,11 +48,11 @@ public class EntrenamientoService {
 		entrenamientoBD.setDuracion(duracion);
 		entrenamientoBD.setFechaInicio(fechaIni);
 
-		// Desglosar horas y minutos
+		//Desglosar horas y minutos
         int horas = (int) horaInicio;
         int minutos = (int) ((horaInicio - horas) * 60);
 
-        // Crear un objeto LocalTime
+        //Crear un objeto LocalTime
         LocalTime time = LocalTime.of(horas, minutos);
 
 		
@@ -99,11 +89,11 @@ public class EntrenamientoService {
                 
 
 
-        		// Desglosar horas y minutos
+        		//Desglosar horas y minutos
                 int horas = (int) entrenamiento.getHoraIni();
                 int minutos = (int) ((entrenamiento.getHoraIni() - horas) * 60);
 
-                // Crear un objeto LocalTime
+                //Crear un objeto LocalTime
                 LocalTime time = LocalTime.of(horas, minutos);
 
                 entrenamientoBD.setTitulo(titulo);
@@ -111,16 +101,15 @@ public class EntrenamientoService {
                 entrenamientoBD.setId(entrenamiento.getId());
                 entrenamientoBD.setUsuario(usu.getUsername());
                 entrenamientoDAO.updateEntrenamiento(entrenamientoBD.getId(), entrenamientoBD);
-            	//
                 
 
                 System.out.println("Entrenamiento actualizado: " + titulo);
-                return;  // Sale del método después de actualizar el entrenamiento
+                return;
             }
         }
 
-        // Mensaje fuera del bucle, solo si no se encuentra el entrenamiento
-        System.out.println("No se encontró el entrenamiento para actualizar.");
+        //Mensaje fuera del bucle, solo si no se encuentra el entrenamiento
+        System.out.println("No se ha encontrado el entrenamiento para actualizar.");
     }
 
 
@@ -151,11 +140,11 @@ public class EntrenamientoService {
         entrenoBD.setTitulo(e.getTitulo());
         entrenoBD.setFechaInicio(e.getFecIni());
         
-		// Desglosar horas y minutos
+		//Desglosar horas y minutos
         int horas = (int) e.getHoraIni();
         int minutos = (int) ((e.getHoraIni() - horas) * 60);
 
-        // Crear un objeto LocalTime
+        //Crear un objeto LocalTime
         LocalTime time = LocalTime.of(horas, minutos);
 
         

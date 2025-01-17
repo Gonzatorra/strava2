@@ -3,7 +3,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 
-import com.strava.dominio.*;
 public class EntrenamientoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -23,10 +22,10 @@ public class EntrenamientoDTO implements Serializable {
         // TODO Auto-generated constructor stub
     }
 
-    // Constructor
+    //Constructor
     public EntrenamientoDTO(int id, String username, String titulo, String deporte, double distancia, LocalDate fecIni,
                             float horaIni, double duracion) {
-        this.id = 0;  // Asigna y aumenta el ID automáticamente
+        this.id = 0;  //Asigna y aumenta el ID automáticamente
         this.username = username;
         this.titulo = titulo;
         this.deporte = deporte;
@@ -36,7 +35,7 @@ public class EntrenamientoDTO implements Serializable {
         this.duracion = duracion;
     }
 
-    // Getters y Setters
+    //Getters-setters
     public int getId() {
         return id;
     }

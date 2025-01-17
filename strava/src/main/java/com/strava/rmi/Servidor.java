@@ -19,22 +19,20 @@ import org.springframework.context.ApplicationContext;
 public class Servidor {
     private final RemoteFacade facade;
     private final AuthClientMeta metaAuthClient;
-    private final GoogleAuthClient googleAuthClient; // Añadimos esta propiedad para el cliente de Google
+    private final GoogleAuthClient googleAuthClient;
 
     public Servidor(ApplicationContext context) throws RemoteException {
-        this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
+        this.googleAuthClient = context.getBean(GoogleAuthClient.class); //Obtener el GoogleAuthClient desde el contexto de Spring
         this.facade = new RemoteFacade(context);
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         iniciarRMI();
         try {
 			registrarUsuariosMeta();
 			registrarUsuariosYRetos();
-            //loginMeta();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        //registrarUsuariosYRetos();
 
         System.out.println("Servidor iniciado");
     }
@@ -60,21 +58,15 @@ public class Servidor {
         metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
     }
 
-    /*private void loginMeta() throws IOException {
-        String token = metaAuthClient.login("maria123", "claveMaria");
-        System.out.println("Token meta maria123: "+token);
-    }*/
-
-
 
 
     private void registrarUsuariosYRetos() throws RemoteException {
-        // Registrar usuarios y crear entrenamientos y retos
+        //Registrar usuarios y crear entrenamientos y retos
         LocalDate fecha = LocalDate.of(2024, 8, 23);
         LocalDateTime fecha1 = LocalDateTime.of(2024, 8, 23, 0, 0);
         LocalDateTime fecha2 = LocalDateTime.of(2025, 8, 23, 0, 0);
 
-        // Usuario 1
+        //Usuario 1
         UsuarioDTO usuario1 = facade.registrarUsuario("ana123", "hola", "ana123@strava.com", "Ana", "Strava");
         EntrenamientoDTO entreno1 = facade.crearEntreno(usuario1, "MiPrimerEntrenamiento", "running", 10.0, fecha, 14.5f, 0.0f);
         List<UsuarioDTO> challengers = new ArrayList<>();
@@ -85,7 +77,7 @@ public class Servidor {
         facade.actualizarUsuario(usuario1);
         
 
-        // Usuario 2
+        //Usuario 2
         UsuarioDTO usuario2 = facade.registrarUsuario("juan456", "pass123", "juan456@strava.com", "Juan", "Strava");
         EntrenamientoDTO entreno2 = facade.crearEntreno(usuario2, "EntrenoAvanzado", "cycling", 20.0, fecha, 18.0f, 5.0f);
         List<UsuarioDTO> challengers2 = new ArrayList<>();
@@ -96,7 +88,7 @@ public class Servidor {
         facade.actualizarUsuario(usuario2);
        
 
-        // Usuario 3
+        //Usuario 3
         UsuarioDTO usuario3 = facade.registrarUsuario("lucia789", "luciaPass", "lucia789@strava.com", "Lucía", "Strava");
         EntrenamientoDTO entreno3 = facade.crearEntreno(usuario3, "EntrenoMatutino", "swimming", 5.0, fecha, 12.0f, 1.0);
         List<UsuarioDTO> challengers3 = new ArrayList<UsuarioDTO>();
@@ -106,7 +98,7 @@ public class Servidor {
         usuario3.getRetos().put(reto3, "En progreso");
         facade.actualizarUsuario(usuario3);
 
-        // Usuarios 4 al 10
+        //Usuarios extra
         facade.registrarUsuario("mario001", "marioKey", "mario001@strava.com", "Mario", "Strava");
         facade.registrarUsuario("elena345", "elenaKey", "elena345@strava.com", "Elena", "Strava");
         facade.registrarUsuario("pedro654", "pedroKey", "pedro654@strava.com", "Pedro", "Strava");
@@ -129,7 +121,7 @@ public class Servidor {
             Servidor servidor = new Servidor(context);
             GoogleAuthClient googleAuthClient1 = servidor.getGoogleAuthClient();
             List<Usuario> usuariosDeGoogle = googleAuthClient1.allUsers();
-            // Imprimir los usuarios
+            //Imprimir los usuarios
             if (usuariosDeGoogle != null) {
                 System.out.println("Usuarios obtenidos de Google:");
                 for (Usuario usuario : usuariosDeGoogle) {

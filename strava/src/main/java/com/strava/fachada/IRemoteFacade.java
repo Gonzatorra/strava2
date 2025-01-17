@@ -1,10 +1,7 @@
 package com.strava.fachada;
 
-import com.google.server.UsuarioRepository;
 import com.strava.DTO.*;
-import com.strava.dominio.*;
 import com.strava.servicios.*;
-
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,14 +10,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public interface IRemoteFacade extends Remote {
     //usuario
     UsuarioDTO registrarUsuario(String username, String contrasena, String email, String nombre, String proveedor) throws RemoteException;
     UsuarioDTO login(String username, String contrasena, String plataforma) throws IOException, RemoteException;
-    //UsuarioDTO loginConProveedor(String username, String password, String proveedor) throws IOException;
     void logout(String token) throws RemoteException;
     void eliminarUsuario(int userId) throws RemoteException;
     void actualizarUsuario(UsuarioDTO usuarioDTO) throws RemoteException;
