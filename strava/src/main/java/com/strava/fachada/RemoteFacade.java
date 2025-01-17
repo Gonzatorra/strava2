@@ -120,7 +120,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         String token = null;
         if (plataforma.equalsIgnoreCase("Google")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
-                if (u.getUsername().equals(username)) {
+                if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
                     token = googleAuthClient.loginUser(username, contrasena);
                     tokensActivos.put(u.getUsername(), token);
                     u.setToken(token);
@@ -134,7 +134,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
             List<Usuario> usuariosG = googleAuthClient.allUsers();
             for (Usuario usuarioG : usuariosG) {
-                if (usuarioG.getUsername().equalsIgnoreCase(username)) {
+                if (usuarioG.getUsername().equalsIgnoreCase(username) && usuarioG.getContrasena().equals(contrasena)) {
                     token = googleAuthClient.loginUser(username, contrasena);
                     UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
                     newUser.setToken(token);
