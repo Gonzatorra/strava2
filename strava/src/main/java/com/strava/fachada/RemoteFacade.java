@@ -148,7 +148,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             }
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
-                if (u.getUsername().equals(username)) {
+                if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
                     token = metaAuthClient.login(username, contrasena);
 
                     u.setToken(token);
@@ -160,7 +160,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             }
 
             Map<String, String> userStore = metaAuthClient.getUserStore();
-            if (userStore.containsKey(username)) {
+            if (userStore.containsKey(username) && userStore.get(username).equals(contrasena)) {
                 token = metaAuthClient.login(username, contrasena);
                 UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
                 newUser.setToken(token);
