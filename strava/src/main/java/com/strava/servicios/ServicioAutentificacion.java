@@ -17,13 +17,11 @@ public class ServicioAutentificacion {
 
     public String autenticar(String username, String password, String proveedor, String plataforma) {
         try {
-            if (proveedor.equals(plataforma)) {
-                IAuthServiceGateway gateway = AuthServiceFactory.getAuthService(proveedor);
-
-                String token = gateway.generarToken();
-                if(gateway.autenticar(username, password, token)) {
-                    return token;
-                }
+            IAuthServiceGateway gateway = AuthServiceFactory.getAuthService(proveedor);
+            String token = gateway.generarToken();
+            System.out.println(token);
+            if(gateway.autenticar(username, password, token)) {
+                return token;
             }
             return null;
         } catch (Exception e) {

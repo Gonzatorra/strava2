@@ -121,36 +121,44 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         if (plataforma.equalsIgnoreCase("Google")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
-                    token = googleAuthClient.loginUser(username, contrasena);
-                    tokensActivos.put(u.getUsername(), token);
-                    u.setToken(token);
-                    actualizarUsuario(u);
-                    if(token!=null) {
-                    	return usuarioService.obtenerUsuarioPorNombre(username);
+                    if(null != googleAuthClient.loginUser(username, contrasena)) {
+                    	//token = googleAuthClient.loginUser(username, contrasena);
+                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google", user.getProveedor());
+                        /*if(token==null) {
+                        	return null;
+                        }*/
+                        tokensActivos.put(u.getUsername(), token);
+                        u.setToken(token);
+                        actualizarUsuario(u);
+                        return usuarioService.obtenerUsuarioPorNombre(username);
                     }
-                    return null;
                 }
             }
 
             List<Usuario> usuariosG = googleAuthClient.allUsers();
             for (Usuario usuarioG : usuariosG) {
                 if (usuarioG.getUsername().equalsIgnoreCase(username) && usuarioG.getContrasena().equals(contrasena)) {
-                    token = googleAuthClient.loginUser(username, contrasena);
-                    UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
-                    newUser.setToken(token);
-                    tokensActivos.put(newUser.getUsername(), token);
-                    actualizarUsuario(newUser);
-                    if(token!=null) {
-                    	return newUser;
-                    }
-                    return null;
+                    if(null!= googleAuthClient.loginUser(username, contrasena)) {
+                    	//token = googleAuthClient.loginUser(username, contrasena);
+                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google", user.getProveedor());
+                        /*if(token==null) {
+                        	return null;
+                        }*/
+                        UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
+                        newUser.setToken(token);
+                        tokensActivos.put(newUser.getUsername(), token);
+                        actualizarUsuario(newUser);
+                        
+                        return newUser;
+                    } 
                 }
             }
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
-                    token = metaAuthClient.login(username, contrasena);
-
+                    //token= metaAuthClient.login(username, contrasena);
+                    token = servicioAutentificacion.autenticar(username, contrasena, "Meta", user.getProveedor());
+                    
                     u.setToken(token);
                     usuarioService.actualizarUsuario(u);
                     UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
@@ -161,7 +169,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
             Map<String, String> userStore = metaAuthClient.getUserStore();
             if (userStore.containsKey(username) && userStore.get(username).equals(contrasena)) {
-                token = metaAuthClient.login(username, contrasena);
+                //token= metaAuthClient.login(username, contrasena);
+                token = servicioAutentificacion.autenticar(username, contrasena, "Meta", user.getProveedor());
                 UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
                 newUser.setToken(token);
                 usuarioService.actualizarUsuario(newUser);
@@ -257,6 +266,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     public void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fechaIni, LocalDateTime fechaFin, float distancia,
                                float tiempo, String usuarioCreador, String deporte, ArrayList<Integer> participantes) throws RemoteException {
         retoService.actualizarReto(reto, nombre, fechaIni, fechaFin, distancia, tiempo, usuarioCreador, deporte, participantes);
+        
     }
 
     @Override
@@ -277,4 +287,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         entrenamientoService.eliminarEntreno(index, entrenamiento);
 
     }
+
+
 }

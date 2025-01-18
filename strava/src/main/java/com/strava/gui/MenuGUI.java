@@ -850,7 +850,7 @@ public class MenuGUI extends JFrame {
 
             //Llenar el modelo inicial basado en el criterio seleccionado
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+            
             Runnable updateTable = () -> {
             	int cambiado=2;
             	while(cambiado>0) {
@@ -859,7 +859,7 @@ public class MenuGUI extends JFrame {
 	                //Limpiar todas las filas del modelo
 	                acceptedModel.setRowCount(0);
 	                
-	                try {
+	                /*try {
 	                    
 	                    System.out.println(usuario.getRetos()); //es vacio
 	                    System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
@@ -867,7 +867,7 @@ public class MenuGUI extends JFrame {
 	                } catch (RemoteException e) {
 	                    // TODO Auto-generated catch block
 	                    e.printStackTrace();
-	                }
+	                }*/
 	                //Filtrar retos basados en el criterio seleccionado
 	                for (RetoDTO r : usuario.getRetos().keySet()) {
 	                	                    
@@ -994,6 +994,9 @@ public class MenuGUI extends JFrame {
             updateButton.setBackground(ORANGE_ACCENT);
             updateButton.setForeground(Color.WHITE);
             buttonPanel.add(updateButton);
+            
+          //Cargar inicialmente la tabla con el criterio por defecto
+            updateTable.run();
 
             //Logica para añadir un reto
             addButton.addActionListener(e -> {
@@ -1179,6 +1182,9 @@ public class MenuGUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "Seleccione un reto para modificar.");
                     return;
                 }
+               if (((String) acceptedTable.getValueAt(selectedRow, 3)).equalsIgnoreCase(usuario.getUsername())) {
+                	
+                
 
                 JPanel panel = new JPanel(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -1372,6 +1378,7 @@ public class MenuGUI extends JFrame {
                     }
                 }
 
+            }
             });
 
 
@@ -1418,13 +1425,23 @@ public class MenuGUI extends JFrame {
                             usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
-                        	facade.getUsuarioService().borrarDeGetRetos(usuario,r);
+                        	//facade.getUsuarioService().borrarDeGetRetos(usuario,r);
+                        	
+                        	HashMap<RetoDTO, String> retos= usuario.getRetos();
+                        	for(RetoDTO reto: retos.keySet()) {
+                        		if(r.getId()==reto.getId()) {
+                        			retos.remove(reto);
+                        			break;
+                        		}
+                        	}
+                        	usuario.setRetos(retos);
+                        	
+                        	
                             facade.actualizarUsuario(usuario);
-                            usuario= facade.getUsuarios().get(usuario.getId());
                             facade.eliminarReto(usuario, r);
-                            facade.actualizarUsuario(usuario);
                             usuario= facade.getUsuarios().get(usuario.getId());
                             System.out.println("El usuario se elimina del reto.");
+                            //System.out.println(r.getParticipantes());
                         }
 
 
@@ -1530,48 +1547,28 @@ public class MenuGUI extends JFrame {
 
                     if (retosDisponibles != null && retosDisponibles.containsKey(idReto)) {
                         RetoDTO retoSeleccionado = retosDisponibles.get(idReto);
-
+                        
                         //Verificar si el usuario ya ha aceptado el reto
                         if (!retoSeleccionado.getParticipantes().stream().anyMatch(participanteID -> participanteID.equals(usuario.getId()))) {
-
-
-                            retoSeleccionado.getParticipantes().add(usuario.getId());
-                            
-
-
-                            ArrayList<UsuarioDTO> participantesDTO = new ArrayList<>();
-                            HashMap<Integer, UsuarioDTO> usuarios = null;
+                        	usuario.getRetos().put(retoSeleccionado, "En Progreso");
                             try {
-                                usuarios = facade.getUsuarios();
+                                facade.actualizarUsuario(usuario);
+                                facade.aceptarReto(usuario, retoSeleccionado);
+                                
                             } catch (RemoteException e1) {
                                 e1.printStackTrace();
                             }
-                            for (UsuarioDTO u : usuarios.values()) {
-                                if (retoSeleccionado.getParticipantes().contains(u.getId())) {
-                                    participantesDTO.add(u);
-                                }
-                            }
-                            ArrayList<Integer> particID = new ArrayList<Integer>();
-                            for (UsuarioDTO u : participantesDTO) {
-                                particID.add(u.getId());
-                            }
-
                             try {
+                            	retoSeleccionado= facade.visualizarReto().get(idReto);
                                 facade.actualizarReto(retoSeleccionado, retoSeleccionado.getNombre(),
                                         retoSeleccionado.getFecIni(), retoSeleccionado.getFecFin(), retoSeleccionado.getObjetivoDistancia(),
                                         retoSeleccionado.getObjetivoTiempo(), retoSeleccionado.getUsuarioCreador(),
-                                        retoSeleccionado.getDeporte(), particID);
+                                        retoSeleccionado.getDeporte(), retoSeleccionado.getParticipantes());
                             } catch (RemoteException e1) {
                                 // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             }
-                            usuario.getRetos().put(retoSeleccionado, "En Progreso");
-                            try {
-                                facade.actualizarUsuario(usuario);
-                                facade.aceptarReto(usuario, retoSeleccionado);
-                            } catch (RemoteException e1) {
-                                e1.printStackTrace();
-                            }
+                            
                             //Agregar el reto a la lista de retos aceptados
                             acceptedModel.addRow(new Object[]{
                                     retoSeleccionado.getId(),

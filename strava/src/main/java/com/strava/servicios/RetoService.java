@@ -78,7 +78,7 @@ public class RetoService {
     	ids.add(usuario.getId());
     	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
     			reto.getUsuarioCreador(), reto.getDeporte(), ids);
-        RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
+        //RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
         
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -94,12 +94,13 @@ public class RetoService {
     public HashMap<Integer,RetoDTO> visualizarReto() {
         return retos;
     }
+    
 
-    public void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fecIni, LocalDateTime fecFin,
+	public void actualizarReto(RetoDTO reto, String nombre, LocalDateTime fecIni, LocalDateTime fecFin,
             float objetivoDistancia, float objetivoTiempo,
             String usuarioCreador, String deporte, ArrayList<Integer> participantes) {
 			Reto retoExistente = RetoAssembler.toDomain(retos.get(reto.getId()));
-		if (retoExistente != null && retoExistente.getUsuarioCreador().equals(usuarioCreador)) {
+		if (retoExistente != null) {
 		
 			EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -119,9 +120,9 @@ public class RetoService {
 			retoDAO.updateReto(retoBD.getId(), retoBD);
 			
 
-			retoExistente.actualizarReto(nombre, fecIni, fecFin, objetivoDistancia, objetivoTiempo,
+			Reto reto2= retoExistente.actualizarReto(nombre, fecIni, fecFin, objetivoDistancia, objetivoTiempo,
 					usuarioCreador, deporte, participantes);
-			retos.put(reto.getId(), RetoAssembler.toDTO(retoExistente));
+			retos.put(reto2.getId(), RetoAssembler.toDTO(reto2));
 		} else {
 			JOptionPane.showMessageDialog(null, "No se ha podido actualizar el reto");
 		}
@@ -141,6 +142,15 @@ public class RetoService {
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             RetoDAO retoDAO = new RetoDAO(entityManager);
             retoDAO.removeParticipantFromReto(usuario.getId(), reto.getId());
+            ArrayList<Integer> participantes= new ArrayList<Integer>();
+            for(int i: reto.getParticipantes()){
+            	if(i!=usuario.getId()) {
+            		participantes.add(i);
+            	}
+            }
+            reto.setParticipantes(participantes);
+            
+            retos.put(reto.getId(), reto);
         }
     }
 
