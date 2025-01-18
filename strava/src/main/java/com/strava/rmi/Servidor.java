@@ -18,12 +18,14 @@ import org.springframework.context.ApplicationContext;
 
 public class Servidor {
     private final RemoteFacade facade;
+    //private final MetaAuthServiceGateway metaGateway; //Y se borra el authClientMeta
     private final AuthClientMeta metaAuthClient;
     private final GoogleAuthClient googleAuthClient;
 
     public Servidor(ApplicationContext context) throws RemoteException {
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); //Obtener el GoogleAuthClient desde el contexto de Spring
         this.facade = new RemoteFacade(context);
+        //this.metaGateway = (MetaAuthServiceGateway)AuthServiceFactory.getAuthService("Meta"); // Y se borra el AuthClientMeta
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
         iniciarRMI();
         try {
@@ -49,6 +51,7 @@ public class Servidor {
     }
 
     private void registrarUsuariosMeta() throws IOException {
+    	//En todos estos habría que cambiar metaAuthCLient por metaGateway
         metaAuthClient.registerUser("maria123", "claveMaria", "maria123@meta.com");
         metaAuthClient.registerUser("jose456", "claveJose", "jose456@meta.com");
         metaAuthClient.registerUser("lucia789", "claveLucia", "lucia789@meta.com");

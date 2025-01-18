@@ -7,7 +7,8 @@ public class AuthServiceFactory {
             case "Google":
                 return new GoogleAuthServiceGateway();
             case "Meta":
-                return new MetaAuthServiceGateway();
+            	//return new MetaAuthServiceGateway("localhost", 1101); //Se implementaría así
+            	return new MetaAuthServiceGateway();
             case "Strava":
                 return new StravaAuthServiceGateway();
             default:
