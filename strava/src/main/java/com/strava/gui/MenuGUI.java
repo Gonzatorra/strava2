@@ -60,7 +60,7 @@ public class MenuGUI extends JFrame {
 
                 	}
                 	else {
-                		JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                		JOptionPane.showMessageDialog(this, "No se pudo autenticar satisfactoriamente. Inténtalo otra vez.");
                 	}
                 }
             } else if ("Google".equalsIgnoreCase(provider)) {
