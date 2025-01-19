@@ -15,11 +15,10 @@ public class ServicioAutentificacion {
         return instancia;
     }
 
-    public String autenticar(String username, String password, String proveedor, String plataforma) {
+    public String autenticar(String username, String password, String proveedor) {
         try {
             IAuthServiceGateway gateway = AuthServiceFactory.getAuthService(proveedor);
             String token = gateway.generarToken();
-            System.out.println(token);
             if(gateway.autenticar(username, password, token)) {
                 return token;
             }

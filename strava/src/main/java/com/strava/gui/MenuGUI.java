@@ -70,7 +70,12 @@ public class MenuGUI extends JFrame {
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
+                	if(facade.getUsersActivos().contains(username)) {
+                		JOptionPane.showMessageDialog(this, "Usuario ya loggeado.");
+
+                	}else {
                     JOptionPane.showMessageDialog(this, "No se pudo autenticar satisfactoriamente. Inténtalo otra vez.");
+                	}
                 }
             } else if ("Meta".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password, "Meta");
@@ -79,7 +84,12 @@ public class MenuGUI extends JFrame {
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
                     dispose();
                 } else {
+                	if(facade.getUsersActivos().contains(username)) {
+                		JOptionPane.showMessageDialog(this, "Usuario ya loggeado.");
+
+                	}else {
                     JOptionPane.showMessageDialog(this, "No se pudo autenticar satisfactoriamente. Inténtalo otra vez.");
+                	}
                 }
             }
         } catch (RemoteException ex) {
@@ -87,6 +97,8 @@ public class MenuGUI extends JFrame {
             ex.printStackTrace();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al autenticar el inicio de sesión. Intentélo de nuevo.");
+            ex.printStackTrace();
+            
 
         }
     }
@@ -889,7 +901,7 @@ public class MenuGUI extends JFrame {
 	                    		    .sum();
 	
 	                    		int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
-	                    		if (progress==100 && r.getFecFin().toLocalDate().isAfter(LocalDate.now())) {
+	                    		if (progress==100) {
 	                    			usuario.getRetos().put(r,"Superado");
 	                    			
 	                    			try {

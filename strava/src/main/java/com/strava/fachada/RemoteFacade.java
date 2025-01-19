@@ -105,9 +105,13 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
                 System.err.println("Credenciales inválidas: " + username);
                 return null;
             }
-            String token = servicioAutentificacion.autenticar(username, contrasena, "Strava", user.getProveedor());
+            String token = servicioAutentificacion.autenticar(username, contrasena, "Strava");
             if (token == null) {
-                System.err.println("Autenticación fallida: " + username);
+            	System.err.println("Autenticación fallida: " + username);
+                return null;
+            }
+            if (!user.getProveedor().equalsIgnoreCase("Strava")){
+            	System.err.println("Inicio de sesion fallido con strava para : " + username);
                 return null;
             }
 
@@ -124,16 +128,15 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
                     if(null != googleAuthClient.loginUser(username, contrasena)) {
-                    	//token = googleAuthClient.loginUser(username, contrasena);
-                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google", user.getProveedor());
-                        /*if(token==null) {
+                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google");
+                        if(token==null) {
                         	return null;
-                        }*/
+                        }
                         tokensActivos.put(u.getUsername(), token);
                         u.setToken(token);
                         actualizarUsuario(u);
                         return usuarioService.obtenerUsuarioPorNombre(username);
-                    }
+                    //}
                 }
             }
 
@@ -141,46 +144,48 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             for (Usuario usuarioG : usuariosG) {
                 if (usuarioG.getUsername().equalsIgnoreCase(username) && usuarioG.getContrasena().equals(contrasena)) {
                     if(null!= googleAuthClient.loginUser(username, contrasena)) {
-                    	//token = googleAuthClient.loginUser(username, contrasena);
-                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google", user.getProveedor());
-                        /*if(token==null) {
+                    	token= servicioAutentificacion.autenticar(username, contrasena, "Google");
+                        if(token==null) {
                         	return null;
-                        }*/
+                        }
                         UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@google.com", username, "Google");
                         newUser.setToken(token);
                         tokensActivos.put(newUser.getUsername(), token);
                         actualizarUsuario(newUser);
-                        
-                        return newUser;
+                       
+                        return this.getUsuarioService().obtenerUsuarioPorNombre(username);
                     } 
+                }
                 }
             }
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
                 	//String token = metaGateway.login(username, contrasena); //Y se borraría el token = de ahora
-                    //token= metaAuthClient.login(username, contrasena); //viejo
-                    token = servicioAutentificacion.autenticar(username, contrasena, "Meta", user.getProveedor());
-                    
-                    u.setToken(token);
-                    usuarioService.actualizarUsuario(u);
-                    UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
-                    tokensActivos.put(usu.getUsername(), token);
-                    return usu;
+                    if(null!= metaAuthClient.login(username, contrasena)) { //viejo
+	                    token = servicioAutentificacion.autenticar(username, contrasena, "Meta");
+	                    
+	                    u.setToken(token);
+	                    usuarioService.actualizarUsuario(u);
+	                    UsuarioDTO usu= usuarioService.obtenerUsuarioPorNombre(username);
+	                    tokensActivos.put(usu.getUsername(), token);
+	                    return usu;
+                    }
                 }
             }
 
             Map<String, String> userStore = metaAuthClient.getUserStore();
             if (userStore.containsKey(username) && userStore.get(username).equals(contrasena)) {
-                //token= metaAuthClient.login(username, contrasena);
-                token = servicioAutentificacion.autenticar(username, contrasena, "Meta", user.getProveedor());
-                UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
-                newUser.setToken(token);
-                usuarioService.actualizarUsuario(newUser);
-                UsuarioDTO u= usuarioService.obtenerUsuarioPorNombre(username);
-                tokensActivos.put(u.getUsername(), token);
-                
-                return u;
+                if(null!= metaAuthClient.login(username, contrasena)) {
+	                token = servicioAutentificacion.autenticar(username, contrasena, "Meta");
+	                UsuarioDTO newUser = usuarioService.registrar(username, contrasena, username + "@meta.com", username, "Meta");
+	                newUser.setToken(token);
+	                usuarioService.actualizarUsuario(newUser);
+	                UsuarioDTO u= usuarioService.obtenerUsuarioPorNombre(username);
+	                tokensActivos.put(u.getUsername(), token);
+	                
+	                return u;
+                }
             }
         }
 
