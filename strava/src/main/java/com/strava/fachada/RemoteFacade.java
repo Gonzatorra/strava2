@@ -160,7 +160,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
             }
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
-                if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena)) {
+                if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena) && u.getProveedor().equals(plataforma)) {
                 	//String token = metaGateway.login(username, contrasena); //Y se borraría el token = de ahora
                     if(null!= metaAuthClient.login(username, contrasena)) { //viejo
 	                    token = servicioAutentificacion.autenticar(username, contrasena, "Meta");
