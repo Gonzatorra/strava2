@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.JOptionPane;
-
 import com.BD.dao.RetoDAO;
 import com.BD.dao.RetoParticipantesDAO;
 import com.BD.entity.RetoEntity;
@@ -37,8 +35,7 @@ public class RetoService {
         }
 
         int nuevoId = idCounter++;
-        //Usuario usu= UsuarioAssembler.toDomain(usuarioCreador);
-       
+
         ArrayList<Integer> ids= new ArrayList<Integer>();
         for (Usuario u: particips) {
             ids.add(u.getId());
@@ -78,8 +75,7 @@ public class RetoService {
     	ids.add(usuario.getId());
     	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
     			reto.getUsuarioCreador(), reto.getDeporte(), ids);
-        //RetoAssembler.toDomain(reto).aceptarReto(UsuarioAssembler.toDomain(usuario));
-        
+
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		RetoDAO retoDAO = new RetoDAO(entityManager);

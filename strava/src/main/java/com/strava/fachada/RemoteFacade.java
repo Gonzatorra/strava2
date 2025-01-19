@@ -25,7 +25,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     private final GoogleAuthClient googleAuthClient;
     private UsuarioService usuarioService;
     private AuthClientMeta metaAuthClient;
-    //private MetaAuthServiceGateway metaGateway; //y se borra el metaAuthClient
 
 
     @Override
@@ -37,8 +36,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 	public RemoteFacade(ApplicationContext context) throws RemoteException {
         super();
         this.metaAuthClient = new AuthClientMeta("localhost", 1101);
-        //this.metaGateway = (MetaAuthServiceGateway)AuthServiceFactory.getAuthService("Meta"); //Y se borra el metaAuthCLient
-        this.googleAuthClient = context.getBean(GoogleAuthClient.class); // Obtener el GoogleAuthClient desde el contexto de Spring
+        this.googleAuthClient = context.getBean(GoogleAuthClient.class); //Inyectar el GoogleAuthClient desde el contexto de Spring
         this.usuarioService = new UsuarioService();
         this.entrenamientoService = new EntrenamientoService();
         this.retoService = new RetoService();
@@ -136,7 +134,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
                         u.setToken(token);
                         actualizarUsuario(u);
                         return usuarioService.obtenerUsuarioPorNombre(username);
-                    //}
                 }
             }
 
@@ -161,7 +158,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         } else if (plataforma.equalsIgnoreCase("Meta")) {
             for (UsuarioDTO u : UsuarioService.getUsuarios().values()) {
                 if (u.getUsername().equals(username) && u.getContrasena().equals(contrasena) && u.getProveedor().equals(plataforma)) {
-                	//String token = metaGateway.login(username, contrasena); //Y se borraría el token = de ahora
                     if(null!= metaAuthClient.login(username, contrasena)) { //viejo
 	                    token = servicioAutentificacion.autenticar(username, contrasena, "Meta");
 	                    
@@ -208,7 +204,6 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
                 actualizarUsuario(usuario);
             } else if ("Meta".equals(proveedor)) {
                 try {
-                	//metaGateway.logout(username); //Y se borra el sendRequest de abajo.
                     AuthClientMeta metaAuthClient = new AuthClientMeta("localhost", 1101);
                     metaAuthClient.sendRequest("LOGOUT;" + username);
                     tokensActivos.remove(username);

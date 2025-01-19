@@ -4,7 +4,7 @@ import java.util.*;
 public class AuthFactoryMeta {
     public static String createToken(String username) {
     	return "meta_" + System.currentTimeMillis();
-    } //deberia ir comentado porque el token se deberia crear en otro sitio y de otra forma-nora
+    }
 
     public static void registerUser(
             String username,

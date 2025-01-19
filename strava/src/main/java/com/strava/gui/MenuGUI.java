@@ -870,16 +870,7 @@ public class MenuGUI extends JFrame {
 	
 	                //Limpiar todas las filas del modelo
 	                acceptedModel.setRowCount(0);
-	                
-	                /*try {
-	                    
-	                    System.out.println(usuario.getRetos()); //es vacio
-	                    System.out.println(facade.visualizarReto().toString()); //NO ES VACIO
-	                    
-	                } catch (RemoteException e) {
-	                    // TODO Auto-generated catch block
-	                    e.printStackTrace();
-	                }*/
+
 	                //Filtrar retos basados en el criterio seleccionado
 	                for (RetoDTO r : usuario.getRetos().keySet()) {
 	                	                    
@@ -1134,19 +1125,7 @@ public class MenuGUI extends JFrame {
                         if (fecIni.isAfter(fecFin)) {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
-                        /*
-                        Reto reto = new Reto(
-	                        0, //ID se generara
-	                        sportField.getText(),
-	                        usuario.getUsername(),
-	                        titleField.getText(),
-	                        fecIni,
-	                        fecFin,
-	                        Float.parseFloat(distanceField.getText()),
-	                        Float.parseFloat(timeField.getText()),
-	                        new ArrayList<>()
-	                    );
-						*/
+
                         //Llamar al metodo del facade para guardar el reto
                         RetoDTO reto1 = facade.crearReto(
                                 titleField.getText(),
@@ -1195,8 +1174,6 @@ public class MenuGUI extends JFrame {
                     return;
                 }
                if (((String) acceptedTable.getValueAt(selectedRow, 3)).equalsIgnoreCase(usuario.getUsername())) {
-                	
-                
 
                 JPanel panel = new JPanel(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -1437,8 +1414,6 @@ public class MenuGUI extends JFrame {
                             usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
-                        	//facade.getUsuarioService().borrarDeGetRetos(usuario,r);
-                        	
                         	HashMap<RetoDTO, String> retos= usuario.getRetos();
                         	for(RetoDTO reto: retos.keySet()) {
                         		if(r.getId()==reto.getId()) {
@@ -1453,7 +1428,6 @@ public class MenuGUI extends JFrame {
                             facade.eliminarReto(usuario, r);
                             usuario= facade.getUsuarios().get(usuario.getId());
                             System.out.println("El usuario se elimina del reto.");
-                            //System.out.println(r.getParticipantes());
                         }
 
 
@@ -1640,7 +1614,7 @@ public class MenuGUI extends JFrame {
 
             //Cargar amigos actuales al inicializar la tabla
             try {
-                amigoModel.setRowCount(0); // Limpiar cualquier dato previo
+                amigoModel.setRowCount(0); //Limpiar cualquier dato previo
                 ArrayList<Integer> amigos = facade.getAmigos(usuario);
                 HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                 for (Integer amigoID : amigos) {

@@ -1,6 +1,6 @@
 package com.strava.rmi;
 
-import com.meta.AuthClientMeta;
+import com.meta.AuthGatewayMeta;
 import com.strava.DTO.*;
 import com.strava.config.AppConfig;
 import com.strava.fachada.*;
@@ -18,15 +18,14 @@ import org.springframework.context.ApplicationContext;
 
 public class Servidor {
     private final RemoteFacade facade;
-    //private final MetaAuthServiceGateway metaGateway; //Y se borra el authClientMeta
-    private final AuthClientMeta metaAuthClient;
+    private final AuthGatewayMeta metaGateway;
     private final GoogleAuthClient googleAuthClient;
 
     public Servidor(ApplicationContext context) throws RemoteException {
         this.googleAuthClient = context.getBean(GoogleAuthClient.class); //Obtener el GoogleAuthClient desde el contexto de Spring
         this.facade = new RemoteFacade(context);
-        //this.metaGateway = (MetaAuthServiceGateway)AuthServiceFactory.getAuthService("Meta"); // Y se borra el AuthClientMeta
-        this.metaAuthClient = new AuthClientMeta("localhost", 1101);
+        this.metaGateway = new AuthGatewayMeta("localhost",1101);
+
         iniciarRMI();
         try {
 			registrarUsuariosMeta();
@@ -51,14 +50,13 @@ public class Servidor {
     }
 
     private void registrarUsuariosMeta() throws IOException {
-    	//En todos estos habría que cambiar metaAuthCLient por metaGateway
-        metaAuthClient.registerUser("maria123", "claveMaria", "maria123@meta.com");
-        metaAuthClient.registerUser("jose456", "claveJose", "jose456@meta.com");
-        metaAuthClient.registerUser("lucia789", "claveLucia", "lucia789@meta.com");
-        metaAuthClient.registerUser("carlos111", "claveCarlos", "carlos111@meta.com");
-        metaAuthClient.registerUser("ana222", "claveAna", "ana222@meta.com");
-        metaAuthClient.registerUser("david333", "claveDavid", "david333@meta.com");
-        metaAuthClient.registerUser("laura444", "claveLaura", "laura444@meta.com");
+        metaGateway.registerUser("maria123", "claveMaria", "maria123@meta.com");
+        metaGateway.registerUser("jose456", "claveJose", "jose456@meta.com");
+        metaGateway.registerUser("lucia789", "claveLucia", "lucia789@meta.com");
+        metaGateway.registerUser("carlos111", "claveCarlos", "carlos111@meta.com");
+        metaGateway.registerUser("ana222", "claveAna", "ana222@meta.com");
+        metaGateway.registerUser("david333", "claveDavid", "david333@meta.com");
+        metaGateway.registerUser("laura444", "claveLaura", "laura444@meta.com");
     }
 
 

@@ -9,5 +9,3 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
 }
-
-//spring Data JPA crea el @Bean de UsuarioRepository. 

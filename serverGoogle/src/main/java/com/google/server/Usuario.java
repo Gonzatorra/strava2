@@ -61,14 +61,6 @@ public class Usuario {
         this.contrasena = contrasena;
         
     }
-    
-    public String getProveedor() {
-		return proveedor;
-	}
-
-	public void setProveedor(String proveedor) {
-		this.proveedor = proveedor;
-	}
 
     @Override
     public String toString() {

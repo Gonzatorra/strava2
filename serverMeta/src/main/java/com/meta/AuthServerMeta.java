@@ -28,7 +28,6 @@ public class AuthServerMeta {
 
     public synchronized String login(String username, String password) {
         if (userStore.containsKey(username) && userStore.get(username).equals(password)) {
-            //String token = UUID.randomUUID().toString();
             String token = "meta_" + System.currentTimeMillis();
             tokenStore.put(token, username);
             return token;
@@ -46,17 +45,6 @@ public class AuthServerMeta {
         return "User registered successfully";
     }
 
-    public synchronized boolean validateToken(String token) {
-        return tokenStore.containsKey(token);
-    }
-
-    public synchronized String getUserInfo(String token) {
-        String username = tokenStore.get(token);
-        if (username != null && userInfoStore.containsKey(username)) {
-            return userInfoStore.get(username);
-        }
-        return "Invalid token";
-    }
 
     public synchronized String logout(String token) {
         if (tokenStore.containsKey(token)) {
@@ -69,14 +57,6 @@ public class AuthServerMeta {
     }
     public String getUserStoreAsJson() {
         return mapToJson(userStore);
-    }
-
-    public String getUserInfoStoreAsJson() {
-        return mapToJson(userInfoStore);
-    }
-
-    public String getTokenStoreAsJson() {
-        return mapToJson(tokenStore);
     }
 
     private String mapToJson(Map<String, String> map) {

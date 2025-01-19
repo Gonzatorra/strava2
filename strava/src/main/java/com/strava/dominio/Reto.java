@@ -124,10 +124,5 @@ public class Reto implements Serializable{
         return this;
     }
 
-/*
-    public void aceptarReto(Usuario usuario) {
-        System.out.println("El usuario acepta el reto y se añade a la lista");
-        this.getParticipantes().add(usuario.getId());
-    }*/
 
 }
