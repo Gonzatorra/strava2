@@ -889,7 +889,7 @@ public class MenuGUI extends JFrame {
 	                    		    .sum();
 	
 	                    		int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
-	                    		if (progress==100) {
+	                    		if (progress==100 && r.getFecFin().toLocalDate().isAfter(LocalDate.now())) {
 	                    			usuario.getRetos().put(r,"Superado");
 	                    			
 	                    			try {
