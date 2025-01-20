@@ -533,21 +533,25 @@ public class MenuGUI extends JFrame {
                         java.util.Date selectedDate = dateChooser.getDate();
                         if (selectedDate != null) {
                             usuario.setfNacimiento(new java.sql.Date(selectedDate.getTime()));
+                        
+	                        facade.actualizarUsuario(usuario);
+	
+	
+	                        tableModel.setValueAt(usuario.getUsername(), 0, 1);
+	                        tableModel.setValueAt(usuario.getEmail(), 1, 1);
+	                        tableModel.setValueAt("*".repeat(usuario.getContrasena().length()), 2, 1);
+	                        tableModel.setValueAt(usuario.getfNacimiento(), 3, 1);
+	                        tableModel.setValueAt(usuario.getNombre(), 4, 1);
+	                        tableModel.setValueAt(usuario.getPeso(), 5, 1);
+	                        tableModel.setValueAt(usuario.getAltura(), 6, 1);
+	                        tableModel.setValueAt(usuario.getFecCMax(), 7, 1);
+	                        tableModel.setValueAt(usuario.getFecCReposo(), 8, 1);
+	
+	                        JOptionPane.showMessageDialog(profilePanel, "Usuario actualizado con éxito.");
                         }
-                        facade.actualizarUsuario(usuario);
-
-
-                        tableModel.setValueAt(usuario.getUsername(), 0, 1);
-                        tableModel.setValueAt(usuario.getEmail(), 1, 1);
-                        tableModel.setValueAt("*".repeat(usuario.getContrasena().length()), 2, 1);
-                        tableModel.setValueAt(usuario.getfNacimiento(), 3, 1);
-                        tableModel.setValueAt(usuario.getNombre(), 4, 1);
-                        tableModel.setValueAt(usuario.getPeso(), 5, 1);
-                        tableModel.setValueAt(usuario.getAltura(), 6, 1);
-                        tableModel.setValueAt(usuario.getFecCMax(), 7, 1);
-                        tableModel.setValueAt(usuario.getFecCReposo(), 8, 1);
-
-                        JOptionPane.showMessageDialog(profilePanel, "Usuario actualizado con éxito.");
+                        else {
+                        	JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto, intentalo de nuevo.");
+                        }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(profilePanel, "Error al actualizar usuario: " + ex.getMessage());
                         ex.printStackTrace();
