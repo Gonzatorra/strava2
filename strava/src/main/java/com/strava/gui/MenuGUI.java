@@ -129,12 +129,16 @@ public class MenuGUI extends JFrame {
 
         String[] activeUsers = facade.getUsersActivos().toArray(new String[0]);
         JComboBox<String> userComboBox = new JComboBox<>(activeUsers);
+        userComboBox.setBackground(ORANGE_ACCENT);
+        userComboBox.setForeground(Color.WHITE);
         gbc.gridx = 1;
         gbc.gridy = 1;
         accessPanel.add(userComboBox, gbc);
 
         //Boton para acceder
         JButton accessButton = new JButton("ACCEDER");
+        accessButton.setBackground(ORANGE_ACCENT);
+        accessButton.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2; // Centrado bajo el ComboBox
@@ -785,47 +789,54 @@ public class MenuGUI extends JFrame {
 
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        String title = titleField.getText();
-                        String sport = sportField.getText();
-                        int duration = Integer.parseInt(durationField.getText());
-                        float distance = Float.parseFloat(distanceField.getText());
-                        LocalDateTime now = LocalDateTime.now();
-                        LocalDate fecha = now.toLocalDate();
-                        LocalTime horaLT = now.toLocalTime();
-                        int horas = horaLT.getHour();
-                        int minutos = horaLT.getMinute();
-                        float hora = horas + minutos / 60.0f;
-                        EntrenamientoDTO entreno = facade.crearEntreno(
-                                usuario,
-                                title,
-                                sport,
-                                distance,
-                                fecha,
-                                hora,
-                                duration
-                        );
-                        usuario.getEntrenamientos().add(entreno);
-                        facade.actualizarUsuario(usuario);
-
-                        //Añade el progreso y otros valores a la tabla
-                        tableModel.addRow(new Object[]{
-                                fecha,
-                                entreno.getId(),
-                                title,         //Titulo
-                                duration,      //Duracion (minutos)
-                                distance,       //Distancia (km)
-                                sport         //Deporte
-                        });
-                        trainPanel.revalidate();  //Asegura que se actualice el panel
-                        trainPanel.repaint();
-
-                        JOptionPane.showMessageDialog(this, "Entrenamiento añadido con éxito.");
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(this, "Por favor, ingresa valores válidos para la duración y distancia.");
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Error al agregar el entrenamiento: " + ex.getMessage());
-                        ex.printStackTrace();
-                    }
+                    	if(titleField.getText().equals("")| sportField.getText().equals("")) {
+                    		JOptionPane.showMessageDialog(null, "Rellena todas las casillas");
+                    	}
+                    	else {
+                    	
+	                        String title = titleField.getText();
+	                        String sport = sportField.getText();
+	                        int duration = Integer.parseInt(durationField.getText());
+	                        float distance = Float.parseFloat(distanceField.getText());
+	                        LocalDateTime now = LocalDateTime.now();
+	                        LocalDate fecha = now.toLocalDate();
+	                        LocalTime horaLT = now.toLocalTime();
+	                        int horas = horaLT.getHour();
+	                        int minutos = horaLT.getMinute();
+	                        float hora = horas + minutos / 60.0f;
+	                        EntrenamientoDTO entreno = facade.crearEntreno(
+	                                usuario,
+	                                title,
+	                                sport,
+	                                distance,
+	                                fecha,
+	                                hora,
+	                                duration
+	                        );
+	                        usuario.getEntrenamientos().add(entreno);
+	                        facade.actualizarUsuario(usuario);
+	
+	                        //Añade el progreso y otros valores a la tabla
+	                        tableModel.addRow(new Object[]{
+	                                fecha,
+	                                entreno.getId(),
+	                                title,         //Titulo
+	                                duration,      //Duracion (minutos)
+	                                distance,       //Distancia (km)
+	                                sport         //Deporte
+	                        });
+	                        trainPanel.revalidate();  //Asegura que se actualice el panel
+	                        trainPanel.repaint();
+	
+	                        JOptionPane.showMessageDialog(this, "Entrenamiento añadido con éxito.");
+                    	}
+                    	} catch (NumberFormatException ex) {
+	                        JOptionPane.showMessageDialog(this, "Por favor, ingresa valores válidos para la duración y distancia.");
+	                    } catch (Exception ex) {
+	                        JOptionPane.showMessageDialog(this, "Error al agregar el entrenamiento: " + ex.getMessage());
+	                        ex.printStackTrace();
+	                    }
+                    
                 }
             });
 
@@ -1114,72 +1125,83 @@ public class MenuGUI extends JFrame {
                 );
 
                 if (option == JOptionPane.OK_OPTION) {
-                    try {
-                        //Fechas
-                        Date startDate = startDateField.getDate();
-                        Date endDate = finishDateField.getDate();
-
-                        //Horas
-                        Date startTime = (Date) startTimeSpinner.getValue();
-                        Date endTime = (Date) endTimeSpinner.getValue();
-
-                        //Combinar fecha y hora en LocalDateTime
-                        @SuppressWarnings("deprecation")
-						LocalDateTime fecIni = LocalDateTime.ofInstant(
-                                startDate.toInstant(), ZoneId.systemDefault()
-                        ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
-
-                        @SuppressWarnings("deprecation")
-						LocalDateTime fecFin = LocalDateTime.ofInstant(
-                                endDate.toInstant(), ZoneId.systemDefault()
-                        ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
-
-                        //Validar que la fecha de inicio sea anterior a la fecha de fin
-                        if (fecIni.isAfter(fecFin)) {
-                            throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
-                        }
-
-                        
-                        //Llamar al metodo del facade para guardar el reto
-                        RetoDTO reto1 = facade.crearReto(
-                                titleField.getText(),
-                                fecIni,
-                                fecFin,
-                                Float.parseFloat(distanceField.getText()),
-                                Float.parseFloat(timeField.getText()),
-                                sportField.getText(),
-                                usuario,
-                                new ArrayList<>()
-                        );
-                        //Añadir el reto al modelo de la tabla
-                        acceptedModel.addRow(new Object[]{
-                                reto1.getId(),
-                                reto1.getNombre(),
-                                reto1.getDeporte(),
-                                reto1.getUsuarioCreador(),
-                                reto1.getFecIni().format(formatter),
-                                reto1.getFecFin().format(formatter),
-                                reto1.getObjetivoDistancia(),
-                                reto1.getObjetivoTiempo()
-                        });
-
-                        usuario.getRetos().put(reto1.getId(), "En Progreso");
-                        
-                        facade.aceptarReto(usuario, reto1);
-                        facade.actualizarUsuario(usuario);
-
-                        JOptionPane.showMessageDialog(null, "Reto añadido con éxito.");
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Distancia y tiempo deben ser valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Error inesperado: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        ex.printStackTrace();
+                	if(titleField.getText().equals("") |  sportField.equals("") ) {
+                		JOptionPane.showMessageDialog(null, "Rellena todas las casillas");
+                    	
                     }
+                	else if(startDateField.getDate()== null | finishDateField.getDate()== null){
+                		JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto");
+                	}
+                	else {
+                		
+	                    try {
+	                        //Fechas
+	                        Date startDate = startDateField.getDate();
+	                        Date endDate = finishDateField.getDate();
+	
+	                        //Horas
+	                        Date startTime = (Date) startTimeSpinner.getValue();
+	                        Date endTime = (Date) endTimeSpinner.getValue();
+	
+	                        //Combinar fecha y hora en LocalDateTime
+	                        @SuppressWarnings("deprecation")
+							LocalDateTime fecIni = LocalDateTime.ofInstant(
+	                                startDate.toInstant(), ZoneId.systemDefault()
+	                        ).with(LocalTime.of(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds()));
+	
+	                        @SuppressWarnings("deprecation")
+							LocalDateTime fecFin = LocalDateTime.ofInstant(
+	                                endDate.toInstant(), ZoneId.systemDefault()
+	                        ).with(LocalTime.of(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds()));
+	
+	                        //Validar que la fecha de inicio sea anterior a la fecha de fin
+	                        if (fecIni.isAfter(fecFin)) {
+	                            throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
+	                        }
+	
+	                        
+	                        //Llamar al metodo del facade para guardar el reto
+	                        RetoDTO reto1 = facade.crearReto(
+	                                titleField.getText(),
+	                                fecIni,
+	                                fecFin,
+	                                Float.parseFloat(distanceField.getText()),
+	                                Float.parseFloat(timeField.getText()),
+	                                sportField.getText(),
+	                                usuario,
+	                                new ArrayList<>()
+	                        );
+	                        //Añadir el reto al modelo de la tabla
+	                        acceptedModel.addRow(new Object[]{
+	                                reto1.getId(),
+	                                reto1.getNombre(),
+	                                reto1.getDeporte(),
+	                                reto1.getUsuarioCreador(),
+	                                reto1.getFecIni().format(formatter),
+	                                reto1.getFecFin().format(formatter),
+	                                reto1.getObjetivoDistancia(),
+	                                reto1.getObjetivoTiempo()
+	                        });
+	
+	                        usuario.getRetos().put(reto1.getId(), "En Progreso");
+	                        
+	                        facade.aceptarReto(usuario, reto1);
+	                        facade.actualizarUsuario(usuario);
+	
+	                        JOptionPane.showMessageDialog(null, "Reto añadido con éxito.");
+	                    } catch (NumberFormatException ex) {
+	                        JOptionPane.showMessageDialog(null, "Distancia y tiempo deben ser valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
+	                    } catch (IllegalArgumentException ex) {
+	                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	                    } catch (Exception ex) {
+	                        JOptionPane.showMessageDialog(null, "Error inesperado: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	                        ex.printStackTrace();
+	                    }
+                	}
                 }
             });
 
+            
             //Logica para modificar un reto
             modButton.addActionListener(e -> {
                 int selectedRow = acceptedTable.getSelectedRow();
@@ -1390,8 +1412,32 @@ public class MenuGUI extends JFrame {
                 }
 
             }
+               else {
+            	   
+
+               }
             });
 
+            acceptedTable.getSelectionModel().addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {  // Evita eventos duplicados
+                    int selectedRow = acceptedTable.getSelectedRow();
+                    
+                    if (selectedRow != -1) {  // Verifica si hay una fila seleccionada
+                    	if (((String) acceptedTable.getValueAt(selectedRow, 3)).equalsIgnoreCase(usuario.getUsername())) {
+                    		modButton.setEnabled(true);
+                    		modButton.setBackground(ORANGE_ACCENT);
+                            modButton.setForeground(Color.WHITE);
+                    		
+                    	}
+                    	else {
+                    		modButton.setEnabled(false);
+                    		modButton.setBackground(Color.WHITE);  // Cambia el fondo a gris
+                     	   	modButton.setForeground(Color.GRAY);  // Cambia el texto a gris oscuro
+                    	}
+                        
+                    }
+                }
+            });
 
             //Logica para eliminar un reto
             delButton.addActionListener(e -> {
@@ -1616,7 +1662,7 @@ public class MenuGUI extends JFrame {
 
             //Mis Amigos
             //Definir columnas para la tabla de amigos
-            String[] amigoColumnNames = {"ID", "Username", "Email"};
+            String[] amigoColumnNames = {"Username", "Email"};
 
             //Crear el modelo de la tabla para mostrar los amigos actuales
             DefaultTableModel amigoModel = new DefaultTableModel(amigoColumnNames, 0) {
@@ -1641,7 +1687,7 @@ public class MenuGUI extends JFrame {
                 HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                 for (Integer amigoID : amigos) {
                     UsuarioDTO amigo = usuarios.get(amigoID);
-                    amigoModel.addRow(new Object[]{amigo.getId(), amigo.getUsername(), amigo.getEmail()});
+                    amigoModel.addRow(new Object[]{amigo.getUsername(), amigo.getEmail()});
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -1650,7 +1696,7 @@ public class MenuGUI extends JFrame {
 
 
             //Definir las columnas para la tabla
-            String[] columnNames = {"ID", "Username", "Email"};
+            String[] columnNames = {"Username", "Email"};
 
             //Crear el modelo de la tabla para mostrar los usuarios disponibles para añadir como amigos
             DefaultTableModel userModel = new DefaultTableModel(columnNames, 0) {
@@ -1670,7 +1716,7 @@ public class MenuGUI extends JFrame {
             //Panel de búsqueda
             JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JLabel searchLabel = new JLabel("Buscar por:");
-            JComboBox<String> searchCriteria = new JComboBox<>(new String[]{"ID", "Username", "Email"});
+            JComboBox<String> searchCriteria = new JComboBox<>(new String[]{"Username", "Email"});
             JTextField searchField = new JTextField(15);
             JButton searchButton = new JButton("Buscar");
             searchPanel.add(searchLabel);
@@ -1691,7 +1737,7 @@ public class MenuGUI extends JFrame {
                 }
                 for (UsuarioDTO user : usuarios.values()) {
                     if (!amigos.contains(user) && !user.getUsername().equals(usuario.getUsername())) {
-                        userModel.addRow(new Object[]{user.getId(), user.getUsername(), user.getEmail()});
+                        userModel.addRow(new Object[]{user.getUsername(), user.getEmail()});
                     }
                 }
             } catch (RemoteException ex) {
@@ -1704,10 +1750,10 @@ public class MenuGUI extends JFrame {
                 String criteria = (String) searchCriteria.getSelectedItem();
                 String searchTerm = searchField.getText().trim().toLowerCase();
 
-                if (searchTerm.isEmpty()) {
+                /*if (searchTerm.isEmpty()) {
                     JOptionPane.showMessageDialog(addAmigos, "Por favor, introduzca un término de búsqueda.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
-                }
+                }*/
 
                 try {
                     userModel.setRowCount(0); //Limpiar la tabla antes de buscar
@@ -1722,14 +1768,14 @@ public class MenuGUI extends JFrame {
                         if (amigos.contains(user)) continue; //Excluir amigos
 
                         boolean matches = switch (criteria) {
-                            case "ID" -> String.valueOf(user.getId()).contains(searchTerm);
                             case "Username" -> user.getUsername().toLowerCase().contains(searchTerm);
                             case "Email" -> user.getEmail().toLowerCase().contains(searchTerm);
+                            case "" -> true;
                             default -> false;
                         };
 
                         if (matches) {
-                            userModel.addRow(new Object[]{user.getId(), user.getUsername(), user.getEmail()});
+                            userModel.addRow(new Object[]{user.getUsername(), user.getEmail()});
                         }
                     }
                 } catch (RemoteException ex) {
