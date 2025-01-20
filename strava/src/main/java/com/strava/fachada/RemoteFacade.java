@@ -263,7 +263,12 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
 
     @Override
     public void cambiarEstado(UsuarioDTO usuario, RetoDTO reto, String estado) throws RemoteException {
-        retoService.cambiarEstado(usuario, reto, estado);
+    	try {
+    		retoService.cambiarEstado(usuario, reto, estado);
+    	} catch (Exception e) {
+            System.out.println("No disponible");
+        }
+        
 
     }
 
