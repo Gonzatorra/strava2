@@ -1346,9 +1346,17 @@ public class MenuGUI extends JFrame {
                         );
 
                         RetoDTO retoActualizado1 = facade.visualizarReto().get(retoActual.getId());
-
+                        HashMap<RetoDTO, String> retosVisualizar = new HashMap<>();
                         //Agregar el nuevo reto al Map
-                        usuario.getRetos().put(retoActualizado1, "En Progreso");
+                        for (RetoDTO r: usuario.getRetos().keySet()) {
+                        	if(r.getId()== retoActualizado1.getId()) {
+                        		retosVisualizar.put(retoActualizado1, usuario.getRetos().get(retoActualizado1));
+                        	}
+                        	else {
+                        		retosVisualizar.put(r, usuario.getRetos().get(r));
+                        	}
+                        }
+                        usuario.setRetos(retosVisualizar);
 
                         //Actualizar la tabla
                         acceptedModel.setValueAt(titleField.getText(), selectedRow, 1);
@@ -1360,7 +1368,11 @@ public class MenuGUI extends JFrame {
 
                         //Actualizar el usuario en el backend
                         facade.actualizarUsuario(usuario);
+                        usuario= facade.getUsuarios().get(usuario.getId());
                         JOptionPane.showMessageDialog(this, "Reto actualizado con éxito.");
+                        System.out.println(facade.visualizarReto());
+                        System.out.println(usuario.getRetos());
+
 
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "Error al modificar el reto: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1414,16 +1426,16 @@ public class MenuGUI extends JFrame {
                             usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
-                        	HashMap<RetoDTO, String> retos= usuario.getRetos();
-                        	for(RetoDTO reto: retos.keySet()) {
-                        		if(r.getId()==reto.getId()) {
-                        			retos.remove(reto);
-                        			break;
-                        		}
-                        	}
-                        	usuario.setRetos(retos);
-                        	
-                        	
+                        	HashMap<RetoDTO, String> retosVisualizar = usuario.getRetos();
+                            //Agregar el nuevo reto al Map
+                            for (RetoDTO reto: usuario.getRetos().keySet()) {
+                            	if(reto.getId()== r.getId()) {
+                            		retosVisualizar. remove(reto);
+                            	}
+                            }
+                           
+                            usuario.setRetos(retosVisualizar);
+                        	                      
                             facade.actualizarUsuario(usuario);
                             facade.eliminarReto(usuario, r);
                             usuario= facade.getUsuarios().get(usuario.getId());
@@ -1433,6 +1445,8 @@ public class MenuGUI extends JFrame {
 
                         acceptedModel.removeRow(selectedRow);
                         JOptionPane.showMessageDialog(this, "Reto eliminado con éxito.");
+                        System.out.println(facade.visualizarReto());
+                        System.out.println(usuario.getRetos());
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "Error al eliminar el reto: " + ex.getMessage());
                         ex.printStackTrace();
