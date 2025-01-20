@@ -1662,7 +1662,7 @@ public class MenuGUI extends JFrame {
 
             //Mis Amigos
             //Definir columnas para la tabla de amigos
-            String[] amigoColumnNames = {"Username", "Email"};
+            String[] amigoColumnNames = {"ID", "Username", "Email"};
 
             //Crear el modelo de la tabla para mostrar los amigos actuales
             DefaultTableModel amigoModel = new DefaultTableModel(amigoColumnNames, 0) {
@@ -1687,7 +1687,7 @@ public class MenuGUI extends JFrame {
                 HashMap<Integer, UsuarioDTO> usuarios = facade.getUsuarios();
                 for (Integer amigoID : amigos) {
                     UsuarioDTO amigo = usuarios.get(amigoID);
-                    amigoModel.addRow(new Object[]{amigo.getUsername(), amigo.getEmail()});
+                    amigoModel.addRow(new Object[]{amigo.getId(), amigo.getUsername(), amigo.getEmail()});
                 }
             } catch (RemoteException ex) {
                 ex.printStackTrace();
@@ -1696,7 +1696,7 @@ public class MenuGUI extends JFrame {
 
 
             //Definir las columnas para la tabla
-            String[] columnNames = {"Username", "Email"};
+            String[] columnNames = {"ID", "Username", "Email"};
 
             //Crear el modelo de la tabla para mostrar los usuarios disponibles para añadir como amigos
             DefaultTableModel userModel = new DefaultTableModel(columnNames, 0) {
@@ -1737,7 +1737,7 @@ public class MenuGUI extends JFrame {
                 }
                 for (UsuarioDTO user : usuarios.values()) {
                     if (!amigos.contains(user) && !user.getUsername().equals(usuario.getUsername())) {
-                        userModel.addRow(new Object[]{user.getUsername(), user.getEmail()});
+                        userModel.addRow(new Object[]{user.getId(), user.getUsername(), user.getEmail()});
                     }
                 }
             } catch (RemoteException ex) {
@@ -1775,7 +1775,7 @@ public class MenuGUI extends JFrame {
                         };
 
                         if (matches) {
-                            userModel.addRow(new Object[]{user.getUsername(), user.getEmail()});
+                            userModel.addRow(new Object[]{user.getId(), user.getUsername(), user.getEmail()});
                         }
                     }
                 } catch (RemoteException ex) {
