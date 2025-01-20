@@ -899,6 +899,7 @@ public class MenuGUI extends JFrame {
 	                    	RetoDTO r;
 							try {
 								r = facade.visualizarReto().get(idReto);
+								if(r!= null) {
 		                    	List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
 		                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) //Filtrar por deporte
 		                    		    .filter(e -> {
@@ -962,6 +963,7 @@ public class MenuGUI extends JFrame {
 		                        } catch (Exception e) {
 		                            e.printStackTrace();
 		                        }
+							}
 		                        
 							} catch (RemoteException e) {
 								// TODO Auto-generated catch block
