@@ -1823,6 +1823,7 @@ public class MenuGUI extends JFrame {
                         //Añadir el amigo
                         currentUser.getAmigos().add(selectedUser.getId());
                         facade.actualizarUsuario(currentUser);
+                        usuario= facade.getUsuarios().get(usuario.getId());
 
 
                         JOptionPane.showMessageDialog(addAmigos, "Amigo añadido con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
