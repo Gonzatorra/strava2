@@ -65,6 +65,7 @@ public class MenuGUI extends JFrame {
                 }
             } else if ("Google".equalsIgnoreCase(provider)) {
                 usuarioWrapper[0] = facade.login(username, password, "Google");
+                
                 if (usuarioWrapper[0] != null) {
                     JOptionPane.showMessageDialog(this, "¡Inicio de sesión exitoso con " + provider + "!");
                     SwingUtilities.invokeLater(() -> new MainAppGUI(usuarioWrapper[0]).setVisible(true));
@@ -355,6 +356,7 @@ public class MenuGUI extends JFrame {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            System.out.println(usuario.getToken());
             
             setTitle("Strava - Principal");
             setSize(600, 400);
@@ -469,6 +471,7 @@ public class MenuGUI extends JFrame {
             modButton.addActionListener(e -> {
                 JPanel panel = new JPanel(new GridLayout(9, 2));
                 JTextField usernameField = new JTextField(usuario.getUsername());
+                usernameField.setEditable(false);
                 JTextField emailField = new JTextField(usuario.getEmail());
                 JPasswordField contraField = new JPasswordField(usuario.getContrasena());
                 JTextField nameField = new JTextField(usuario.getNombre());
@@ -511,7 +514,7 @@ public class MenuGUI extends JFrame {
 
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        usuario.setUsername(usernameField.getText());
+                 
                         usuario.setEmail(emailField.getText());
                         usuario.setNombre(nameField.getText());
                         usuario.setPeso(Float.parseFloat(weightField.getText()));
@@ -527,7 +530,6 @@ public class MenuGUI extends JFrame {
                         if (selectedDate != null) {
                             usuario.setfNacimiento(new java.sql.Date(selectedDate.getTime()));
                         }
-
                         facade.actualizarUsuario(usuario);
 
 
@@ -873,74 +875,84 @@ public class MenuGUI extends JFrame {
 	                acceptedModel.setRowCount(0);
 
 	                //Filtrar retos basados en el criterio seleccionado
-	                for (RetoDTO r : usuario.getRetos().keySet()) {
+	                for (int idReto : usuario.getRetos().keySet()) {
+	                	
 	                	                    
-	                    String estado = usuario.getRetos().get(r);
+	                    String estado = usuario.getRetos().get(idReto);
 	
 	                    if ("Todos".equalsIgnoreCase(criteria) || criteria.equalsIgnoreCase(estado)) {
+	                    	RetoDTO r;
+							try {
+								r = facade.visualizarReto().get(idReto);
+		                    	List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
+		                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) //Filtrar por deporte
+		                    		    .filter(e -> {
+		                    		        LocalDate retoFecIni = r.getFecIni().toLocalDate(); //Convertir LocalDateTime a LocalDate
+		                    		        LocalDate retoFecFin = r.getFecFin().toLocalDate();
+		                    		        return !e.getFecIni().isBefore(retoFecIni) && !e.getFecIni().isAfter(retoFecFin); //Comparar fechas
+		                    		    })
+		                    		    .collect(Collectors.toList());
+		
+		                    		double totalDistance = entrenamientos.stream()
+		                    		    .mapToDouble(EntrenamientoDTO::getDistancia)
+		                    		    .sum();
+		
+		                    		int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
+		                    		if (progress==100) {
+		                    			usuario.getRetos().put(r.getId(),"Superado");
+		                    			
+		                    			try {
+											facade.cambiarEstado(usuario, r, "Superado");
+										} catch (RemoteException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}
+		                    		}
+		                    		else if(r.getFecFin().toLocalDate().isBefore(LocalDate.now())) {
+		                    			
+		                    			usuario.getRetos().put(r.getId(),"No Superado");
+		                    			try {
+											facade.cambiarEstado(usuario, r, "No Superado");
+										} catch (RemoteException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}
+		                    		}
+		                    		else {
+		                    			usuario.getRetos().put(r.getId(),"En Progreso");
+		                    			try {
+											facade.cambiarEstado(usuario, r, "En Progreso");
+										} catch (RemoteException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}
+		                    		}
+		
+		
+		                        
+		                        try {
+		                            acceptedModel.addRow(new Object[]{
+		                                    r.getId(),
+		                                    r.getNombre(),
+		                                    r.getDeporte(),
+		                                    r.getUsuarioCreador(),
+		                                    r.getFecIni().format(formatter),
+		                                    r.getFecFin().format(formatter),
+		                                    r.getObjetivoDistancia(),
+		                                    r.getObjetivoTiempo(),
+		                                    progress
+		                            });
+		                        } catch (Exception e) {
+		                            e.printStackTrace();
+		                        }
+		                        
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+	                    	
 	
-	                    	List<EntrenamientoDTO> entrenamientos = usuario.getEntrenamientos().stream()
-	                    		    .filter(e -> e.getDeporte().equalsIgnoreCase(r.getDeporte())) //Filtrar por deporte
-	                    		    .filter(e -> {
-	                    		        LocalDate retoFecIni = r.getFecIni().toLocalDate(); //Convertir LocalDateTime a LocalDate
-	                    		        LocalDate retoFecFin = r.getFecFin().toLocalDate();
-	                    		        return !e.getFecIni().isBefore(retoFecIni) && !e.getFecIni().isAfter(retoFecFin); //Comparar fechas
-	                    		    })
-	                    		    .collect(Collectors.toList());
-	
-	                    		double totalDistance = entrenamientos.stream()
-	                    		    .mapToDouble(EntrenamientoDTO::getDistancia)
-	                    		    .sum();
-	
-	                    		int progress = (int) Math.min((totalDistance / r.getObjetivoDistancia()) * 100, 100);
-	                    		if (progress==100) {
-	                    			usuario.getRetos().put(r,"Superado");
-	                    			
-	                    			try {
-										facade.cambiarEstado(usuario, r, "Superado");
-									} catch (RemoteException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-	                    		}
-	                    		else if(r.getFecFin().toLocalDate().isBefore(LocalDate.now())) {
-	                    			
-	                    			usuario.getRetos().put(r,"No Superado");
-	                    			try {
-										facade.cambiarEstado(usuario, r, "No Superado");
-									} catch (RemoteException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-	                    		}
-	                    		else {
-	                    			usuario.getRetos().put(r,"En Progreso");
-	                    			try {
-										facade.cambiarEstado(usuario, r, "En Progreso");
-									} catch (RemoteException e1) {
-										// TODO Auto-generated catch block
-										e1.printStackTrace();
-									}
-	                    		}
-	
-	
-	                        
-	                        try {
-	                            acceptedModel.addRow(new Object[]{
-	                                    r.getId(),
-	                                    r.getNombre(),
-	                                    r.getDeporte(),
-	                                    r.getUsuarioCreador(),
-	                                    r.getFecIni().format(formatter),
-	                                    r.getFecFin().format(formatter),
-	                                    r.getObjetivoDistancia(),
-	                                    r.getObjetivoTiempo(),
-	                                    progress
-	                            });
-	                        } catch (Exception e) {
-	                            e.printStackTrace();
-	                        }
-	                        
+
 	                        
 	                    }
 	                }
@@ -1127,6 +1139,7 @@ public class MenuGUI extends JFrame {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
 
+                        
                         //Llamar al metodo del facade para guardar el reto
                         RetoDTO reto1 = facade.crearReto(
                                 titleField.getText(),
@@ -1150,7 +1163,7 @@ public class MenuGUI extends JFrame {
                                 reto1.getObjetivoTiempo()
                         });
 
-                        usuario.getRetos().put(reto1, "En Progreso");
+                        usuario.getRetos().put(reto1.getId(), "En Progreso");
                         
                         facade.aceptarReto(usuario, reto1);
                         facade.actualizarUsuario(usuario);
@@ -1322,16 +1335,16 @@ public class MenuGUI extends JFrame {
                             throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
                         }
 
+                        int retoIdTabla = (int) acceptedModel.getValueAt(selectedRow, 0);
                         //Obtener el reto actual por ID (clave)
-                        RetoDTO retoActual = usuario.getRetos().keySet()
-                                .stream()
-                                .findFirst()
-                                .orElse(null);
+                        RetoDTO retoActual = facade.visualizarReto().get(retoIdTabla);
 
                         /*if (retoActual != null) {
                             //Eliminar el reto anterior del Map
                             usuario.getRetos().remove(retoActual);
                         }*/
+                        System.out.println("AAAA"+retoActual.getParticipantes());
+                       
 
                         //Actualizar la información en el backend
                         facade.actualizarReto(
@@ -1343,21 +1356,14 @@ public class MenuGUI extends JFrame {
                                 Float.parseFloat(timeField.getText()),
                                 usuario.getUsername(),
                                 sportField.getText(),
-                                new ArrayList<>()
+                                retoActual.getParticipantes()
+                                
                         );
 
                         RetoDTO retoActualizado1 = facade.visualizarReto().get(retoActual.getId());
+                        System.out.println("AAAANNNNN"+retoActual.getParticipantes());
                         HashMap<RetoDTO, String> retosVisualizar = new HashMap<>();
                         //Agregar el nuevo reto al Map
-                        for (RetoDTO r: usuario.getRetos().keySet()) {
-                        	if(r.getId()== retoActualizado1.getId()) {
-                        		retosVisualizar.put(retoActualizado1, usuario.getRetos().get(retoActualizado1));
-                        	}
-                        	else {
-                        		retosVisualizar.put(r, usuario.getRetos().get(r));
-                        	}
-                        }
-                        usuario.setRetos(retosVisualizar);
 
                         //Actualizar la tabla
                         acceptedModel.setValueAt(titleField.getText(), selectedRow, 1);
@@ -1373,6 +1379,9 @@ public class MenuGUI extends JFrame {
                         JOptionPane.showMessageDialog(this, "Reto actualizado con éxito.");
                         System.out.println(facade.visualizarReto());
                         System.out.println(usuario.getRetos());
+                        
+                        
+                       
 
 
                     } catch (Exception ex) {
@@ -1413,29 +1422,27 @@ public class MenuGUI extends JFrame {
                         
                         if (usuario.getUsername().equals(r.getUsuarioCreador())) {
                             //eliminar reto completo
-                            System.out.println("El creador elimina el reto.");
                             ArrayList<Integer> participantes = r.getParticipantes();
-                            for (Integer participante : participantes) {
-                                UsuarioDTO usu = facade.getUsuarios().get(participante);
-                                facade.getUsuarioService().borrarDeGetRetos(usu,r);
-                                facade.actualizarUsuario(usu);
+                            System.out.println("El creador elimina el reto." + r.getParticipantes());
 
+                            for (int participante : participantes) {
+                                System.out.println("El reto.");
+
+                                UsuarioDTO usu = facade.getUsuarios().get(participante);
+                                System.out.println("Retos del usuario antes de eliminar: " + usu.getRetos());
+
+                                usu.getRetos().remove(r.getId());
+                                facade.actualizarUsuario(usu);
+                                System.out.println("FGGGGGGGGGGGGGGGGGGG" + usu.getRetos().toString());
+                                
                             }
                             usuario= facade.getUsuarios().get(usuario.getId());
                             facade.eliminarReto(usuario, r);
-                            facade.actualizarUsuario(usuario);
-                            usuario= facade.getUsuarios().get(usuario.getId());
 
                         } else {
-                        	HashMap<RetoDTO, String> retosVisualizar = usuario.getRetos();
+                        	
                             //Agregar el nuevo reto al Map
-                            for (RetoDTO reto: usuario.getRetos().keySet()) {
-                            	if(reto.getId()== r.getId()) {
-                            		retosVisualizar. remove(reto);
-                            	}
-                            }
-                           
-                            usuario.setRetos(retosVisualizar);
+                        	usuario.getRetos().remove(r.getId());
                         	                      
                             facade.actualizarUsuario(usuario);
                             facade.eliminarReto(usuario, r);
@@ -1551,7 +1558,7 @@ public class MenuGUI extends JFrame {
                         
                         //Verificar si el usuario ya ha aceptado el reto
                         if (!retoSeleccionado.getParticipantes().stream().anyMatch(participanteID -> participanteID.equals(usuario.getId()))) {
-                        	usuario.getRetos().put(retoSeleccionado, "En Progreso");
+                        	usuario.getRetos().put(retoSeleccionado.getId(), "En Progreso");
                             try {
                                 facade.actualizarUsuario(usuario);
                                 facade.aceptarReto(usuario, retoSeleccionado);

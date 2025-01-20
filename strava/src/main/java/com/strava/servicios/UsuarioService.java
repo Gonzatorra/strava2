@@ -52,14 +52,8 @@ public class UsuarioService implements Serializable {
     }
     
     public void borrarDeGetRetos(UsuarioDTO usu, RetoDTO reto) {
-    	HashMap<RetoDTO, String> retos= usu.getRetos();
-    	for(RetoDTO r: retos.keySet()) {
-    		if(r.getId()==reto.getId()) {
-    			retos.remove(r);
-    			break;
-    		}
-    	}
-    	usu.setRetos(retos);
+    	
+    	usu.getRetos().remove(reto);
     	actualizarUsuario(usu);
     }
 
@@ -104,7 +98,7 @@ public class UsuarioService implements Serializable {
 
             usuarioDAO.updateUsuario(usuarioBD.getId(), usuarioBD);
 
-            usuario.setUsername(usuarioDTO.getUsername());
+            /*usuario.setUsername(usuarioDTO.getUsername());
             usuario.setEmail(usuarioDTO.getEmail());
             usuario.setContrasena(usuarioDTO.getContrasena());
             usuario.setNombre(usuarioDTO.getNombre());
@@ -112,13 +106,14 @@ public class UsuarioService implements Serializable {
             usuario.setAltura(usuarioDTO.getAltura());
             usuario.setfNacimiento(usuarioDTO.getfNacimiento());
             usuario.setFecCMax(usuarioDTO.getFecCMax());
+            usuario.setToken(usuarioDTO.getToken());
             usuario.setFecCReposo(usuarioDTO.getFecCReposo());
             usuario.setRetos(usuarioDTO.getRetos());
             usuario.setEntrenamientos(usuarioDTO.getEntrenamientos());
-            usuario.setAmigos(usuarioDTO.getAmigos());
+            usuario.setAmigos(usuarioDTO.getAmigos());*/
             
-
-            usuarios.put(usuarioDTO.getId(), usuario);
+            usuarios.put(usuarioDTO.getId(), usuarioDTO);
+            //usuarios.put(usuarioDTO.getId(), usuario);
             System.out.println("Usuario actualizado: " + usuario.getUsername());
         }
     }

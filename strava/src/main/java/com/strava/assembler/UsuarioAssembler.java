@@ -37,11 +37,8 @@ public class UsuarioAssembler {
         }
         dto.setEntrenamientos(entrenosDT);
 
-        HashMap<RetoDTO, String> retosMap = new HashMap<>();
-        for (Map.Entry<Reto, String> entry : usuario.getRetos().entrySet()) {
-            retosMap.put(RetoAssembler.toDTO(entry.getKey()), entry.getValue());
-        }
-        dto.setRetos(retosMap);
+        
+        dto.setRetos(usuario.getRetos());
 
 
 
@@ -80,11 +77,8 @@ public class UsuarioAssembler {
         }
         usuario.setEntrenamientos(entrenosD);
 
-        HashMap<Reto, String> retosMap = new HashMap<>();
-        for (Map.Entry<RetoDTO, String> entry : usuarioDTO.getRetos().entrySet()) {
-            retosMap.put(RetoAssembler.toDomain(entry.getKey()), entry.getValue());
-        }
-        usuario.setRetos(retosMap);
+        
+        usuario.setRetos(usuarioDTO.getRetos());
 
 
         return usuario;

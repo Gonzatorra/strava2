@@ -74,7 +74,7 @@ public class Servidor {
         challengers.add(usuario1);
         RetoDTO reto1 = facade.crearReto("PrimerReto", fecha1, fecha2, 10, 30, "running", usuario1, challengers);
         usuario1.getEntrenamientos().add(entreno1);
-        usuario1.getRetos().put(reto1, "En Progreso");
+        usuario1.getRetos().put(reto1.getId(), "En Progreso");
         facade.actualizarUsuario(usuario1);
         
 
@@ -85,7 +85,7 @@ public class Servidor {
         challengers2.add(usuario2);
         RetoDTO reto2 = facade.crearReto("RetoCiclismo", fecha1, fecha2, 20, 50, "cycling", usuario2, challengers2);
         usuario2.getEntrenamientos().add(entreno2);
-        usuario2.getRetos().put(reto2, "En Progreso");
+        usuario2.getRetos().put(reto2.getId(), "En Progreso");
         facade.actualizarUsuario(usuario2);
        
 
@@ -96,7 +96,7 @@ public class Servidor {
         challengers3.add(usuario3);
         RetoDTO reto3 = facade.crearReto("RetoNatacion", fecha1, fecha2, 5, 15, "swimming", usuario3, challengers3);
         usuario3.getEntrenamientos().add(entreno3);
-        usuario3.getRetos().put(reto3, "En progreso");
+        usuario3.getRetos().put(reto3.getId(), "En progreso");
         facade.actualizarUsuario(usuario3);
 
         //Usuarios extra

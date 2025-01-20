@@ -20,7 +20,7 @@ public class UsuarioDTO implements Serializable{
     private float fecCReposo;
     private String token;
     private ArrayList<EntrenamientoDTO> entrenamientos;
-    private HashMap<RetoDTO, String> retos;
+    private HashMap<Integer, String> retos;
     private ArrayList<Integer> amigos;
     private String proveedor; // Nuevo atributo
 
@@ -147,11 +147,11 @@ public class UsuarioDTO implements Serializable{
         this.entrenamientos = entrenamientos;
     }
 
-    public HashMap<RetoDTO, String> getRetos() {
+    public HashMap<Integer, String> getRetos() {
         return retos;
     }
 
-    public void setRetos(HashMap<RetoDTO, String> retos) {
+    public void setRetos(HashMap<Integer, String> retos) {
         this.retos = retos;
     }
 

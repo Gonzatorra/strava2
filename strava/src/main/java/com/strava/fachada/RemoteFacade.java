@@ -230,6 +230,7 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
     @Override
     public void actualizarUsuario(UsuarioDTO usuarioDTO) throws RemoteException {
         usuarioService.actualizarUsuario(usuarioDTO);
+        
     }
 
 
@@ -291,6 +292,8 @@ public class RemoteFacade extends UnicastRemoteObject implements IRemoteFacade {
         entrenamientoService.eliminarEntreno(index, entrenamiento);
 
     }
+
+
 
 
 }

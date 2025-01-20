@@ -75,6 +75,8 @@ public class RetoService {
     	ids.add(usuario.getId());
     	actualizarReto(reto, reto.getNombre(), reto.getFecIni(), reto.getFecFin(), reto.getObjetivoDistancia(), reto.getObjetivoTiempo(), 
     			reto.getUsuarioCreador(), reto.getDeporte(), ids);
+    	
+    	
 
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MyPersistenceUnit");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
