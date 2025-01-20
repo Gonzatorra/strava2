@@ -1327,10 +1327,10 @@ public class MenuGUI extends JFrame {
                                 .findFirst()
                                 .orElse(null);
 
-                        if (retoActual != null) {
+                        /*if (retoActual != null) {
                             //Eliminar el reto anterior del Map
                             usuario.getRetos().remove(retoActual);
-                        }
+                        }*/
 
                         //Actualizar la información en el backend
                         facade.actualizarReto(
@@ -1348,7 +1348,7 @@ public class MenuGUI extends JFrame {
                         RetoDTO retoActualizado1 = facade.visualizarReto().get(retoActual.getId());
 
                         //Agregar el nuevo reto al Map
-                        usuario.getRetos().put(retoActualizado1, "prueba");
+                        usuario.getRetos().put(retoActualizado1, "En Progreso");
 
                         //Actualizar la tabla
                         acceptedModel.setValueAt(titleField.getText(), selectedRow, 1);
