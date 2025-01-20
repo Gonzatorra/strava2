@@ -159,7 +159,6 @@ public class MenuGUI extends JFrame {
                         .findFirst()
                         .orElse(null);
                     
-                    
                     if (usuario != null) {
                         SwingUtilities.invokeLater(() -> new MainAppGUI(usuario).setVisible(true));
                         SwingUtilities.getWindowAncestor(accessPanel).dispose();
@@ -350,12 +349,13 @@ public class MenuGUI extends JFrame {
         public MainAppGUI(UsuarioDTO usuario) {
         	
             this.usuario = usuario;
+            
             try {
                 facade = (IRemoteFacade) Naming.lookup("rmi://localhost/RemoteFacade");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            
             setTitle("Strava - Principal");
             setSize(600, 400);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -763,6 +763,7 @@ public class MenuGUI extends JFrame {
                 trainPanel.revalidate();  // Asegura que se actualice el panel
                 trainPanel.repaint();
 
+                
                 panel.add(new JLabel("Título:"));
                 panel.add(titleField);
                 panel.add(new JLabel("Deporte:"));
