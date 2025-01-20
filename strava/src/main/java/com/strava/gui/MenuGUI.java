@@ -934,13 +934,15 @@ public class MenuGUI extends JFrame {
 										}
 		                    		}
 		                    		else {
-		                    			usuario.getRetos().put(r.getId(),"En Progreso");
-		                    			try {
-											facade.cambiarEstado(usuario, r, "En Progreso");
-										} catch (RemoteException e1) {
-											// TODO Auto-generated catch block
-											e1.printStackTrace();
-										}
+		                    			if(usuario.getRetos()!= null) {
+			                    			usuario.getRetos().put(r.getId(),"En Progreso");
+			                    			try {
+												facade.cambiarEstado(usuario, r, "En Progreso");
+											} catch (RemoteException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+		                    			}
 		                    		}
 		
 		
